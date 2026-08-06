@@ -63,4 +63,37 @@ const getPatientProfile = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getPatientProfile };
+// 4. تحديث بيانات المريض (Update Patient Profile)
+const updatePatientProfile = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const updates = req.body;
+
+    if (updates.password) {
+      delete updates.password;
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
+      new: true,
+      runValidators: true,
+    }).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'المستخدم غير موجود' });
+    }
+
+    res.status(200).json({
+      message: 'تم تحديث البيانات بنجاح',
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getPatientProfile,
+  updatePatientProfile,
+};

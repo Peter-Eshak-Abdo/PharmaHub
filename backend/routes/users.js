@@ -4,6 +4,7 @@ const {
   registerUser,
   loginUser,
   getPatientProfile,
+  updatePatientProfile,
 } = require('../controllers/user');
 const { protect } = require('../middlewares/auth');
 
@@ -13,7 +14,10 @@ router.post('/register', registerUser);
 // مسار تسجيل الدخول
 router.post('/login', loginUser);
 
-// مسار جلب بيانات المريض (محمي بـ Middleware)
+// مسار جلب بيانات المريض
 router.get('/profile', protect, getPatientProfile);
+
+// مسار تحديث بيانات المريض
+router.put('/profile', protect, updatePatientProfile);
 
 module.exports = router;
