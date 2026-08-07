@@ -1,11 +1,84 @@
-const User = require("../models/Users");
+const User = require("../models/users");
+const Patient = require("../models/patient");
+
+const assertPatientRole = (req, res) => {
+  if (!req.user || req.user.role !== "patient") {
+    res.status(403).json({ message: "غير مصرح، هذا المسار مخصص للمريض فقط" });
+    return false;
+  }
+
+  return true;
+};
 
 // جلب بيانات المريض
 const getPatientProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
-    res.json(user);
+    if (!assertPatientRole(req, res)) return;
+
+    const patient = await Patient.findOne({ userId: req.user._id }).populate(
+      "userId",
+      "email role",
+    );
+
+    if (!patient) {
+      return res.status(404).json({ message: "ملف المريض غير موجود" });
+    }
+
+    res.json({ success: true, data: patient });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// إنشاء بيانات المريض لأول مرة
+const createPatientProfile = async (req, res) => {
+  try {
+    if (!assertPatientRole(req, res)) return;
+
+    const existingPatient = await Patient.findOne({ userId: req.user._id });
+    if (existingPatient) {
+      return res.status(400).json({ message: "ملف المريض موجود بالفعل" });
+    }
+
+    const {
+      fullName,
+      phoneNumber,
+      age,
+      gender,
+      address,
+      occupation,
+      companyName,
+    } = req.body;
+
+    if (!fullName || !phoneNumber || age === undefined || !gender) {
+      return res.status(400).json({
+        message: "fullName, phoneNumber, age and gender are required",
+      });
+    }
+
+    const patient = await Patient.create({
+      userId: req.user._id,
+      fullName,
+      phoneNumber,
+      age,
+      gender,
+      address,
+      occupation,
+      companyName,
+    });
+
+    const populatedPatient = await Patient.findById(patient._id).populate(
+      "userId",
+      "email role",
+    );
+
+    res.status(201).json({ success: true, data: populatedPatient });
+  } catch (error) {
+    if (error.code === 11000) {
+      return res
+        .status(409)
+        .json({ message: "هذا المستخدم لديه ملف مريض بالفعل" });
+    }
     res.status(500).json({ message: error.message });
   }
 };
@@ -13,29 +86,35 @@ const getPatientProfile = async (req, res) => {
 // تحديث بيانات المريض
 const updatePatientProfile = async (req, res) => {
   try {
-    const userId = req.user._id;
+    if (!assertPatientRole(req, res)) return;
+
     const updates = req.body;
+    delete updates.userId;
 
-    if (updates.password) {
-      delete updates.password;
-    }
+    const updatedPatient = await Patient.findOneAndUpdate(
+      { userId: req.user._id },
+      updates,
+      {
+        new: true,
+        runValidators: true,
+      },
+    ).populate("userId", "email role");
 
-    const updatedUser = await User.findByIdAndUpdate(userId, updates, {
-      new: true,
-      runValidators: true,
-    }).select("-password");
-
-    if (!updatedUser) {
-      return res.status(404).json({ message: "المستخدم غير موجود" });
+    if (!updatedPatient) {
+      return res.status(404).json({ message: "ملف المريض غير موجود" });
     }
 
     res.status(200).json({
-      message: "تم تحديث البيانات بنجاح",
-      user: updatedUser,
+      message: "تم تحديث بيانات المريض بنجاح",
+      user: updatedPatient,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { getPatientProfile, updatePatientProfile };
+module.exports = {
+  getPatientProfile,
+  createPatientProfile,
+  updatePatientProfile,
+};
