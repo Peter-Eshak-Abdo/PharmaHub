@@ -1,5 +1,5 @@
-const User = require("../models/users");
-const Patient = require("../models/patient");
+const User = require("../models/Users");
+const Patient = require("../models/Patients");
 
 const assertPatientRole = (req, res) => {
   if (!req.user || req.user.role !== "patient") {
