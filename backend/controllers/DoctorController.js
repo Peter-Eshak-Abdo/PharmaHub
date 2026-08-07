@@ -90,14 +90,14 @@ const updateDoctorProfile = async (req, res) => {
     const updates = req.body;
     delete updates.userId;
 
-    const updatedDoctor = await Doctor.findOneAndUpdate(
-      { userId: req.user._id },
-      updates,
-      {
-        new: true,
-        runValidators: true,
-      },
-    ).populate("userId", "email role");
+  const updatedDoctor = await Doctor.findOneAndUpdate(
+  { userId: req.user._id },
+  updates,
+  {
+    returnDocument: "after",
+    runValidators: true,
+  },
+).populate("userId", "email role");
 
     if (!updatedDoctor) {
       return res.status(404).json({ message: "ملف الدكتور غير موجود" });
