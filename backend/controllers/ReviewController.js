@@ -1,6 +1,6 @@
 const Review = require("../models/Reviews");
 const Appointment = require("../models/Apponintments");
-const Doctor = require("../models/Doctor"); // from mohamed Eid
+const Doctor = require("../models/Doctors");
 
 exports.createReview = async (req, res) => {
   try {
