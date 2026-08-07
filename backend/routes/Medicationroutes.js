@@ -4,7 +4,7 @@ const {
     addMedication,
     getMedications,
     getMedicationById,
-} = require('../controllers/Medicationcontroller');
+} = require('../controllers/MedicationController');
 
 // GET  /api/medications           — fetch all medications (optional ?type= filter)
 // POST /api/medications           — add a new medication (Admin)

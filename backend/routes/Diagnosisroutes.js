@@ -4,7 +4,7 @@ const {
     addDiagnosis,
     getDiagnoses,
     getDiagnosisById,
-} = require('../controllers/Diagnosiscontroller');
+} = require('../controllers/DiagnosisController');
 
 // GET  /api/diagnoses       — fetch all diagnoses
 // POST /api/diagnoses       — add a new diagnosis (Admin)

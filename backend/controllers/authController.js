@@ -1,8 +1,10 @@
-const User = require('../models/users');
-const jwt = require('jsonwebtoken');
+const User = require("../models/Users");
+const jwt = require("jsonwebtoken");
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'secret', { expiresIn: '30d' });
+  return jwt.sign({ id }, process.env.JWT_SECRET || "secret", {
+    expiresIn: "30d",
+  });
 };
 
 // تسجيل حساب جديد
@@ -12,7 +14,7 @@ const registerUser = async (req, res) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      return res.status(400).json({ message: 'المستخدم موجود بالفعل' });
+      return res.status(400).json({ message: "المستخدم موجود بالفعل" });
     }
 
     const user = await User.create({ email, password, role });
@@ -40,7 +42,7 @@ const loginUser = async (req, res) => {
         token: generateToken(user._id),
       });
     } else {
-      res.status(401).json({ message: 'البريد أو كلمة المرور غير صحيحة' });
+      res.status(401).json({ message: "البريد أو كلمة المرور غير صحيحة" });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });

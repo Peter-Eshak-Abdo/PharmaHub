@@ -5,7 +5,7 @@ const {
   getAvailabilityByDoctor,
   updateAvailability,
   deleteAvailability,
-} = require('../controllers/availabilityController');
+} = require('../controllers/AvailabilityController');
 const auth = require('../middlewares/auth');
 
 // Create a new weekly slot — protected, only the doctor (or admin) should do this

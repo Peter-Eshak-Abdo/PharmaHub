@@ -1,9 +1,9 @@
-const User = require('../models/users');
+const User = require("../models/Users");
 
 // جلب بيانات المريض
 const getPatientProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password');
+    const user = await User.findById(req.user._id).select("-password");
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -23,14 +23,14 @@ const updatePatientProfile = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(userId, updates, {
       new: true,
       runValidators: true,
-    }).select('-password');
+    }).select("-password");
 
     if (!updatedUser) {
-      return res.status(404).json({ message: 'المستخدم غير موجود' });
+      return res.status(404).json({ message: "المستخدم غير موجود" });
     }
 
     res.status(200).json({
-      message: 'تم تحديث البيانات بنجاح',
+      message: "تم تحديث البيانات بنجاح",
       user: updatedUser,
     });
   } catch (error) {
