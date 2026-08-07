@@ -5,7 +5,7 @@ const {
   getPatientAppointments,
   getDoctorAppointments,
   updateAppointmentStatus,
-} = require("../controllers/appoinment");
+} = require("../controllers/AppoinmentController");
 
 router.post("/", createAppointment);// إنشاء حجز جديد
 router.get("/patient/:patientId", getPatientAppointments);// جلب حجوزات مريض محدد

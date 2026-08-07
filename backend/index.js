@@ -1,8 +1,8 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const connectDB = require('./config/database');
+const connectDB = require('./config/db');
 
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/AuthRoutes');
 const patientRoutes = require('./routes/patientRoutes');
 
 dotenv.config();

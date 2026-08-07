@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   createReview,
   getDoctorReviews,
-} = require("../controllers/reviewController");
+} = require("../controllers/ReviewController");
 
 router.post("/", createReview);// إضافة تقييم جديد
 router.get("/doctor/:doctorId", getDoctorReviews);// جلب تقييمات طبيب محدد

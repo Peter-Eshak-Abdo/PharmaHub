@@ -5,7 +5,7 @@ const {
   getExceptionsByDoctor,
   checkExceptionForDate,
   deleteException,
-} = require('../controllers/exceptionController');
+} = require('../controllers/ExceptionController');
 const auth = require('../middlewares/auth');
 
 // Create a new exception (vacation/blocked/emergency) — protected

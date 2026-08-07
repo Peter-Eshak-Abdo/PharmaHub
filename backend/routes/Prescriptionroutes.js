@@ -4,7 +4,7 @@ const {
     createPrescription,
     getPrescriptionByAppointmentId,
     getPrescriptionsByPatient,
-} = require('../controllers/Prescriptioncontroller');
+} = require('../controllers/PrescriptionController');
 
 // POST /api/prescriptions
 // Create a new prescription (Doctor only — auth middleware to be added by team)
