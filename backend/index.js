@@ -1,9 +1,10 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const express = require("express");
+const dotenv = require("dotenv");
+const connectDB = require("./config/db");
 
-const authRoutes = require('./routes/AuthRoutes');
-const patientRoutes = require('./routes/PatientRoutes');
+const authRoutes = require("./routes/authRoutes");
+const patientRoutes = require("./routes/PatientRoutes");
+const doctorRoutes = require("./routes/DoctorRoutes");
 
 dotenv.config();
 
@@ -14,8 +15,9 @@ const app = express();
 app.use(express.json());
 
 // مسارات المصادقة والمريض
-app.use('/api/auth', authRoutes);
-app.use('/api/patient', patientRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/patient", patientRoutes);
+app.use("/api/doctor", doctorRoutes);
 
 const PORT = process.env.PORT || 5000;
 
