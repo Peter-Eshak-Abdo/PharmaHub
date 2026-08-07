@@ -1,5 +1,5 @@
-const Appointment = require("../models/apponinments");
-const Doctor = require("../models/doctor"); // from mohamed Eid Branch
+const Appointment = require("../models/Apponintments");
+const Doctor = require("../models/Doctors"); // from mohamed Eid Branch
 
 exports.createAppointment = async (req, res) => {
   try {

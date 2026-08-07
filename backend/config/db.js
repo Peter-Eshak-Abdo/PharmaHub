@@ -1,4 +1,3 @@
-// استدعاء مكتبة mongoose للتواصل مع قاعدة بيانات MongoDB
 const mongoose = require('mongoose');
 
 // دالة غير متزامنة للاتصال بقاعدة البيانات
