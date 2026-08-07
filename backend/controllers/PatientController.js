@@ -91,14 +91,14 @@ const updatePatientProfile = async (req, res) => {
     const updates = req.body;
     delete updates.userId;
 
-    const updatedPatient = await Patient.findOneAndUpdate(
-      { userId: req.user._id },
-      updates,
-      {
-        new: true,
-        runValidators: true,
-      },
-    ).populate("userId", "email role");
+const updatedPatient = await Patient.findOneAndUpdate(
+  { userId: req.user._id },
+  updates,
+  {
+    returnDocument: "after",
+    runValidators: true,
+  },
+).populate("userId", "email role");
 
     if (!updatedPatient) {
       return res.status(404).json({ message: "ملف المريض غير موجود" });
