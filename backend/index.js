@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/AuthRoutes');
-const patientRoutes = require('./routes/patientRoutes');
+const patientRoutes = require('./routes/PatientRoutes');
 
 dotenv.config();
 

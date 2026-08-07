@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getPatientProfile, updatePatientProfile } = require('../controllers/patientController');
+const { getPatientProfile, updatePatientProfile } = require('../controllers/PatientController');
 const { protect } = require('../middlewares/auth');
 
 // مسار جلب بيانات المريض

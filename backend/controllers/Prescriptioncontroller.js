@@ -1,5 +1,5 @@
 const Prescription = require("../models/Prescriptions");
-// const Appointment = require('../models/Appointment');
+const Appointment = require('../models/Appointments');
 const Diagnosis = require("../models/Diagnosis");
 const Medication = require("../models/Medications");
 
@@ -16,17 +16,16 @@ const createPrescription = async (req, res) => {
       notes,
     } = req.body;
 
-    // BR-RX-001: Commented out until Appointment model is available
-    // const appointment = await Appointment.findById(appointmentId);
-    // if (!appointment) {
-    //     return res.status(404).json({ success: false, message: 'Appointment not found' });
-    // }
-    // if (appointment.status !== 'Completed') {
-    //     return res.status(400).json({
-    //         success: false,
-    //         message: 'Prescription can only be created for a Completed appointment (BR-RX-001)',
-    //     });
-    // }
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment) {
+        return res.status(404).json({ success: false, message: 'Appointment not found' });
+    }
+    if (appointment.status !== 'Completed') {
+        return res.status(400).json({
+            success: false,
+            message: 'Prescription can only be created for a Completed appointment (BR-RX-001)',
+        });
+    }
 
     // BR-RX-004: Validate all diagnosisIds exist in the catalog
     if (diagnosisIds.length > 0) {
