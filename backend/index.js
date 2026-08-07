@@ -16,13 +16,16 @@ const reviewRoutes = require("./routes/ReviewRoutes");
 
 dotenv.config();
 
-connectDB();
-
 const app = express();
 
 // تمكين الطلبات المتقاطعة المصدر (CORS)
 app.use(cors());
 app.use(express.json());
+
+// الاتصال بقاعدة البيانات
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB Connected...'))
+  .catch((err) => console.log('DB Connection Error:', err));
 
 // مسارات المصادقة والمريض
 app.use("/api/auth", authRoutes);
