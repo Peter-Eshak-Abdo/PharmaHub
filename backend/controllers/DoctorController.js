@@ -1,4 +1,4 @@
-const Doctor = require("../models/doctor");
+const Doctor = require("../models/Doctors");
 
 const assertDoctorRole = (req, res) => {
   if (!req.user || req.user.role !== "doctor") {
@@ -47,6 +47,7 @@ const createDoctorProfile = async (req, res) => {
       yearsOfExperience,
       bio,
       rating,
+      consultationFeeSnapshot,
     } = req.body;
 
     if (!fullName || !specialization) {
@@ -64,6 +65,7 @@ const createDoctorProfile = async (req, res) => {
       yearsOfExperience,
       bio,
       rating,
+      consultationFeeSnapshot,
     });
 
     const populatedDoctor = await Doctor.findById(doctor._id).populate(

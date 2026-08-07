@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/users"); // الربط بملف المستخدمين
+const User = require("../models/Users"); // الربط بملف المستخدمين
 
 // Middleware للتحقق من التوكن (Token) وحماية المسارات
 const protect = async (req, res, next) => {

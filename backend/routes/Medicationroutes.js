@@ -1,16 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
-    addMedication,
-    getMedications,
-    getMedicationById,
-} = require('../controllers/MedicationController');
+  addMedication,
+  getMedications,
+  getMedicationById,
+} = require("../controllers/Medicationcontroller");
 
 // GET  /api/medications           — fetch all medications (optional ?type= filter)
 // POST /api/medications           — add a new medication (Admin)
-router.route('/').get(getMedications).post(addMedication);
+router.route("/").get(getMedications).post(addMedication);
 
 // GET /api/medications/:id        — fetch a single medication
-router.route('/:id').get(getMedicationById);
+router.route("/:id").get(getMedicationById);
 
 module.exports = router;
