@@ -56,6 +56,16 @@ const getMedicalHistory = async (req, res) => {
                 }
             },
 
+            // 4.5 Lookup Medications associated with the Prescription
+            {
+                $lookup: {
+                    from: 'medications', 
+                    localField: 'prescription.medications.medicationId',
+                    foreignField: '_id',
+                    as: 'medicationDetails'
+                }
+            },
+
             // 5. Structure the final output view
             {
                 $project: {
@@ -70,6 +80,11 @@ const getMedicalHistory = async (req, res) => {
                         icdCode: 1
                     },
                     'prescription.medications': 1,
+                    medicationDetails: {
+                        name: 1,
+                        genericName: 1,
+                        type: 1
+                    },
                     'prescription.notes': 1,
                     'prescription.issuedDate': 1
                 }

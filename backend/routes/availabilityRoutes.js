@@ -7,19 +7,19 @@ const {
   deleteAvailability,
   getAvailableSlots,
 } = require("../controllers/availabilityController");
-const { protect } = require("../middlewares/auth");
+const { protect, checkRole } = require("../middlewares/auth");
 
 // Create a new weekly slot — protected, only the doctor (or admin) should do this
-router.post("/", protect, addAvailability);
+router.post("/", protect, checkRole(['doctor']), addAvailability);
 
 // Fetch a doctor's weekly schedule — public, patients need this to book
 router.get("/:doctorId", getAvailabilityByDoctor);
 router.get("/:doctorId/slots", getAvailableSlots);
 
 // Update an existing slot — protected
-router.put("/:id", protect, updateAvailability);
+router.put("/:id", protect, checkRole(['doctor']), updateAvailability);
 
 // Delete a slot — protected
-router.delete("/:id", protect, deleteAvailability);
+router.delete("/:id", protect, checkRole(['doctor']), deleteAvailability);
 
 module.exports = router;

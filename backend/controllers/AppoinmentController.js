@@ -35,6 +35,14 @@ exports.createAppointment = async (req, res) => {
       });
     }
 
+    const finalFee = consultationFeeSnapshot !== undefined ? consultationFeeSnapshot : doctor.consultationFeeSnapshot;
+    if (finalFee === undefined || finalFee <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "A valid consultation fee (> 0) must be provided either in the request or on the doctor's profile.",
+      });
+    }
+
     const appointment = await Appointment.create({
       patientId,
       doctorId,
@@ -43,8 +51,7 @@ exports.createAppointment = async (req, res) => {
       consultationType,
       reasonForVisit,
       estimatedDurationMinutes,
-      consultationFeeSnapshot:
-        consultationFeeSnapshot || doctor.consultationFeeSnapshot || 0,
+      consultationFeeSnapshot: finalFee,
     });
     res.status(201).json({ success: true, data: appointment });
   } catch (error) {
