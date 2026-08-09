@@ -23,9 +23,10 @@ app.use(cors());
 app.use(express.json());
 
 // الاتصال بقاعدة البيانات
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB Connected...'))
-  .catch((err) => console.log('DB Connection Error:', err));
+// mongoose.connect(process.env.MONGO_URI)
+//   .then(() => console.log('MongoDB Connected...'))
+//   .catch((err) => console.log('DB Connection Error:', err));
+connectDB();
 
 // مسارات المصادقة والمريض
 app.use("/api/auth", authRoutes);
