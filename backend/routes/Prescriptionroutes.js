@@ -6,9 +6,11 @@ const {
   getPrescriptionsByPatient,
 } = require("../controllers/Prescriptioncontroller");
 
+const { protect, checkRole } = require("../middlewares/auth");
+
 // POST /api/prescriptions
-// Create a new prescription (Doctor only — auth middleware to be added by team)
-router.route("/").post(createPrescription);
+// Create a new prescription (Doctor only)
+router.route("/").post(protect, checkRole(["doctor"]), createPrescription);
 
 // GET /api/prescriptions/appointment/:appointmentId
 // Fetch prescription for a specific appointment

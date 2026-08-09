@@ -127,7 +127,11 @@ exports.getAvailableSlots = async (req, res) => {
     }
     // Check schedule exceptions (doctor on vacation etc.)
     const ScheduleException = require('../models/ScheduleException');
-    const exception = await ScheduleException.findOne({ doctorId, date: new Date(date) });
+    const exception = await ScheduleException.findOne({
+      doctorId,
+      startDate: { $lte: new Date(date) },
+      endDate: { $gte: new Date(date) },
+    });
     if (exception) {
       return res.status(200).json({ success: true, slots: [] }); // doctor unavailable
     }

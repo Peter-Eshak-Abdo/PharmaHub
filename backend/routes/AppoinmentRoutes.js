@@ -7,7 +7,9 @@ const {
   updateAppointmentStatus,
 } = require("../controllers/AppoinmentController");
 
-router.post("/", createAppointment);// إنشاء حجز جديد
+const { protect, checkRole } = require("../middlewares/auth");
+
+router.post("/", protect, checkRole(["patient"]), createAppointment);// إنشاء حجز جديد
 router.get("/patient/:patientId", getPatientAppointments);// جلب حجوزات مريض محدد
 router.get("/doctor/:doctorId", getDoctorAppointments);// جلب حجوزات طبيب محدد
 router.patch("/:id/status", updateAppointmentStatus);// تحديث حالة الحجز (مكتمل / ملغي / ...)
