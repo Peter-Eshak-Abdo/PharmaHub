@@ -1,1 +1,15 @@
-<p>review-form works!</p>
+<!-- features/appointments/review-form/review-form.component.html -->
+<div>
+  <button *ngIf="!showForm" (click)="showForm = true">إضافة تقييم</button>
+
+  <form *ngIf="showForm" [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+    <label>التقييم (1-5):</label>
+    <input type="number" formControlName="rating" min="1" max="5" />
+
+    <label>تعليق:</label>
+    <textarea formControlName="comment"></textarea>
+
+    <button type="submit" [disabled]="reviewForm.invalid">حفظ التقييم</button>
+    <button type="button" (click)="showForm = false">إلغاء</button>
+  </form>
+</div>
