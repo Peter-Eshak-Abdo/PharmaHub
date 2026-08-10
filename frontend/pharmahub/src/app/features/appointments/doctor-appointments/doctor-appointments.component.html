@@ -1,1 +1,35 @@
-<p>doctor-appointments works!</p>
+<!-- features/appointments/doctor-appointments/doctor-appointments.component.html -->
+<div class="appointments-container">
+  <h2>حجوزات المرضى</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>المريض</th>
+        <th>التاريخ</th>
+        <th>الوقت</th>
+        <th>النوع</th>
+        <th>الحالة</th>
+        <th>الإجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let appt of appointments">
+        <td>{{ appt.patientName }}</td>
+        <td>{{ appt.date }}</td>
+        <td>{{ appt.timeSlot }}</td>
+        <td>{{ appt.consultationType }}</td>
+        <td><span class="badge" [ngClass]="getStatusClass(appt.status)">{{ appt.status }}</span></td>
+        <td>
+          <button *ngIf="appt.status === 'Pending'"
+            (click)="updateStatus(appt.id, appt.status, 'Confirmed')">تأكيد</button>
+          <button *ngIf="appt.status === 'Pending' || appt.status === 'Confirmed'"
+            (click)="updateStatus(appt.id, appt.status, 'Cancelled')">إلغاء</button>
+          <button *ngIf="appt.status === 'Confirmed'"
+            (click)="updateStatus(appt.id, appt.status, 'Completed')">مكتمل</button>
+          <button *ngIf="appt.status === 'Confirmed'" (click)="updateStatus(appt.id, appt.status, 'No-Show')">لم
+            يحضر</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
