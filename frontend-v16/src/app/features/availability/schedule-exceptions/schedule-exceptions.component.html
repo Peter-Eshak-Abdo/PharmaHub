@@ -1,0 +1,92 @@
+<div class="max-w-container-max mx-auto px-gutter py-lg">
+  <div class="flex flex-col gap-xs mb-md">
+    <h1 class="font-headline-lg text-headline-lg text-on-surface">Schedule Exceptions</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">Block out vacation days, emergencies, or other unavailable dates.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
+
+    <!-- Left: Exceptions list -->
+    <div class="lg:col-span-8 flex flex-col gap-md">
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+              <th class="p-sm font-semibold">Type</th>
+              <th class="p-sm font-semibold">Start Date</th>
+              <th class="p-sm font-semibold">End Date</th>
+              <th class="p-sm font-semibold hidden md:table-cell">Reason</th>
+              <th class="p-sm font-semibold text-right w-24">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="font-body-sm text-body-sm text-on-surface">
+            <tr *ngFor="let exc of exceptions" class="hover:bg-surface-container-low/50 transition-colors group border-t border-outline-variant">
+              <td class="p-sm font-medium">
+                <span class="bg-primary-container text-on-primary-container px-xs py-base rounded-md font-mono text-xs">{{ exc.type }}</span>
+              </td>
+              <td class="p-sm">{{ exc.startDate | date }}</td>
+              <td class="p-sm">{{ exc.endDate | date }}</td>
+              <td class="p-sm text-on-surface-variant hidden md:table-cell">{{ exc.reason }}</td>
+              <td class="p-sm text-right">
+                <button (click)="deleteException(exc._id)" class="text-on-surface-variant hover:text-error opacity-0 group-hover:opacity-100 transition-opacity p-base">
+                  <span class="material-symbols-outlined text-sm">delete</span>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="exceptions.length === 0">
+              <td colspan="5" class="p-sm text-center text-on-surface-variant">No exceptions added yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right: Add form -->
+    <div class="lg:col-span-4">
+      <div class="bg-surface-container-lowest rounded-xl shadow-md p-md flex flex-col sticky top-24">
+        <div class="flex items-center gap-xs mb-md">
+          <span class="material-symbols-outlined text-primary bg-primary-container p-xs rounded-full">event_busy</span>
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">Add Exception</h2>
+        </div>
+
+        <form class="flex flex-col gap-sm">
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Start Date</label>
+            <input type="date" [(ngModel)]="newException.startDate" name="startDate"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
+          </div>
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">End Date</label>
+            <input type="date" [(ngModel)]="newException.endDate" name="endDate"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
+          </div>
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Type</label>
+            <select [(ngModel)]="newException.type" name="type"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
+              <option *ngFor="let t of types" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Reason</label>
+            <textarea [(ngModel)]="newException.reason" name="reason" rows="3"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow resize-none"
+              placeholder="e.g. Annual leave"></textarea>
+          </div>
+
+          <div class="mt-xs">
+            <button type="button" (click)="addException()"
+              class="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-sm rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-xs">
+              <span class="material-symbols-outlined text-sm">save</span>
+              Add Exception
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
