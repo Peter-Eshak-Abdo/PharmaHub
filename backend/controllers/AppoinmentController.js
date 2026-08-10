@@ -123,9 +123,3 @@ exports.updateAppointmentStatus = async (req, res) => {
   }
 };
 
-module.exports = {
-  createAppointment,
-  getPatientAppointments,
-  getDoctorAppointments,
-  updateAppointmentStatus,
-};
