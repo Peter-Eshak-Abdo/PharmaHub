@@ -1,1 +1,36 @@
-<p>booking-form works!</p>
+<!-- features/appointments/booking-form/booking-form.component.html -->
+<div class="booking-container">
+  <h2>حجز موعد جديد</h2>
+  <form [formGroup]="bookingForm">
+
+    <div *ngIf="step === 1">
+      <h3>الخطوة 1: اختيار الموعد</h3>
+      <label>التاريخ:</label>
+      <input type="date" formControlName="date" (change)="onDateChange($event)" />
+
+      <label>المواعيد المتاحة:</label>
+      <select formControlName="timeSlot">
+        <option *ngFor="let slot of availableSlots" [value]="slot.time">{{ slot.time }}</option>
+      </select>
+
+      <button type="button" [disabled]="bookingForm.get('date')?.invalid || bookingForm.get('timeSlot')?.invalid"
+        (click)="nextStep()">التالي</button>
+    </div>
+
+    <div *ngIf="step === 2">
+      <h3>الخطوة 2: تفاصيل الكشف</h3>
+      <label>نوع الكشف:</label>
+      <select formControlName="consultationType">
+        <option value="In-Clinic">في العيادة (In-Clinic)</option>
+        <option value="Online">أونلاين (Online)</option>
+      </select>
+
+      <label>سبب الزيارة (اختياري):</label>
+      <textarea formControlName="reasonForVisit"></textarea>
+
+      <button type="button" (click)="step = 1">السابق</button>
+      <button type="button" [disabled]="bookingForm.invalid" (click)="submitBooking()">تأكيد الحجز</button>
+    </div>
+
+  </form>
+</div>
