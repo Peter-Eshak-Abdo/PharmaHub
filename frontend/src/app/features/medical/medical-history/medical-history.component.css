@@ -1,0 +1,113 @@
+/* ══════════════════════════════════════════════════════════════════
+   Medical History — Component Styles
+   Vertical timeline with ambient blobs, entrance animations,
+   and premium hover interactions
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Ambient decorative blobs ────────────────────────────────── */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob-top {
+  top: 0;
+  right: 0;
+  width: 700px;
+  height: 700px;
+  background: rgba(57, 184, 253, 0.08); /* secondary-container tint */
+  transform: translate(40%, -30%);
+}
+
+.blob-bottom {
+  bottom: 0;
+  left: 0;
+  width: 500px;
+  height: 500px;
+  background: rgba(0, 133, 91, 0.07);  /* tertiary-container tint */
+  transform: translate(-30%, 30%);
+}
+
+/* ── Timeline spine gradient ─────────────────────────────────── */
+.timeline-spine {
+  background: linear-gradient(
+    to bottom,
+    #00685f,       /* primary */
+    #008378 40%,   /* primary-container */
+    #bcc9c6 100%   /* surface-variant */
+  );
+}
+
+/* ── Date dot hover on group ─────────────────────────────────── */
+.timeline-entry:hover .date-dot {
+  transform: scale(1.35);
+  background-color: #00685f !important; /* primary */
+}
+
+/* ── History card lift + translate on hover (via group) ──────── */
+.history-card {
+  transition: box-shadow 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  will-change: transform;
+}
+
+/* ── Accent bar colour transition ────────────────────────────── */
+.accent-bar {
+  transition: background-color 0.3s ease;
+}
+
+.timeline-entry:hover .accent-bar {
+  background-color: #00685f !important; /* always becomes primary on hover */
+}
+
+/* ── Entry stagger entrance animation ────────────────────────── */
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.timeline-entry {
+  animation: slideInLeft 0.4s ease-out both;
+}
+
+/* Stagger delays for first 8 entries */
+.timeline-entry:nth-child(1) { animation-delay: 0.05s; }
+.timeline-entry:nth-child(2) { animation-delay: 0.12s; }
+.timeline-entry:nth-child(3) { animation-delay: 0.19s; }
+.timeline-entry:nth-child(4) { animation-delay: 0.26s; }
+.timeline-entry:nth-child(5) { animation-delay: 0.33s; }
+.timeline-entry:nth-child(6) { animation-delay: 0.40s; }
+.timeline-entry:nth-child(7) { animation-delay: 0.47s; }
+.timeline-entry:nth-child(8) { animation-delay: 0.54s; }
+
+/* ── Medication item entrance ────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.med-item {
+  animation: fadeUp 0.3s ease-out both;
+}
+.med-item:nth-child(1) { animation-delay: 0.1s; }
+.med-item:nth-child(2) { animation-delay: 0.2s; }
+.med-item:nth-child(3) { animation-delay: 0.3s; }
+
+/* ── Loading spinner ─────────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.timeline-spinner {
+  width: 52px;
+  height: 52px;
+  border: 3px solid #bcc9c6;       /* outline-variant */
+  border-top-color: #00685f;        /* primary */
+  border-radius: 9999px;
+  animation: spin 0.9s linear infinite;
+}
+
+/* ── Scrollbar suppress ──────────────────────────────────────── */
+::-webkit-scrollbar { display: none; }
