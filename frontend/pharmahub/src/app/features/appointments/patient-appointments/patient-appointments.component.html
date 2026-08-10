@@ -1,1 +1,30 @@
-<p>patient-appointments works!</p>
+<!-- features/appointments/patient-appointments/patient-appointments.component.html -->
+<div class="appointments-container">
+  <h2>حجوزاتي</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>الطبيب</th>
+        <th>التاريخ</th>
+        <th>الوقت</th>
+        <th>النوع</th>
+        <th>الحالة</th>
+        <th>التقييم</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let appt of appointments">
+        <td>{{ appt.doctorName }}</td>
+        <td>{{ appt.date }}</td>
+        <td>{{ appt.timeSlot }}</td>
+        <td>{{ appt.consultationType }}</td>
+        <td><span class="badge" [ngClass]="getStatusClass(appt.status)">{{ appt.status }}</span></td>
+        <td>
+          <app-review-form *ngIf="appt.status === 'Completed' && !appt.hasReview" [appointmentId]="appt.id"
+            (reviewSubmitted)="ngOnInit()">
+          </app-review-form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
