@@ -1,3 +1,7 @@
+const crypto = require('crypto');
+global.crypto = crypto;
+
+
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
@@ -24,9 +28,12 @@ app.use(cors());
 app.use(express.json());
 
 // الاتصال بقاعدة البيانات
+<<<<<<< HEAD
 // mongoose.connect(process.env.MONGO_URI)
 //   .then(() => console.log('MongoDB Connected...'))
 //   .catch((err) => console.log('DB Connection Error:', err));
+=======
+>>>>>>> origin/belal-slot-engine
 connectDB();
 
 // مسارات المصادقة والمريض
