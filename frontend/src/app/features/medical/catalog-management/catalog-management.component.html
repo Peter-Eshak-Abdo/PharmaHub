@@ -1,0 +1,410 @@
+<!-- ═══════════════════════════════════════════════════════════════════
+     Catalog Management — Diagnosis + Medication catalogs
+     Design: diagnosis_catalog + medication_catalog mockups merged
+     Access: doctor or admin role only
+═══════════════════════════════════════════════════════════════════ -->
+<div class="flex flex-col w-full max-w-container-max mx-auto px-gutter gap-lg pt-lg pb-xl bg-background min-h-screen font-body-md text-on-surface">
+
+  <!-- ── PAGE HEADER ─────────────────────────────────────────────── -->
+  <div class="flex flex-col gap-xs">
+    <h1 class="font-display text-display text-on-surface">Catalog Management</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+      Manage the central repositories of recognized medical conditions (ICD-10) and approved medications.
+    </p>
+  </div>
+
+  <!-- ── TAB BAR ─────────────────────────────────────────────────── -->
+  <div class="flex gap-base border-b border-outline-variant">
+    <button
+      id="tab-diagnoses"
+      type="button"
+      class="tab-btn flex items-center gap-xs px-md pb-sm text-label-md transition-all"
+      [class.tab-active]="activeTab === 'diagnoses'"
+      [class.text-primary]="activeTab === 'diagnoses'"
+      [class.text-on-surface-variant]="activeTab !== 'diagnoses'"
+      (click)="setTab('diagnoses')">
+      <span class="material-symbols-outlined text-[18px]">stethoscope</span>
+      Diagnosis Catalog
+    </button>
+    <button
+      id="tab-medications"
+      type="button"
+      class="tab-btn flex items-center gap-xs px-md pb-sm text-label-md transition-all"
+      [class.tab-active]="activeTab === 'medications'"
+      [class.text-primary]="activeTab === 'medications'"
+      [class.text-on-surface-variant]="activeTab !== 'medications'"
+      (click)="setTab('medications')">
+      <span class="material-symbols-outlined text-[18px]">pill</span>
+      Medication Catalog
+    </button>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       DIAGNOSES TAB
+  ════════════════════════════════════════════════════════════════ -->
+  <div *ngIf="activeTab === 'diagnoses'" class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
+
+    <!-- Left: search + table -->
+    <div class="lg:col-span-8 flex flex-col gap-md">
+
+      <!-- Search bar -->
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm p-sm flex items-center gap-sm">
+        <div class="flex-1 relative">
+          <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+          <input
+            id="diagnosis-search"
+            type="text"
+            class="w-full bg-surface-container-low rounded-lg pl-xl pr-sm py-xs font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+            placeholder="Search by name or ICD-10 code..."
+            (input)="diagnosisSearch$.next($any($event.target).value)"
+          />
+        </div>
+      </div>
+
+      <!-- Success / Error banners -->
+      <div *ngIf="diagnosisSuccess"
+           class="flex items-center gap-xs bg-primary-container text-on-primary-container rounded-xl px-md py-sm shadow-sm">
+        <span class="material-symbols-outlined text-[18px]">check_circle</span>
+        <span class="text-label-md">{{ diagnosisSuccess }}</span>
+      </div>
+      <div *ngIf="diagnosisError && !diagnosisSuccess"
+           class="flex items-center gap-xs bg-error-container text-on-error-container rounded-xl px-md py-sm shadow-sm">
+        <span class="material-symbols-outlined text-[18px]">error</span>
+        <span class="text-label-md">{{ diagnosisError }}</span>
+      </div>
+
+      <!-- Table -->
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+                <th class="p-sm font-semibold">Diagnosis Name</th>
+                <th class="p-sm font-semibold w-32">ICD-10</th>
+                <th class="p-sm font-semibold hidden md:table-cell">Description</th>
+              </tr>
+            </thead>
+            <tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/30">
+
+              <!-- Loading skeleton -->
+              <tr *ngIf="diagnosisLoading">
+                <td colspan="3" class="p-md text-center text-on-surface-variant">
+                  <div class="flex items-center justify-center gap-sm">
+                    <div class="loading-spinner-sm"></div>
+                    <span>Loading diagnoses…</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Empty state -->
+              <tr *ngIf="!diagnosisLoading && diagnoses.length === 0">
+                <td colspan="3" class="p-lg text-center">
+                  <div class="flex flex-col items-center gap-sm">
+                    <span class="material-symbols-outlined text-3xl text-on-surface-variant">search_off</span>
+                    <span class="text-body-sm text-on-surface-variant">No diagnoses found.</span>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Data rows -->
+              <tr *ngFor="let d of diagnoses"
+                  class="table-row hover:bg-surface-container-low/50 transition-colors group">
+                <td class="p-sm font-medium">{{ d.name }}</td>
+                <td class="p-sm">
+                  <span class="bg-primary-container text-on-primary-container px-xs py-base rounded-md font-mono text-xs">
+                    {{ d.icdCode }}
+                  </span>
+                </td>
+                <td class="p-sm text-on-surface-variant hidden md:table-cell">
+                  <span class="line-clamp-2">{{ d.description || '—' }}</span>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-surface-container-low p-sm flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm border-t border-outline-variant/30">
+          <span>{{ diagnoses.length }} {{ diagnoses.length === 1 ? 'entry' : 'entries' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Add Diagnosis form -->
+    <div class="lg:col-span-4">
+      <div class="bg-surface-container-lowest rounded-xl shadow-md p-md flex flex-col sticky top-24 gap-sm">
+        <div class="flex items-center gap-xs mb-xs">
+          <span class="material-symbols-outlined text-primary bg-primary-container p-xs rounded-full">add_circle</span>
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">Add New Diagnosis</h2>
+        </div>
+
+        <form [formGroup]="diagnosisForm" (ngSubmit)="submitDiagnosis()" novalidate class="flex flex-col gap-sm">
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="diag-name">
+              Diagnosis Name <span class="text-error">*</span>
+            </label>
+            <input
+              id="diag-name"
+              type="text"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
+              [class.ring-2]="isInvalid(diagnosisForm, 'name')"
+              [class.ring-error]="isInvalid(diagnosisForm, 'name')"
+              placeholder="e.g. Acute Bronchitis"
+              formControlName="name"
+            />
+            <span *ngIf="isInvalid(diagnosisForm, 'name')" class="text-label-sm text-error">Required</span>
+          </div>
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="icd-code">
+              ICD-10 Code <span class="text-error">*</span>
+            </label>
+            <input
+              id="icd-code"
+              type="text"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface font-mono placeholder:font-sans placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
+              [class.ring-2]="isInvalid(diagnosisForm, 'icdCode')"
+              [class.ring-error]="isInvalid(diagnosisForm, 'icdCode')"
+              placeholder="e.g. J20.9"
+              formControlName="icdCode"
+            />
+            <span *ngIf="isInvalid(diagnosisForm, 'icdCode')" class="text-label-sm text-error">Required</span>
+          </div>
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="diag-desc">
+              Description (Optional)
+            </label>
+            <textarea
+              id="diag-desc"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow resize-none"
+              placeholder="Brief clinical description..."
+              rows="4"
+              formControlName="description">
+            </textarea>
+          </div>
+
+          <div class="mt-xs">
+            <button
+              id="submit-diagnosis-btn"
+              type="submit"
+              class="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-sm rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-xs"
+              [disabled]="diagnosisSubmitting">
+              <span *ngIf="diagnosisSubmitting" class="loading-spinner-sm-white"></span>
+              <span *ngIf="!diagnosisSubmitting" class="material-symbols-outlined text-sm">save</span>
+              {{ diagnosisSubmitting ? 'Saving…' : 'Add to Catalog' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div><!-- /diagnoses tab -->
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       MEDICATIONS TAB
+  ════════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="activeTab === 'medications'">
+
+    <!-- Search + Add button row -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
+      <div class="relative w-full md:w-96">
+        <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+        <input
+          id="medication-search"
+          type="text"
+          class="w-full pl-xl pr-sm py-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all"
+          placeholder="Search medications..."
+          (input)="medicationSearch$.next($any($event.target).value)"
+        />
+      </div>
+      <button
+        id="add-medication-btn"
+        type="button"
+        class="flex items-center gap-xs px-md py-sm bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors font-label-md text-label-md shrink-0 shadow-sm hover:shadow-md"
+        (click)="openMedicationModal()">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        Add New Medication
+      </button>
+    </div>
+
+    <!-- Success / Error banners -->
+    <div *ngIf="medicationSuccess"
+         class="flex items-center gap-xs bg-primary-container text-on-primary-container rounded-xl px-md py-sm shadow-sm">
+      <span class="material-symbols-outlined text-[18px]">check_circle</span>
+      <span class="text-label-md">{{ medicationSuccess }}</span>
+    </div>
+    <div *ngIf="medicationError && !medicationSuccess"
+         class="flex items-center gap-xs bg-error-container text-on-error-container rounded-xl px-md py-sm shadow-sm">
+      <span class="material-symbols-outlined text-[18px]">error</span>
+      <span class="text-label-md">{{ medicationError }}</span>
+    </div>
+
+    <!-- Medications table -->
+    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+      <div class="overflow-x-auto flex-1">
+        <table class="w-full text-left border-collapse">
+          <thead class="bg-surface-container sticky top-0 z-10">
+            <tr>
+              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Name</th>
+              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Generic Name</th>
+              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Type</th>
+            </tr>
+          </thead>
+          <tbody class="font-body-md text-body-md text-on-surface">
+
+            <!-- Loading -->
+            <tr *ngIf="medicationLoading">
+              <td colspan="3" class="p-md text-center text-on-surface-variant">
+                <div class="flex items-center justify-center gap-sm">
+                  <div class="loading-spinner-sm"></div>
+                  <span>Loading medications…</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Empty state -->
+            <tr *ngIf="!medicationLoading && medications.length === 0">
+              <td colspan="3" class="p-lg text-center">
+                <div class="flex flex-col items-center gap-sm">
+                  <span class="material-symbols-outlined text-3xl text-on-surface-variant">medication_liquid</span>
+                  <span class="text-body-sm text-on-surface-variant">No medications found.</span>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Data rows -->
+            <tr *ngFor="let m of medications"
+                class="table-row hover:bg-surface-container-low transition-colors group cursor-pointer border-b border-surface-container">
+              <td class="py-md px-md font-label-md text-label-md">{{ m.name }}</td>
+              <td class="py-md px-md text-on-surface-variant">{{ m.genericName }}</td>
+              <td class="py-md px-md">
+                <span class="inline-flex items-center px-xs py-base rounded-full font-label-sm text-label-sm"
+                      [ngClass]="medTypeBadgeClass(m.type)">
+                  {{ m.type }}
+                </span>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer -->
+      <div class="bg-surface-container px-md py-sm flex items-center justify-between border-t border-surface-container">
+        <span class="font-body-sm text-body-sm text-on-surface-variant">
+          {{ medications.length }} {{ medications.length === 1 ? 'entry' : 'entries' }}
+        </span>
+      </div>
+    </div>
+
+  </ng-container><!-- /medications tab -->
+
+</div>
+
+
+<!-- ════════════════════════════════════════════════════════════════
+     ADD MEDICATION MODAL
+════════════════════════════════════════════════════════════════ -->
+<div *ngIf="showMedicationModal"
+     class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-on-surface/20 backdrop-blur-sm"
+     (click)="closeMedicationModal()">
+  <div class="bg-surface-container-lowest rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col modal-panel"
+       (click)="$event.stopPropagation()">
+
+    <!-- Modal header -->
+    <div class="px-md py-sm flex items-center justify-between bg-surface-container border-b border-outline-variant">
+      <h2 class="font-headline-sm text-headline-sm text-on-surface">Add New Medication</h2>
+      <button
+        id="close-medication-modal-btn"
+        type="button"
+        class="p-xs text-on-surface-variant hover:text-on-surface transition-colors rounded-full hover:bg-surface-container-high"
+        (click)="closeMedicationModal()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Modal body -->
+    <form [formGroup]="medicationForm" (ngSubmit)="submitMedication()" novalidate>
+      <div class="p-md flex flex-col gap-md bg-surface-container-lowest">
+
+        <div *ngIf="medicationError"
+             class="flex items-center gap-xs bg-error-container text-on-error-container rounded-lg px-sm py-xs">
+          <span class="material-symbols-outlined text-[16px]">error</span>
+          <span class="text-label-sm">{{ medicationError }}</span>
+        </div>
+
+        <div class="flex flex-col gap-xs">
+          <label class="font-label-sm text-label-sm text-on-surface" for="med-name">
+            Medication Name <span class="text-error">*</span>
+          </label>
+          <input
+            id="med-name"
+            type="text"
+            class="w-full px-sm py-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all"
+            [class.ring-error]="isInvalid(medicationForm, 'name')"
+            placeholder="e.g., Zoloft"
+            formControlName="name"
+          />
+          <span *ngIf="isInvalid(medicationForm, 'name')" class="text-label-sm text-error">Required</span>
+        </div>
+
+        <div class="flex flex-col gap-xs">
+          <label class="font-label-sm text-label-sm text-on-surface" for="med-generic">
+            Generic Name <span class="text-error">*</span>
+          </label>
+          <input
+            id="med-generic"
+            type="text"
+            class="w-full px-sm py-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all"
+            [class.ring-error]="isInvalid(medicationForm, 'genericName')"
+            placeholder="e.g., Sertraline"
+            formControlName="genericName"
+          />
+          <span *ngIf="isInvalid(medicationForm, 'genericName')" class="text-label-sm text-error">Required</span>
+        </div>
+
+        <div class="flex flex-col gap-xs">
+          <label class="font-label-sm text-label-sm text-on-surface" for="med-type">
+            Type <span class="text-error">*</span>
+          </label>
+          <div class="relative w-full">
+            <select
+              id="med-type"
+              class="w-full px-sm py-sm pr-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all appearance-none cursor-pointer"
+              [class.ring-error]="isInvalid(medicationForm, 'type')"
+              formControlName="type">
+              <option value="" disabled>Select a type…</option>
+              <option *ngFor="let t of medicationTypes" [value]="t">{{ t }}</option>
+            </select>
+            <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+          </div>
+          <span *ngIf="isInvalid(medicationForm, 'type')" class="text-label-sm text-error">Required</span>
+        </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="px-md py-sm bg-surface-container flex justify-end gap-sm border-t border-outline-variant">
+        <button
+          id="cancel-medication-btn"
+          type="button"
+          class="px-md py-sm bg-transparent text-primary hover:bg-primary/5 rounded-lg transition-colors font-label-md text-label-md"
+          (click)="closeMedicationModal()">
+          Cancel
+        </button>
+        <button
+          id="save-medication-btn"
+          type="submit"
+          class="px-md py-sm bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors shadow-sm font-label-md text-label-md flex items-center gap-xs"
+          [disabled]="medicationSubmitting">
+          <span *ngIf="medicationSubmitting" class="loading-spinner-sm-white"></span>
+          <span *ngIf="!medicationSubmitting" class="material-symbols-outlined text-[16px]">save</span>
+          {{ medicationSubmitting ? 'Saving…' : 'Save Medication' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

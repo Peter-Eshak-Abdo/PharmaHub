@@ -1,13 +1,10 @@
-const crypto = require('crypto');
-global.crypto = crypto;
-
-
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
+const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 
-const authRoutes = require("./routes/AuthRoutes");
+const authRoutes = require("./routes/authRoutes");
 const patientRoutes = require("./routes/PatientRoutes");
 const doctorRoutes = require("./routes/DoctorRoutes");
 const appointmentRoutes = require("./routes/AppoinmentRoutes");
@@ -27,6 +24,9 @@ app.use(cors());
 app.use(express.json());
 
 // الاتصال بقاعدة البيانات
+// mongoose.connect(process.env.MONGO_URI)
+//   .then(() => console.log('MongoDB Connected...'))
+//   .catch((err) => console.log('DB Connection Error:', err));
 connectDB();
 
 // مسارات المصادقة والمريض
