@@ -9,6 +9,8 @@ import { PrescriptionFormComponent } from './features/medical/prescription-form/
 import { PrescriptionViewComponent } from './features/medical/prescription-view/prescription-view.component';
 import { CatalogManagementComponent } from './features/medical/catalog-management/catalog-management.component';
 import { MedicalHistoryComponent } from './features/medical/medical-history/medical-history.component';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -16,18 +18,18 @@ import { MedicalHistoryComponent } from './features/medical/medical-history/medi
     PrescriptionFormComponent,
     PrescriptionViewComponent,
     CatalogManagementComponent,
-    MedicalHistoryComponent
+    MedicalHistoryComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
-    AppRoutingModule
+    AppRoutingModule,
+    CoreModule,
+    SharedModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
-
-
+export class AppModule {}
