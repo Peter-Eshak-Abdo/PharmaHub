@@ -24,18 +24,9 @@ app.use(cors());
 app.use(express.json());
 
 // الاتصال بقاعدة البيانات
-<<<<<<< HEAD
-<<<<<<< HEAD
 // mongoose.connect(process.env.MONGO_URI)
 //   .then(() => console.log('MongoDB Connected...'))
 //   .catch((err) => console.log('DB Connection Error:', err));
-=======
->>>>>>> origin/belal-slot-engine
-=======
-// mongoose.connect(process.env.MONGO_URI)
-//   .then(() => console.log('MongoDB Connected...'))
-//   .catch((err) => console.log('DB Connection Error:', err));
->>>>>>> origin/belal-slot-engine
 connectDB();
 
 // مسارات المصادقة والمريض
