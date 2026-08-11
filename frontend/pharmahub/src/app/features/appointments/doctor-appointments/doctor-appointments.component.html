@@ -1,35 +1,71 @@
 <!-- features/appointments/doctor-appointments/doctor-appointments.component.html -->
-<div class="appointments-container">
-  <h2>حجوزات المرضى</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>المريض</th>
-        <th>التاريخ</th>
-        <th>الوقت</th>
-        <th>النوع</th>
-        <th>الحالة</th>
-        <th>الإجراءات</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let appt of appointments">
-        <td>{{ appt.patientName }}</td>
-        <td>{{ appt.date }}</td>
-        <td>{{ appt.timeSlot }}</td>
-        <td>{{ appt.consultationType }}</td>
-        <td><span class="badge" [ngClass]="getStatusClass(appt.status)">{{ appt.status }}</span></td>
-        <td>
-          <button *ngIf="appt.status === 'Pending'"
-            (click)="updateStatus(appt.id, appt.status, 'Confirmed')">تأكيد</button>
-          <button *ngIf="appt.status === 'Pending' || appt.status === 'Confirmed'"
-            (click)="updateStatus(appt.id, appt.status, 'Cancelled')">إلغاء</button>
-          <button *ngIf="appt.status === 'Confirmed'"
-            (click)="updateStatus(appt.id, appt.status, 'Completed')">مكتمل</button>
-          <button *ngIf="appt.status === 'Confirmed'" (click)="updateStatus(appt.id, appt.status, 'No-Show')">لم
-            يحضر</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans dir-rtl">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">لوحة تحكم الطبيب</h1>
+        <p class="text-gray-500 mt-1">إدارة حجوزات المرضى ومتابعة المواعيد</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                المريض</th>
+              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                التاريخ والوقت</th>
+              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                النوع</th>
+              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                الحالة</th>
+              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let appt of appointments" class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">{{ appt.patientName }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ appt.date }}</div>
+                <div class="text-sm text-gray-500">{{ appt.timeSlot }}</div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {{ appt.consultationType }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [ngClass]="getStatusClass(appt.status)"
+                  class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full">
+                  {{ appt.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex gap-2">
+                  <button *ngIf="appt.status === 'Pending'" (click)="updateStatus(appt.id, appt.status, 'Confirmed')"
+                    class="text-teal-600 hover:text-teal-900 bg-teal-50 px-3 py-1 rounded-md transition-colors">تأكيد</button>
+                  <button *ngIf="appt.status === 'Pending' || appt.status === 'Confirmed'"
+                    (click)="updateStatus(appt.id, appt.status, 'Cancelled')"
+                    class="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md transition-colors">إلغاء</button>
+                  <button *ngIf="appt.status === 'Confirmed'" (click)="updateStatus(appt.id, appt.status, 'Completed')"
+                    class="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md transition-colors">مكتمل</button>
+                  <button *ngIf="appt.status === 'Confirmed'" (click)="updateStatus(appt.id, appt.status, 'No-Show')"
+                    class="text-gray-600 hover:text-gray-900 bg-gray-100 px-3 py-1 rounded-md transition-colors">لم
+                    يحضر</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div *ngIf="appointments.length === 0" class="text-center py-12">
+          <p class="text-gray-500">لا توجد حجوزات لعرضها حالياً.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
 </div>
