@@ -1,0 +1,351 @@
+<!-- Prescription Form – matches write_prescriptions/code.html design -->
+<div class="px-gutter py-xl bg-background min-h-screen font-body-md text-on-surface">
+  <div class="max-w-container-max mx-auto flex flex-col gap-lg lg:flex-row lg:items-start lg:gap-xl">
+
+    <!-- ═══════════════════════════════════════════════════════════
+         LEFT COLUMN – Context & Patient Header
+    ═══════════════════════════════════════════════════════════ -->
+    <div class="w-full lg:w-1/3 flex flex-col gap-md">
+
+      <!-- Active session badge -->
+      <div class="flex items-center gap-xs">
+        <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+        <span class="text-label-md text-primary font-label-md uppercase tracking-widest">Active Session</span>
+      </div>
+
+      <h1 class="text-display font-display text-on-surface leading-tight">
+        Clinical Record &<br/>Prescription
+      </h1>
+
+      <!-- Patient Info Card (values driven by form inputs) -->
+      <div class="bg-surface-container rounded-2xl p-md shadow-sm relative overflow-hidden">
+        <div class="flex flex-col gap-sm">
+          <div class="flex items-center gap-sm pb-sm border-b border-outline-variant/30">
+            <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center ring-2 ring-primary/20">
+              <span class="material-symbols-outlined text-primary text-2xl">person</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-headline-sm font-headline-sm text-on-surface">Patient Prescription</span>
+              <span class="text-body-sm text-on-surface-variant">
+                Appointment ID: <span class="font-medium text-primary">{{ appointmentId || '—' }}</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- IDs input area (hidden from final view, needed for submission) -->
+          <div class="grid grid-cols-1 gap-sm pt-xs">
+            <div class="flex flex-col gap-xs">
+              <label class="text-label-sm text-on-surface-variant uppercase tracking-wider">Patient ID</label>
+              <input
+                id="patient-id-input"
+                type="text"
+                class="w-full bg-surface-container-lowest text-on-surface text-body-sm rounded-lg px-sm py-xs focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                placeholder="Enter Patient ID"
+                [class.ring-2]="prescriptionForm.get('patientId')?.invalid && prescriptionForm.get('patientId')?.touched"
+                [class.ring-error]="prescriptionForm.get('patientId')?.invalid && prescriptionForm.get('patientId')?.touched"
+                [formControl]="$any(prescriptionForm.get('patientId'))"
+              />
+            </div>
+            <div class="flex flex-col gap-xs">
+              <label class="text-label-sm text-on-surface-variant uppercase tracking-wider">Doctor ID</label>
+              <input
+                id="doctor-id-input"
+                type="text"
+                class="w-full bg-surface-container-lowest text-on-surface text-body-sm rounded-lg px-sm py-xs focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                placeholder="Enter Doctor ID"
+                [class.ring-2]="prescriptionForm.get('doctorId')?.invalid && prescriptionForm.get('doctorId')?.touched"
+                [class.ring-error]="prescriptionForm.get('doctorId')?.invalid && prescriptionForm.get('doctorId')?.touched"
+                [formControl]="$any(prescriptionForm.get('doctorId'))"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary card -->
+      <div class="bg-surface-container-low rounded-2xl p-md shadow-sm">
+        <h3 class="text-headline-sm font-headline-sm text-on-surface mb-sm flex items-center gap-xs">
+          <span class="material-symbols-outlined text-primary">summarize</span>
+          Summary
+        </h3>
+        <ul class="flex flex-col gap-sm">
+          <li class="flex items-start gap-sm">
+            <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-on-surface-variant text-sm">vaccines</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-body-sm font-medium text-on-surface">{{ selectedDiagnoses.length }} Diagnosis selected</span>
+              <span class="text-label-sm text-on-surface-variant">{{ medications.length }} Medication(s) listed</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         RIGHT COLUMN – Main Form
+    ═══════════════════════════════════════════════════════════ -->
+    <div class="w-full lg:w-2/3 flex flex-col gap-lg">
+
+      <!-- Success Banner -->
+      <div *ngIf="submitSuccess"
+           class="bg-primary-container text-on-primary-container rounded-2xl p-md flex items-center gap-sm shadow-md">
+        <span class="material-symbols-outlined">check_circle</span>
+        <div>
+          <p class="font-semibold">Prescription submitted successfully!</p>
+          <p class="text-body-sm">The prescription has been saved to the patient's record.</p>
+        </div>
+      </div>
+
+      <!-- Error Banner -->
+      <div *ngIf="submitError"
+           class="bg-error-container text-on-error-container rounded-2xl p-md flex items-center gap-sm shadow-md">
+        <span class="material-symbols-outlined">error</span>
+        <p class="text-body-sm">{{ submitError }}</p>
+      </div>
+
+      <form [formGroup]="prescriptionForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- ── DIAGNOSIS SECTION ──────────────────────────────── -->
+        <div class="bg-surface-container-lowest rounded-3xl p-lg shadow-md flex flex-col gap-md relative overflow-visible mb-lg">
+          <!-- Watermark icon -->
+          <div class="absolute top-0 right-0 p-lg opacity-5 pointer-events-none">
+            <span class="material-symbols-outlined text-[120px] leading-none">stethoscope</span>
+          </div>
+
+          <div class="flex flex-col gap-xs relative z-10">
+            <h2 class="text-headline-md font-headline-md text-on-surface">Diagnosis</h2>
+            <p class="text-body-sm text-on-surface-variant">Select primary and secondary diagnoses for this encounter.</p>
+          </div>
+
+          <!-- Search input -->
+          <div class="relative z-20" id="diagnosis-container">
+            <div class="flex flex-col gap-xs">
+              <label class="text-label-md font-label-md text-on-surface" for="diagnosis-input">ICD-10 Codes / Conditions</label>
+              <div class="relative flex items-center w-full">
+                <span class="material-symbols-outlined absolute left-sm text-on-surface-variant z-10">search</span>
+                <input
+                  id="diagnosis-input"
+                  type="text"
+                  class="w-full bg-surface-container text-on-surface text-body-md rounded-xl pl-[44px] pr-sm py-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all shadow-sm"
+                  placeholder="Search diagnosis by name or ICD code..."
+                  (input)="onDiagnosisInput($event)"
+                  (focus)="showDiagnosisDropdown = diagnosisSuggestions.length > 0"
+                  (blur)="hideDiagnosisDropdown()"
+                />
+              </div>
+            </div>
+
+            <!-- Selected diagnosis badges -->
+            <div class="flex flex-wrap gap-xs mt-sm" id="selected-diagnoses">
+              <div
+                *ngFor="let d of selectedDiagnoses"
+                class="diagnosis-badge inline-flex items-center gap-xs bg-primary-container text-on-primary-container rounded-full pl-sm pr-xs py-[6px] text-label-md shadow-sm hover:scale-105 cursor-default">
+                <span>{{ d.label }}</span>
+                <button
+                  type="button"
+                  class="w-5 h-5 rounded-full flex items-center justify-center hover:bg-on-primary-container/20 transition-colors"
+                  (click)="removeDiagnosis(d._id)">
+                  <span class="material-symbols-outlined text-[14px]">close</span>
+                </button>
+              </div>
+              <p *ngIf="selectedDiagnoses.length === 0" class="text-label-sm text-on-surface-variant italic">
+                No diagnoses selected yet.
+              </p>
+            </div>
+
+            <!-- Autocomplete dropdown -->
+            <div
+              class="absolute top-full left-0 w-full mt-xs bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden z-30 transition-all duration-200"
+              [class.hidden]="!showDiagnosisDropdown"
+              id="diagnosis-dropdown">
+              <ul class="flex flex-col py-xs max-h-[200px] overflow-y-auto">
+                <li
+                  *ngFor="let d of diagnosisSuggestions"
+                  class="px-md py-sm hover:bg-surface-container cursor-pointer text-body-md text-on-surface flex items-center justify-between group"
+                  (mousedown)="selectDiagnosis(d)">
+                  <span>{{ d.icdCode }} – {{ d.name }}</span>
+                  <span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── MEDICATIONS SECTION ───────────────────────────── -->
+        <div class="bg-surface-container-lowest rounded-3xl p-lg shadow-md flex flex-col gap-md mb-lg" formArrayName="medications">
+          <div class="flex items-center justify-between">
+            <div class="flex flex-col gap-xs">
+              <h2 class="text-headline-md font-headline-md text-on-surface">Prescribed Medications</h2>
+              <p class="text-body-sm text-on-surface-variant">Add details for new or continuing prescriptions.</p>
+            </div>
+            <button
+              id="add-medication-btn"
+              type="button"
+              class="inline-flex items-center gap-xs bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 px-sm py-[10px] rounded-full text-label-md transition-colors shadow-sm"
+              (click)="addMedication()">
+              <span class="material-symbols-outlined text-[18px]">add</span>
+              Add Medication
+            </button>
+          </div>
+
+          <!-- Medication rows -->
+          <div class="flex flex-col gap-md" id="medication-list">
+            <div
+              *ngFor="let med of medications.controls; let i = index"
+              [formGroupName]="i"
+              class="med-row bg-surface-container-low rounded-2xl p-md flex flex-col gap-md relative group shadow-sm transition-all hover:shadow-md">
+
+              <!-- Remove button -->
+              <button
+                type="button"
+                class="remove-med-btn absolute top-sm right-sm w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error-container transition-colors opacity-0 group-hover:opacity-100"
+                (click)="removeMedication(i)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+
+              <!-- Row 1: Name + Dosage -->
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-md pr-xl">
+
+                <!-- Medication Name with autocomplete -->
+                <div class="flex flex-col gap-xs relative">
+                  <label class="text-label-sm text-on-surface-variant uppercase tracking-wider">Medication Name</label>
+                  <div class="relative w-full">
+                    <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-primary z-10 text-[20px]">pill</span>
+                    <input
+                      [id]="'medication-name-' + i"
+                      type="text"
+                      class="med-input w-full bg-surface-container-lowest text-on-surface text-body-md rounded-xl pl-xl pr-sm py-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all"
+                      [class.ring-error]="isFieldInvalid(i, 'medicationId')"
+                      placeholder="Search medication..."
+                      [value]="medicationSearch[i]"
+                      (input)="onMedicationInput($event, i)"
+                      (blur)="hideMedicationDropdown(i)"
+                    />
+                    <!-- Medication dropdown -->
+                    <div
+                      class="absolute top-full left-0 w-full mt-xs bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden z-30"
+                      [class.hidden]="!showMedicationDropdown[i]">
+                      <ul class="flex flex-col py-xs max-h-[160px] overflow-y-auto">
+                        <li
+                          *ngFor="let m of medicationSuggestions[i]"
+                          class="px-md py-sm hover:bg-surface-container cursor-pointer text-body-sm text-on-surface flex items-center justify-between group"
+                          (mousedown)="selectMedication(m, i)">
+                          <span>{{ m.name }} <span class="text-on-surface-variant">({{ m.genericName }})</span></span>
+                          <span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">add_circle</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <span *ngIf="isFieldInvalid(i, 'medicationId')" class="text-label-sm text-error">Required</span>
+                </div>
+
+                <!-- Dosage -->
+                <div class="flex flex-col gap-xs">
+                  <label class="text-label-sm text-on-surface-variant uppercase tracking-wider">Dosage</label>
+                  <input
+                    [id]="'dosage-' + i"
+                    type="text"
+                    class="w-full bg-surface-container-lowest text-on-surface text-body-md rounded-xl px-sm py-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all"
+                    [class.ring-error]="isFieldInvalid(i, 'dosage')"
+                    placeholder="e.g. 500mg"
+                    formControlName="dosage"
+                  />
+                  <span *ngIf="isFieldInvalid(i, 'dosage')" class="text-label-sm text-error">Required</span>
+                </div>
+              </div>
+
+              <!-- Row 2: Frequency + Duration + Instructions -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+
+                <!-- Frequency -->
+                <div class="flex flex-col gap-xs">
+                  <label class="text-label-sm text-on-surface-variant uppercase tracking-wider">Frequency</label>
+                  <div class="relative">
+                    <select
+                      [id]="'frequency-' + i"
+                      class="w-full bg-surface-container-lowest text-on-surface text-body-md rounded-xl px-sm py-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all cursor-pointer"
+                      formControlName="frequency">
+                      <option *ngFor="let opt of frequencyOptions" [value]="opt">{{ opt }}</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                  </div>
+                </div>
+
+                <!-- Duration -->
+                <div class="flex flex-col gap-xs">
+                  <label class="text-label-sm text-on-surface-variant uppercase tracking-wider">Duration</label>
+                  <div class="relative">
+                    <select
+                      [id]="'duration-' + i"
+                      class="w-full bg-surface-container-lowest text-on-surface text-body-md rounded-xl px-sm py-sm appearance-none focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all cursor-pointer"
+                      formControlName="duration">
+                      <option *ngFor="let opt of durationOptions" [value]="opt">{{ opt }}</option>
+                    </select>
+                    <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+                  </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="flex flex-col gap-xs">
+                  <label class="text-label-sm text-on-surface-variant uppercase tracking-wider">Instructions</label>
+                  <input
+                    [id]="'instructions-' + i"
+                    type="text"
+                    class="w-full bg-surface-container-lowest text-on-surface text-body-md rounded-xl px-sm py-sm focus:outline-none focus:ring-2 focus:ring-primary shadow-sm transition-all"
+                    placeholder="e.g. Take with food"
+                    formControlName="instructions"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CLINICAL NOTES ──────────────────────────────────── -->
+        <div class="bg-surface-container-lowest rounded-3xl p-lg shadow-md flex flex-col gap-md mb-lg">
+          <h2 class="text-headline-md font-headline-md text-on-surface">Clinical Notes</h2>
+          <div class="flex flex-col gap-xs">
+            <label class="text-label-sm text-on-surface-variant uppercase tracking-wider" for="clinical-notes">
+              General Instructions & Remarks
+            </label>
+            <textarea
+              id="clinical-notes"
+              class="w-full bg-surface-container-low text-on-surface text-body-md rounded-xl p-sm focus:outline-none focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all shadow-sm resize-y"
+              placeholder="Add any patient instructions, follow-up recommendations, or clinical observations here..."
+              rows="4"
+              formControlName="notes">
+            </textarea>
+          </div>
+        </div>
+
+        <!-- ── SUBMISSION BAR ──────────────────────────────────── -->
+        <div class="flex items-center justify-between bg-surface-container rounded-3xl p-md shadow-sm sticky bottom-md z-40 backdrop-blur-md bg-opacity-80">
+          <div class="flex items-center gap-sm text-on-surface-variant">
+            <span class="material-symbols-outlined">info</span>
+            <span class="text-label-md">Prescription will be securely saved to the patient's record.</span>
+          </div>
+          <div class="flex gap-sm">
+            <button
+              id="cancel-btn"
+              type="button"
+              class="px-lg py-sm rounded-full text-primary hover:bg-primary/10 text-label-md transition-colors"
+              (click)="prescriptionForm.reset()">
+              Clear Form
+            </button>
+            <button
+              id="submit-prescription-btn"
+              type="submit"
+              class="px-xl py-sm rounded-full bg-primary text-on-primary text-label-md shadow-md hover:shadow-lg hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all flex items-center gap-xs"
+              [disabled]="isSubmitting">
+              <span *ngIf="isSubmitting" class="material-symbols-outlined animate-spin text-[20px]">sync</span>
+              <span *ngIf="!isSubmitting" class="material-symbols-outlined text-[20px]">send</span>
+              {{ isSubmitting ? 'Submitting...' : 'Submit Prescription' }}
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div><!-- /right column -->
+  </div><!-- /two-column grid -->
+</div>

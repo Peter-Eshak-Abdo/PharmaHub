@@ -1,6 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 /* src/styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
 :root {
   /* Colors - Clinical Precision Design System[cite: 7] */
@@ -9,16 +10,16 @@
   --text-heading: #1e293b;
   --text-body: #475569;
   --border-color: #e2e8f0;
-  
+
   --primary-color: #0d9488;
   --primary-hover: #0f766e;
   --primary-glow: rgba(13, 148, 136, 0.2);
-  
+
   --secondary-color: #0ea5e9;
-  
+
   --success-bg: #d1fae5;
   --success-text: #047857;
-  
+
   --danger-bg: #fee2e2;
   --danger-text: #b91c1c;
   --danger-color: #ef4444;
@@ -28,7 +29,7 @@
 
   /* Typography[cite: 7] */
   --font-family: 'Inter', sans-serif;
-  
+
   /* Layout & Spacing[cite: 7] */
   --radius-sm: 8px;
   --radius-lg: 16px;
@@ -44,6 +45,10 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.5;
+    /* font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    color: #191c1d;
+    min-height: 100vh; */
 }
 
 h1, h2, h3, h4, h5, h6 {

@@ -1,0 +1,13 @@
+<nav>
+  <a routerLink="/">Doctor Appointment System</a>
+  <ul *ngIf="currentUser">
+    <li *ngIf="currentUser.role === 'admin'"><a routerLink="/admin/dashboard">Admin Dashboard</a></li>
+    <li *ngIf="currentUser.role === 'doctor'"><a routerLink="/doctor-dashboard">Doctor Dashboard</a></li>
+    <li *ngIf="currentUser.role === 'patient'"><a routerLink="/appointments">My Appointments</a></li>
+    <li><button (click)="logout()">Logout</button></li>
+  </ul>
+  <ul *ngIf="!currentUser">
+    <li><a routerLink="/auth/login">Login</a></li>
+    <li><a routerLink="/auth/register">Register</a></li>
+  </ul>
+</nav>
