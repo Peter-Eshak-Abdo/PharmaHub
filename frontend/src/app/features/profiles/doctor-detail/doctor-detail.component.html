@@ -1,0 +1,28 @@
+<div class="container mt-4" *ngIf="doctor">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h3 class="mb-0">{{ doctor.fullName }}</h3>
+      <span class="badge bg-warning text-dark fs-6">⭐ {{ doctor.rating }} / 5</span>
+    </div>
+    
+    <div class="card-body">
+      <h5 class="text-primary">{{ doctor.specialization }}</h5>
+      <hr>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>التعليم:</strong> {{ doctor.education }}</p>
+          <p><strong>المؤهلات:</strong> {{ doctor.qualifications }}</p>
+          <p><strong>سنوات الخبرة:</strong> {{ doctor.yearsOfExperience }} سنوات</p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>نبذة:</strong> {{ doctor.bio }}</p>
+        </div>
+      </div>
+      
+      <!-- Component مكان حقن تقييمات الطبيب لاحقاً -->
+      <!-- <app-reviews [doctorId]="doctor._id"></app-reviews> -->
+      
+    </div>
+  </div>
+</div><p>doctor-detail works!</p>
