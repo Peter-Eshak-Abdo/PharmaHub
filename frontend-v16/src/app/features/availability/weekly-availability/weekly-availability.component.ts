@@ -8,7 +8,7 @@ import { AvailabilityService } from '../services/availability.service';
 })
 export class WeeklyAvailabilityComponent implements OnInit {
   slots: any[] = [];
-  doctorId: string = ''; // TODO: get this from the logged-in user via AuthService later
+  doctorId: string = '6a7a68e2039344ea7b05c884'; // TODO: replace with real logged-in doctor's ID via AuthService later
 
   newSlot = {
     doctorId: '',

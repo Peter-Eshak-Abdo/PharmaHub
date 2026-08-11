@@ -8,7 +8,7 @@ import { ExceptionService } from '../services/exception.service';
 })
 export class ScheduleExceptionsComponent implements OnInit {
   exceptions: any[] = [];
-  doctorId: string = ''; // TODO: get this from the logged-in user via AuthService later
+  doctorId: string = '6a7a68e2039344ea7b05c884'; // TODO: get this from the logged-in user via AuthService later
 
   newException = {
     doctorId: '',
