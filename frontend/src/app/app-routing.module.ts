@@ -6,13 +6,29 @@ import { CatalogManagementComponent } from './features/medical/catalog-managemen
 import { MedicalHistoryComponent } from './features/medical/medical-history/medical-history.component';
 
 const routes: Routes = [
-  { path: 'prescriptions/new/:appointmentId', component: PrescriptionFormComponent },
+  {
+    path: 'prescriptions/new/:appointmentId',
+    component: PrescriptionFormComponent,
+  },
   { path: 'prescriptions/new', component: PrescriptionFormComponent },
-  { path: 'prescriptions/view/:appointmentId', component: PrescriptionViewComponent },
-  { path: 'prescriptions/:appointmentId', component: PrescriptionViewComponent },
+  {
+    path: 'prescriptions/view/:appointmentId',
+    component: PrescriptionViewComponent,
+  },
+  {
+    path: 'prescriptions/:appointmentId',
+    component: PrescriptionViewComponent,
+  },
   { path: 'catalog-management', component: CatalogManagementComponent },
   { path: 'medical-history/:patientId', component: MedicalHistoryComponent },
-  { path: 'medical-history', component: MedicalHistoryComponent }
+  { path: 'medical-history', component: MedicalHistoryComponent },
+  {
+    path: 'availability',
+    loadChildren: () =>
+      import('./features/availability/availability.module').then(
+        (m) => m.AvailabilityModule,
+      ),
+  },
 ];
 
 @NgModule({
