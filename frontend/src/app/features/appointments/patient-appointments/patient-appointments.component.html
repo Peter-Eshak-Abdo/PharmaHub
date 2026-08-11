@@ -1,0 +1,89 @@
+<!-- features/appointments/patient-appointments/patient-appointments.component.html -->
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans dir-rtl">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="mb-6">
+      <h1 class="text-4xl font-bold text-slate-800 tracking-tight">حجوزاتي</h1>
+      <p class="text-slate-600 mt-2 text-lg">إدارة مواعيدك القادمة والسابقة بكل سهولة.</p>
+    </div>
+
+    <div class="flex gap-8 border-b border-slate-200 mb-8 overflow-x-auto">
+      <button (click)="activeTab = 'Upcoming'" [class.border-teal-600]="activeTab === 'Upcoming'"
+        [class.text-teal-600]="activeTab === 'Upcoming'" [class.border-transparent]="activeTab !== 'Upcoming'"
+        [class.text-slate-500]="activeTab !== 'Upcoming'"
+        class="pb-3 font-semibold text-sm border-b-2 whitespace-nowrap hover:text-slate-800 transition-colors">
+        القادمة
+      </button>
+      <button (click)="activeTab = 'Completed'" [class.border-teal-600]="activeTab === 'Completed'"
+        [class.text-teal-600]="activeTab === 'Completed'" [class.border-transparent]="activeTab !== 'Completed'"
+        [class.text-slate-500]="activeTab !== 'Completed'"
+        class="pb-3 font-semibold text-sm border-b-2 whitespace-nowrap hover:text-slate-800 transition-colors">
+        المكتملة
+      </button>
+      <button (click)="activeTab = 'Cancelled'" [class.border-teal-600]="activeTab === 'Cancelled'"
+        [class.text-teal-600]="activeTab === 'Cancelled'" [class.border-transparent]="activeTab !== 'Cancelled'"
+        [class.text-slate-500]="activeTab !== 'Cancelled'"
+        class="pb-3 font-semibold text-sm border-b-2 whitespace-nowrap hover:text-slate-800 transition-colors">
+        الملغية
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div *ngFor="let appt of filteredAppointments"
+        class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 flex flex-col gap-4 hover:shadow-md transition-shadow">
+
+        <div class="flex justify-between items-start">
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 border border-slate-200">
+              <span class="text-slate-600 font-bold text-lg">{{ appt.doctorName.charAt(0) }}</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-slate-800">{{ appt.doctorName }}</h3>
+              <p class="text-sm text-slate-600">{{ appt.consultationType }}</p>
+            </div>
+          </div>
+          <span [ngClass]="getStatusBadge(appt.status)"
+            class="px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
+            {{ appt.status }}
+          </span>
+        </div>
+
+        <div class="mt-2 pt-4 border-t border-slate-100 flex flex-col gap-2">
+          <div class="flex items-center gap-2 text-slate-700">
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span class="font-medium text-sm">{{ appt.date }}</span>
+          </div>
+          <div class="flex items-center gap-2 text-slate-700">
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span class="text-sm">{{ appt.timeSlot }}</span>
+          </div>
+        </div>
+
+        <div class="mt-2 flex justify-end items-center gap-3">
+          <app-review-form *ngIf="appt.status === 'Completed' && !appt.hasReview" [appointmentId]="appt.id"
+            (reviewSubmitted)="ngOnInit()">
+          </app-review-form>
+          <button
+            class="font-semibold text-sm text-teal-600 flex items-center gap-1 hover:text-teal-700 transition-colors">
+            التفاصيل <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="filteredAppointments.length === 0"
+        class="col-span-full text-center py-16 bg-white rounded-lg border border-slate-200 border-dashed">
+        <p class="text-slate-500 font-medium">لا توجد حجوزات في هذه القائمة حالياً.</p>
+      </div>
+    </div>
+
+  </div>
+</div>

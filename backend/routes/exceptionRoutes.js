@@ -6,10 +6,10 @@ const {
   checkExceptionForDate,
   deleteException,
 } = require("../controllers/ExceptionController");
-const { protect } = require("../middlewares/auth");
+const { protect, checkRole } = require("../middlewares/auth");
 
 // Create a new exception (vacation/blocked/emergency) — protected
-router.post("/", protect, addException);
+router.post("/", protect, checkRole(['doctor']), addException);
 
 // Fetch all exceptions for a doctor — public, useful for calendar display
 router.get("/:doctorId", getExceptionsByDoctor);
@@ -19,6 +19,6 @@ router.get("/:doctorId", getExceptionsByDoctor);
 router.get("/:doctorId/check", checkExceptionForDate);
 
 // Delete an exception — protected
-router.delete("/:id", protect, deleteException);
+router.delete("/:id", protect, checkRole(['doctor']), deleteException);
 
 module.exports = router;

@@ -1,0 +1,88 @@
+/* ══════════════════════════════════════════════════════════════════
+   Catalog Management — Component Styles
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Tab underline indicator ─────────────────────────────────── */
+.tab-btn {
+  position: relative;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.tab-active {
+  border-bottom-color: #00685f; /* primary */
+}
+
+/* ── Row entrance animation ──────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.table-row {
+  animation: fadeIn 0.2s ease-out both;
+}
+
+/* ── Loading spinners ────────────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner-sm {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #bcc9c6;
+  border-top-color: #00685f;
+  border-radius: 9999px;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.loading-spinner-sm-white {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 9999px;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ── Error ring helper ───────────────────────────────────────── */
+.ring-error {
+  --tw-ring-color: #ba1a1a;
+  box-shadow: 0 0 0 2px var(--tw-ring-color);
+}
+
+/* ── Modal entrance animation ────────────────────────────────── */
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-overlay {
+  animation: fadeIn 0.15s ease-out;
+}
+
+.modal-panel {
+  animation: modalIn 0.2s ease-out;
+}
+
+/* ── Scrollbar hide ──────────────────────────────────────────── */
+::-webkit-scrollbar { display: none; }
+
+/* ── line-clamp polyfill for older browsers ──────────────────── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Success / error auto-dismiss visual pulse ────────────────── */
+@keyframes pulse-border {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
+}
