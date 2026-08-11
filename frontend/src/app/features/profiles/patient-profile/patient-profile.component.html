@@ -1,0 +1,48 @@
+<div class="container mt-4">
+  <h2>الملف الشخصي للمريض</h2>
+  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+    
+    <div class="mb-3">
+      <label>الاسم الكامل</label>
+      <input type="text" formControlName="fullName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label>العنوان</label>
+      <input type="text" formControlName="address" class="form-control" />
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <label>العمر</label>
+        <input type="number" formControlName="age" class="form-control" />
+      </div>
+      <div class="col">
+        <label>الجنس</label>
+        <select formControlName="gender" class="form-select">
+          <option value="Male">ذكر</option>
+          <option value="Female">أنثى</option>
+          <option value="Other">آخر</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label>رقم الهاتف</label>
+      <input type="text" formControlName="phoneNumber" class="form-control" />
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <label>الوظيفة</label>
+        <input type="text" formControlName="occupation" class="form-control" />
+      </div>
+      <div class="col">
+        <label>جهة العمل (الشركة)</label>
+        <input type="text" formControlName="companyName" class="form-control" />
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">حفظ التعديلات</button>
+  </form>
+</div>
