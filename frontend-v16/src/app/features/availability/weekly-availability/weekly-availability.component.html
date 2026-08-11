@@ -1,0 +1,89 @@
+<div class="max-w-container-max mx-auto px-gutter py-lg">
+  <div class="flex flex-col gap-xs mb-md">
+    <h1 class="font-headline-lg text-headline-lg text-on-surface">Weekly Availability</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">Manage your recurring weekly working hours for patient bookings.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
+
+    <!-- Left: Slot list -->
+    <div class="lg:col-span-8 flex flex-col gap-md">
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+              <th class="p-sm font-semibold">Day</th>
+              <th class="p-sm font-semibold">Start</th>
+              <th class="p-sm font-semibold">End</th>
+              <th class="p-sm font-semibold">Slot Length</th>
+              <th class="p-sm font-semibold text-right w-24">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="font-body-sm text-body-sm text-on-surface">
+            <tr *ngFor="let slot of slots" class="hover:bg-surface-container-low/50 transition-colors group border-t border-outline-variant">
+              <td class="p-sm font-medium">{{ slot.dayOfWeek }}</td>
+              <td class="p-sm">{{ slot.startTime }}</td>
+              <td class="p-sm">{{ slot.endTime }}</td>
+              <td class="p-sm">{{ slot.slotDurationMinutes }} min</td>
+              <td class="p-sm text-right">
+                <button (click)="deleteSlot(slot._id)" class="text-on-surface-variant hover:text-error opacity-0 group-hover:opacity-100 transition-opacity p-base">
+                  <span class="material-symbols-outlined text-sm">delete</span>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="slots.length === 0">
+              <td colspan="5" class="p-sm text-center text-on-surface-variant">No availability slots added yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right: Add form -->
+    <div class="lg:col-span-4">
+      <div class="bg-surface-container-lowest rounded-xl shadow-md p-md flex flex-col sticky top-24">
+        <div class="flex items-center gap-xs mb-md">
+          <span class="material-symbols-outlined text-primary bg-primary-container p-xs rounded-full">add_circle</span>
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">Add Weekly Slot</h2>
+        </div>
+
+        <form class="flex flex-col gap-sm">
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Day of Week</label>
+            <select [(ngModel)]="newSlot.dayOfWeek" name="dayOfWeek"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
+              <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Start Time</label>
+            <input type="time" [(ngModel)]="newSlot.startTime" name="startTime"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
+          </div>
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">End Time</label>
+            <input type="time" [(ngModel)]="newSlot.endTime" name="endTime"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
+          </div>
+
+          <div class="flex flex-col gap-base">
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Slot Duration (minutes)</label>
+            <input type="number" [(ngModel)]="newSlot.slotDurationMinutes" name="slotDurationMinutes"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
+          </div>
+
+          <div class="mt-xs">
+            <button type="button" (click)="addSlot()"
+              class="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-sm rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-xs">
+              <span class="material-symbols-outlined text-sm">save</span>
+              Add Slot
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
