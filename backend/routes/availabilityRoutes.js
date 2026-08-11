@@ -6,7 +6,6 @@ const {
   getAvailabilityByDoctor,
   updateAvailability,
   deleteAvailability,
-  getAvailableSlots,
 } = require("../controllers/availabilityController");
 const { protect, checkRole } = require("../middlewares/auth");
 
@@ -18,7 +17,6 @@ router.get("/:doctorId/slots", getAvailableSlots);
 
 // Fetch a doctor's weekly schedule — public, patients need this to book
 router.get("/:doctorId", getAvailabilityByDoctor);
-router.get("/:doctorId/slots", getAvailableSlots);
 
 // Update an existing slot — protected
 router.put("/:id", protect, checkRole(['doctor']), updateAvailability);
