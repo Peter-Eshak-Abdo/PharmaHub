@@ -1,0 +1,58 @@
+<!-- features/appointments/patient-appointments/patient-appointments.component.html -->
+<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans dir-rtl">
+  <div class="max-w-5xl mx-auto">
+
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">حجوزاتي</h1>
+      <p class="text-gray-500 mt-2">إدارة مواعيدك القادمة والسابقة بكل سهولة.</p>
+    </div>
+
+    <div class="space-y-4">
+      <div *ngFor="let appt of appointments"
+        class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-6 transition-shadow hover:shadow-md">
+
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 rounded-full bg-teal-50 flex items-center justify-center shrink-0">
+            <span class="text-teal-600 font-bold text-lg">{{ appt.doctorName.charAt(0) }}</span>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-gray-900">{{ appt.doctorName }}</h3>
+            <div class="flex items-center gap-4 text-sm text-gray-500 mt-1">
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                {{ appt.date }}
+              </span>
+              <span class="flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ appt.timeSlot }}
+              </span>
+              <span>• {{ appt.consultationType }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:items-end gap-3">
+          <span [ngClass]="getStatusClass(appt.status)" class="px-3 py-1 rounded-full text-xs font-semibold w-fit">
+            {{ appt.status }}
+          </span>
+          <app-review-form *ngIf="appt.status === 'Completed' && !appt.hasReview" [appointmentId]="appt.id"
+            (reviewSubmitted)="ngOnInit()">
+          </app-review-form>
+        </div>
+
+      </div>
+
+      <div *ngIf="appointments.length === 0"
+        class="text-center py-12 bg-white rounded-2xl border border-gray-100 border-dashed">
+        <p class="text-gray-500">لا توجد حجوزات لعرضها حالياً.</p>
+      </div>
+    </div>
+
+  </div>
+</div>

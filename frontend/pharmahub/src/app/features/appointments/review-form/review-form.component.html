@@ -1,0 +1,35 @@
+<!-- features/appointments/review-form/review-form.component.html -->
+<div class="relative">
+  <button *ngIf="!showForm" (click)="showForm = true"
+    class="text-sm text-teal-600 hover:text-teal-700 font-medium border border-teal-600 hover:bg-teal-50 px-4 py-2 rounded-xl transition-colors">
+    إضافة تقييم
+  </button>
+
+  <div *ngIf="showForm"
+    class="absolute top-0 right-0 sm:right-full sm:mr-4 w-72 bg-white p-5 rounded-2xl shadow-lg border border-gray-100 z-10">
+    <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">التقييم (1-5)</label>
+        <input type="number" title="Ratting" formControlName="rating" min="1" max="5"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">تعليق</label>
+        <textarea formControlName="comment" rows="2" title="Comment"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors resize-none"></textarea>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" [disabled]="reviewForm.invalid"
+          class="flex-1 bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors disabled:opacity-50">
+          حفظ
+        </button>
+        <button type="button" (click)="showForm = false"
+          class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-2 px-3 rounded-lg transition-colors">
+          إلغاء
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
