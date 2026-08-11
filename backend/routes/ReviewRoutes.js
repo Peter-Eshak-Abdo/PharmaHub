@@ -5,7 +5,9 @@ const {
   getDoctorReviews,
 } = require("../controllers/ReviewController");
 
-router.post("/", createReview);// إضافة تقييم جديد
+const { protect, checkRole } = require("../middlewares/auth");
+
+router.post("/", protect, checkRole(["patient"]), createReview);// إضافة تقييم جديد
 router.get("/doctor/:doctorId", getDoctorReviews);// جلب تقييمات طبيب محدد
 
 module.exports = router;

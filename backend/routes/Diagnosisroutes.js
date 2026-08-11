@@ -6,9 +6,11 @@ const {
     getDiagnosisById,
 } = require('../controllers/DiagnosisController');
 
+const { protect, checkRole } = require("../middlewares/auth");
+
 // GET  /api/diagnoses       — fetch all diagnoses
 // POST /api/diagnoses       — add a new diagnosis (Admin)
-router.route('/').get(getDiagnoses).post(addDiagnosis);
+router.route('/').get(getDiagnoses).post(protect, checkRole(['admin']), addDiagnosis);
 
 // GET /api/diagnoses/:id    — fetch a single diagnosis
 router.route('/:id').get(getDiagnosisById);

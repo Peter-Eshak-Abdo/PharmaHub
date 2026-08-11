@@ -1,0 +1,211 @@
+<!-- ═══════════════════════════════════════════════════════════════════
+     Medical History — READ ONLY — Timeline View
+     Design: Medical_History/code.html mockup
+     API:    GET /api/patients/:patientId/medical-history
+═══════════════════════════════════════════════════════════════════ -->
+<div class="flex flex-col w-full h-full p-md lg:p-xl gap-xl relative overflow-hidden bg-background min-h-screen font-body-md text-on-surface">
+
+  <!-- ── Decorative ambient blobs ──────────────────────────────── -->
+  <div class="blob blob-top"></div>
+  <div class="blob blob-bottom"></div>
+
+  <!-- ── PAGE HEADER ─────────────────────────────────────────── -->
+  <div class="flex flex-col gap-sm relative z-10 w-full max-w-container-max mx-auto">
+    <h1 class="font-display text-display text-on-background">Medical History</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+      A comprehensive record of past clinical visits, diagnoses, and prescribed treatments.
+    </p>
+  </div>
+
+  <!-- ── LOADING STATE ─────────────────────────────────────────── -->
+  <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-[120px] gap-md relative z-10">
+    <div class="timeline-spinner"></div>
+    <p class="text-body-md text-on-surface-variant">Loading medical history…</p>
+  </div>
+
+  <!-- ── ERROR STATE ───────────────────────────────────────────── -->
+  <div *ngIf="!isLoading && errorMessage"
+       class="relative z-10 w-full max-w-container-max mx-auto">
+    <div class="flex flex-col items-center justify-center py-[80px] gap-md text-center">
+      <div class="w-16 h-16 rounded-full bg-error-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-error text-3xl">history_edu</span>
+      </div>
+      <h2 class="text-headline-md font-headline-md text-on-surface">Unable to Load History</h2>
+      <p class="text-body-md text-on-surface-variant max-w-sm">{{ errorMessage }}</p>
+    </div>
+  </div>
+
+  <!-- ── EMPTY STATE ───────────────────────────────────────────── -->
+  <div *ngIf="!isLoading && !errorMessage && history.length === 0"
+       class="relative z-10 w-full max-w-container-max mx-auto">
+    <div class="flex flex-col items-center justify-center py-[80px] gap-md text-center">
+      <div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-on-surface-variant text-3xl">calendar_clock</span>
+      </div>
+      <h2 class="text-headline-md font-headline-md text-on-surface">No History Found</h2>
+      <p class="text-body-md text-on-surface-variant max-w-sm">
+        No completed appointments or prescriptions have been recorded for this patient yet.
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       TIMELINE
+  ══════════════════════════════════════════════════════════════ -->
+  <div *ngIf="!isLoading && !errorMessage && history.length > 0"
+       class="relative w-full max-w-container-max mx-auto z-10 flex-1">
+
+    <!-- Vertical spine line -->
+    <div class="timeline-spine absolute left-4 md:left-[120px] top-4 bottom-4 w-0.5 rounded-full z-0"></div>
+
+    <!-- Timeline entries -->
+    <div class="flex flex-col gap-xl relative z-10 pt-sm">
+
+      <div *ngFor="let entry of history; let i = index; let last = last"
+           class="timeline-entry flex flex-col md:flex-row gap-4 md:gap-8 relative group"
+           [class.pb-xl]="last">
+
+        <!-- ── Date node ──────────────────────────────────────── -->
+        <div class="flex items-start md:w-[120px] shrink-0 pt-1 relative">
+          <!-- Dot -->
+          <div class="date-dot absolute left-4 md:right-0 md:left-auto md:translate-x-1/2 w-3 h-3 rounded-full ring-4 ring-background z-10 transition-all duration-300"
+               [class.bg-primary]="i === 0"
+               [class.bg-outline]="i > 0">
+          </div>
+          <!-- Date text -->
+          <div class="pl-12 md:pl-0 md:pr-8 text-left md:text-right w-full">
+            <span class="font-headline-sm text-headline-sm block transition-colors duration-300"
+                  [class.text-primary]="i === 0"
+                  [class.text-on-surface-variant]="i > 0">
+              {{ formatDate(entry.appointmentDate).day }} {{ formatDate(entry.appointmentDate).month }}
+            </span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider block mt-1"
+                  [class.text-primary]="i === 0"
+                  [class.text-outline]="i > 0">
+              {{ formatDate(entry.appointmentDate).year }}
+            </span>
+          </div>
+        </div>
+
+        <!-- ── Content card ───────────────────────────────────── -->
+        <div class="pl-12 md:pl-0 flex-1 w-full max-w-3xl">
+          <div class="history-card bg-surface-container-lowest p-md rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group-hover:-translate-y-1 relative overflow-hidden"
+               [class.opacity-90]="i > 1"
+               [class.hover:opacity-100]="i > 1">
+
+            <!-- Left accent bar -->
+            <div class="accent-bar absolute top-0 left-0 w-1 h-full rounded-l-xl transition-colors duration-300"
+                 [ngClass]="accentClass(i)">
+            </div>
+
+            <div class="flex flex-col gap-sm md:gap-md">
+
+              <!-- Header: Doctor + Diagnosis badge -->
+              <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+
+                <!-- Doctor -->
+                <div class="flex items-center gap-sm">
+                  <!-- Avatar initials fallback -->
+                  <div class="w-12 h-12 rounded-full flex items-center justify-center shadow-sm ring-2 ring-primary/20 font-headline-md text-headline-md shrink-0"
+                       [class.bg-primary-container]="i % 2 === 0"
+                       [class.text-on-primary-container]="i % 2 === 0"
+                       [class.bg-tertiary-container]="i % 2 !== 0"
+                       [class.text-on-tertiary-container]="i % 2 !== 0">
+                    {{ entry.doctor?.fullName ? entry.doctor!.fullName.charAt(0) : 'D' }}
+                  </div>
+                  <div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface">
+                      {{ entry.doctor?.fullName ?? '—' }}
+                    </h3>
+                    <p class="font-label-md text-label-md text-on-surface-variant flex items-center gap-1 mt-0.5">
+                      <span class="material-symbols-outlined text-[16px]">stethoscope</span>
+                      {{ entry.doctor?.specialization ?? 'Specialist' }}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Diagnosis badges -->
+                <div class="flex flex-wrap gap-xs">
+                  <ng-container *ngIf="entry.diagnoses && entry.diagnoses.length > 0">
+                    <div *ngFor="let diag of entry.diagnoses; let di = index"
+                         class="flex items-center gap-xs px-3 py-1.5 rounded-full font-label-md text-label-md"
+                         [ngClass]="diagnoseBadgeClass(di)">
+                      <span class="material-symbols-outlined text-[18px]">{{ diagnoseBadgeIcon(di) }}</span>
+                      {{ diag.name }}
+                    </div>
+                  </ng-container>
+                  <div *ngIf="!entry.diagnoses || entry.diagnoses.length === 0"
+                       class="flex items-center gap-xs bg-surface-container text-on-surface-variant px-3 py-1.5 rounded-full font-label-md text-label-md border border-outline-variant">
+                    <span class="material-symbols-outlined text-[18px]">stethoscope</span>
+                    No diagnoses
+                  </div>
+                </div>
+              </div>
+
+              <!-- Reason for visit / notes -->
+              <div *ngIf="entry.reasonForVisit || entry.prescription?.notes"
+                   class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                {{ entry.reasonForVisit || entry.prescription?.notes }}
+              </div>
+
+              <!-- Medications section -->
+              <div *ngIf="entry.prescription?.medications && entry.prescription!.medications!.length > 0"
+                   class="bg-surface-container-low rounded-lg p-sm mt-xs">
+                <h4 class="font-label-md text-label-md text-on-surface uppercase tracking-wider mb-sm flex items-center gap-2">
+                  <span class="material-symbols-outlined text-primary text-[18px]">prescriptions</span>
+                  Prescribed Medications
+                </h4>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+                  <div *ngFor="let med of entry.prescription!.medications; let mi = index"
+                       class="med-item flex gap-3 items-start bg-surface-container-lowest p-3 rounded-lg shadow-sm">
+                    <!-- Icon -->
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
+                         [class.bg-secondary-container]="mi % 3 === 0"
+                         [class.text-on-secondary-fixed]="mi % 3 === 0"
+                         [class.bg-tertiary-fixed]="mi % 3 === 1"
+                         [class.text-on-tertiary-fixed-variant]="mi % 3 === 1"
+                         [class.bg-primary-container]="mi % 3 === 2"
+                         [class.text-on-primary-container]="mi % 3 === 2">
+                      <span class="material-symbols-outlined text-[18px]">medication</span>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="flex flex-col">
+                      <span class="font-headline-sm text-headline-sm text-on-surface">
+                        {{ getMedName(med, entry.medicationDetails ?? []) }}
+                      </span>
+                      <span *ngIf="getMedGeneric(med, entry.medicationDetails ?? [])"
+                            class="font-body-sm text-body-sm text-on-surface-variant">
+                        {{ getMedGeneric(med, entry.medicationDetails ?? []) }}
+                      </span>
+                      <span class="font-body-sm text-body-sm text-on-surface-variant">
+                        {{ med.dosage }}
+                      </span>
+                      <span class="font-label-sm text-label-sm text-on-surface-variant mt-1">
+                        {{ med.frequency }}
+                      </span>
+                      <span class="font-label-sm text-label-sm text-primary mt-1 opacity-80">
+                        Duration: {{ med.duration }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- No prescription yet -->
+              <div *ngIf="!entry.prescription?.medications || entry.prescription!.medications!.length === 0"
+                   class="bg-surface-container-low rounded-lg px-sm py-xs flex items-center gap-xs">
+                <span class="material-symbols-outlined text-on-surface-variant text-[16px]">info</span>
+                <span class="text-label-sm text-on-surface-variant">No prescription issued for this visit.</span>
+              </div>
+
+            </div><!-- /inner flex col -->
+          </div><!-- /history-card -->
+        </div><!-- /content column -->
+
+      </div><!-- /ngFor -->
+    </div><!-- /timeline entries -->
+  </div><!-- /timeline container -->
+
+</div>

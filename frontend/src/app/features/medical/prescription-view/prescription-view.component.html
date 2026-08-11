@@ -1,0 +1,224 @@
+<!-- ═══════════════════════════════════════════════════════════════════
+     Prescription View — READ ONLY
+     Design System: Clinical Precision (write_prescriptions tokens)
+═══════════════════════════════════════════════════════════════════ -->
+<div class="px-gutter py-xl bg-background min-h-screen font-body-md text-on-surface">
+  <div class="max-w-container-max mx-auto flex flex-col gap-lg">
+
+    <!-- ── LOADING STATE ─────────────────────────────────────────── -->
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-[120px] gap-md">
+      <div class="loading-spinner"></div>
+      <p class="text-body-md text-on-surface-variant">Loading prescription…</p>
+    </div>
+
+    <!-- ── NOT FOUND / ERROR STATE ───────────────────────────────── -->
+    <div *ngIf="!isLoading && (notFound || errorMessage) && !prescription"
+         class="flex flex-col items-center justify-center py-[120px] gap-md text-center">
+      <div class="w-16 h-16 rounded-full bg-error-container flex items-center justify-center">
+        <span class="material-symbols-outlined text-error text-3xl">description_off</span>
+      </div>
+      <h2 class="text-headline-md font-headline-md text-on-surface">Prescription Not Found</h2>
+      <p class="text-body-md text-on-surface-variant max-w-sm">
+        {{ errorMessage || 'No prescription exists for this appointment yet.' }}
+      </p>
+      <a routerLink="/prescriptions/new"
+         class="inline-flex items-center gap-xs bg-primary text-on-primary px-lg py-sm rounded-full text-label-md shadow-md hover:bg-primary/90 hover:shadow-lg transition-all">
+        <span class="material-symbols-outlined text-[18px]">add</span>
+        Create Prescription
+      </a>
+    </div>
+
+    <!-- ── PRESCRIPTION CARD ─────────────────────────────────────── -->
+    <ng-container *ngIf="!isLoading && prescription">
+
+      <!-- Page header -->
+      <div class="flex items-center justify-between">
+        <div class="flex flex-col gap-xs">
+          <div class="flex items-center gap-xs">
+            <span class="w-2 h-2 rounded-full bg-primary"></span>
+            <span class="text-label-md text-primary uppercase tracking-widest">Prescription Record</span>
+          </div>
+          <h1 class="text-display font-display text-on-surface leading-tight">
+            Clinical<br/>Prescription
+          </h1>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="flex gap-sm print:hidden">
+          <button id="print-btn"
+                  type="button"
+                  class="inline-flex items-center gap-xs border border-outline text-on-surface-variant hover:bg-surface-container-high px-lg py-sm rounded-full text-label-md transition-all"
+                  (click)="print()">
+            <span class="material-symbols-outlined text-[18px]">print</span>
+            Print
+          </button>
+          <a [routerLink]="['/prescriptions/new', appointmentId]"
+             class="inline-flex items-center gap-xs bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 px-lg py-sm rounded-full text-label-md shadow-sm transition-all">
+            <span class="material-symbols-outlined text-[18px]">edit</span>
+            Edit
+          </a>
+        </div>
+      </div>
+
+      <!-- ── META CARD (Doctor + Patient + Date) ─────────────────── -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+
+        <!-- Doctor info -->
+        <div class="bg-surface-container-lowest rounded-2xl p-md shadow-sm flex flex-col gap-xs meta-card">
+          <div class="flex items-center gap-xs mb-xs">
+            <span class="material-symbols-outlined text-primary text-[20px]">stethoscope</span>
+            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Prescribing Doctor</span>
+          </div>
+          <span class="text-headline-sm font-headline-sm text-on-surface">{{ doctorName }}</span>
+          <span class="text-body-sm text-on-surface-variant">{{ doctorSpecialization }}</span>
+        </div>
+
+        <!-- Patient info -->
+        <div class="bg-surface-container-lowest rounded-2xl p-md shadow-sm flex flex-col gap-xs meta-card">
+          <div class="flex items-center gap-xs mb-xs">
+            <span class="material-symbols-outlined text-primary text-[20px]">person</span>
+            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Patient</span>
+          </div>
+          <span class="text-headline-sm font-headline-sm text-on-surface">{{ patientName }}</span>
+          <span class="text-body-sm text-on-surface-variant">ID: {{ prescription?.patientId?._id ?? prescription?.patientId ?? '—' }}</span>
+        </div>
+
+        <!-- Issue date -->
+        <div class="bg-surface-container-lowest rounded-2xl p-md shadow-sm flex flex-col gap-xs meta-card">
+          <div class="flex items-center gap-xs mb-xs">
+            <span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
+            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Issued Date</span>
+          </div>
+          <span class="text-headline-sm font-headline-sm text-on-surface">{{ issuedDate }}</span>
+          <span class="text-body-sm text-on-surface-variant">Appointment ID: {{ appointmentId }}</span>
+        </div>
+      </div>
+
+      <!-- ── DIAGNOSES SECTION ────────────────────────────────────── -->
+      <div class="bg-surface-container-lowest rounded-3xl p-lg shadow-md flex flex-col gap-md relative overflow-hidden">
+        <!-- Watermark -->
+        <div class="absolute top-0 right-0 p-lg opacity-5 pointer-events-none">
+          <span class="material-symbols-outlined text-[120px] leading-none">stethoscope</span>
+        </div>
+
+        <div class="flex flex-col gap-xs relative z-10">
+          <h2 class="text-headline-md font-headline-md text-on-surface flex items-center gap-xs">
+            <span class="material-symbols-outlined text-primary">diagnosis</span>
+            Diagnoses
+          </h2>
+          <p class="text-body-sm text-on-surface-variant">ICD-10 coded conditions recorded for this encounter.</p>
+        </div>
+
+        <!-- Badge list -->
+        <div class="flex flex-wrap gap-xs">
+          <div *ngFor="let d of diagnoses"
+               class="diag-badge inline-flex items-center gap-xs bg-primary-container text-on-primary-container rounded-full px-sm py-[6px] text-label-md shadow-sm">
+            <span class="material-symbols-outlined text-[14px]">local_hospital</span>
+            <span>{{ d.icdCode }} – {{ d.name }}</span>
+          </div>
+          <p *ngIf="diagnoses.length === 0" class="text-body-sm text-on-surface-variant italic">
+            No diagnoses recorded.
+          </p>
+        </div>
+      </div>
+
+      <!-- ── MEDICATIONS SECTION ──────────────────────────────────── -->
+      <div class="bg-surface-container-lowest rounded-3xl p-lg shadow-md flex flex-col gap-md">
+        <div class="flex flex-col gap-xs">
+          <h2 class="text-headline-md font-headline-md text-on-surface flex items-center gap-xs">
+            <span class="material-symbols-outlined text-primary">pill</span>
+            Prescribed Medications
+          </h2>
+          <p class="text-body-sm text-on-surface-variant">Medications dispensed for this prescription.</p>
+        </div>
+
+        <!-- Medication rows -->
+        <div class="flex flex-col gap-md">
+          <div *ngFor="let med of medications; let i = index"
+               class="med-card bg-surface-container-low rounded-2xl p-md flex flex-col gap-md shadow-sm hover:shadow-md transition-shadow">
+
+            <!-- Header row: name + type badge -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-sm">
+                <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center shrink-0">
+                  <span class="material-symbols-outlined text-on-primary-container text-[20px]">medication</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-headline-sm font-headline-sm text-on-surface">{{ getMedName(med) }}</span>
+                  <span *ngIf="getMedGeneric(med)" class="text-body-sm text-on-surface-variant">
+                    Generic: {{ getMedGeneric(med) }}
+                  </span>
+                </div>
+              </div>
+              <span *ngIf="getMedType(med)"
+                    class="inline-flex items-center bg-surface-container text-on-surface-variant rounded-full px-sm py-[4px] text-label-sm border border-outline-variant">
+                {{ getMedType(med) }}
+              </span>
+            </div>
+
+            <!-- Detail grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
+              <div class="flex flex-col gap-[2px]">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Dosage</span>
+                <span class="text-body-md font-medium text-on-surface">{{ med.dosage || '—' }}</span>
+              </div>
+              <div class="flex flex-col gap-[2px]">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Frequency</span>
+                <span class="text-body-md font-medium text-on-surface">{{ med.frequency || '—' }}</span>
+              </div>
+              <div class="flex flex-col gap-[2px]">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Duration</span>
+                <span class="text-body-md font-medium text-on-surface">{{ med.duration || '—' }}</span>
+              </div>
+              <div class="flex flex-col gap-[2px]" *ngIf="med.instructions">
+                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Instructions</span>
+                <span class="text-body-md font-medium text-on-surface">{{ med.instructions }}</span>
+              </div>
+            </div>
+
+            <!-- Optional notes -->
+            <div *ngIf="med.notes"
+                 class="bg-surface-container rounded-xl px-sm py-xs flex items-start gap-xs">
+              <span class="material-symbols-outlined text-on-surface-variant text-[16px] mt-[2px]">info</span>
+              <span class="text-body-sm text-on-surface-variant">{{ med.notes }}</span>
+            </div>
+          </div>
+
+          <p *ngIf="medications.length === 0" class="text-body-sm text-on-surface-variant italic">
+            No medications prescribed.
+          </p>
+        </div>
+      </div>
+
+      <!-- ── CLINICAL NOTES ──────────────────────────────────────── -->
+      <div *ngIf="prescription?.notes"
+           class="bg-surface-container-lowest rounded-3xl p-lg shadow-md flex flex-col gap-md">
+        <h2 class="text-headline-md font-headline-md text-on-surface flex items-center gap-xs">
+          <span class="material-symbols-outlined text-primary">notes</span>
+          Clinical Notes
+        </h2>
+        <div class="bg-surface-container-low rounded-xl p-md">
+          <p class="text-body-md text-on-surface leading-relaxed whitespace-pre-line">
+            {{ prescription.notes }}
+          </p>
+        </div>
+      </div>
+
+      <!-- ── FOOTER BAR ─────────────────────────────────────────── -->
+      <div class="flex items-center justify-between bg-surface-container rounded-3xl p-md shadow-sm print:hidden">
+        <div class="flex items-center gap-sm text-on-surface-variant">
+          <span class="material-symbols-outlined">verified</span>
+          <span class="text-label-md">This prescription is digitally recorded and linked to Appointment #{{ appointmentId }}.</span>
+        </div>
+        <button id="print-btn-footer"
+                type="button"
+                class="px-xl py-sm rounded-full bg-primary text-on-primary text-label-md shadow-md hover:shadow-lg hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all flex items-center gap-xs"
+                (click)="print()">
+          <span class="material-symbols-outlined text-[20px]">print</span>
+          Print Prescription
+        </button>
+      </div>
+
+    </ng-container>
+  </div>
+</div>

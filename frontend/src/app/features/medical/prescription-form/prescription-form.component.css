@@ -1,0 +1,64 @@
+/* ══════════════════════════════════════════════════════════════════
+   Prescription Form — Component Styles
+   Design token values defined via Tailwind CDN config in index.html
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Fade-in for diagnosis badges ─────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.diagnosis-badge {
+  animation: fadeIn 0.25s ease-out;
+  transition: transform 0.15s ease;
+}
+
+.med-row {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* ── Focus ring for invalid fields ───────────────────────────── */
+.ring-error {
+  --tw-ring-color: #ba1a1a;
+  box-shadow: 0 0 0 2px var(--tw-ring-color);
+}
+
+/* ── Sticky submission bar ──────────────────────────────────── */
+.sticky {
+  position: sticky;
+}
+
+/* ── Autocomplete dropdowns ──────────────────────────────────── */
+#diagnosis-dropdown,
+[id^="medication-dropdown"] {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+/* ── Spinning submit loader ──────────────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin {
+  animation: spin 0.8s linear infinite;
+}
+
+/* ── Scrollbar hide for dropdown lists ──────────────────────── */
+ul::-webkit-scrollbar {
+  display: none;
+}
+ul {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ── Select custom styling ───────────────────────────────────── */
+select {
+  background-image: none; /* material icon used instead */
+}
