@@ -7,6 +7,11 @@ import { MedicalHistoryComponent } from './features/medical/medical-history/medi
 
 const routes: Routes = [
   {
+    path: 'auth',
+    loadChildren: () =>
+      import('./features/auth/auth.module').then((m) => m.AuthModule),
+  },
+  {
     path: 'prescriptions/new/:appointmentId',
     component: PrescriptionFormComponent,
   },
@@ -36,16 +41,12 @@ const routes: Routes = [
         (m) => m.AppointmentsModule,
       ),
   },
-  {
-    path: '',
-    redirectTo: 'appointments/patient',
-    pathMatch: 'full',
-  },
+  // { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  // { path: '**', redirectTo: 'auth/login' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
-
+export class AppRoutingModule {}
