@@ -11,11 +11,10 @@ export class ReviewService {
 
   constructor(private http: HttpClient) {}
 
-  addReview(appointmentId: string, reviewData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${appointmentId}`, reviewData);
-  }
-
-  getDoctorReviews(doctorId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/doctor/${doctorId}`);
+  addReview(
+    appointmentId: string,
+    review: { rating: number; comment: string },
+  ): Observable<any> {
+    return this.http.post(this.apiUrl, { appointmentId, ...review });
   }
 }

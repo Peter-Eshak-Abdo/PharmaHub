@@ -2,35 +2,40 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Appointment, TimeSlot } from '../models/appointment.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppointmentService {
   private apiUrl = '/api/appointments';
-  private availabilityUrl = '/api/availability';
 
   constructor(private http: HttpClient) {}
 
-  getAvailableSlots(doctorId: string, date: string): Observable<any> {
-    return this.http.get(
-      `${this.availabilityUrl}/${doctorId}/slots?date=${date}`,
+  getPatientAppointments(): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/patient`);
+  }
+
+  getDoctorAppointments(): Observable<Appointment[]> {
+    return this.http.get<Appointment[]>(`${this.apiUrl}/doctor`);
+  }
+
+  getAvailableSlots(
+    doctorId: string,
+    date: string,
+  ): Observable<{ slots: TimeSlot[] }> {
+    return this.http.get<{ slots: TimeSlot[] }>(
+      `${this.apiUrl}/slots?doctorId=${doctorId}&date=${date}`,
     );
   }
 
-  createAppointment(data: any): Observable<any> {
-    return this.http.post(this.apiUrl, data);
+  createAppointment(payload: Partial<Appointment>): Observable<Appointment> {
+    return this.http.post<Appointment>(this.apiUrl, payload);
   }
 
-  getPatientAppointments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/patient`);
-  }
-
-  getDoctorAppointments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/doctor`);
-  }
-
-  updateAppointmentStatus(id: string, status: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${id}/status`, { status });
+  updateAppointmentStatus(id: string, status: string): Observable<Appointment> {
+    return this.http.patch<Appointment>(`${this.apiUrl}/${id}/status`, {
+      status,
+    });
   }
 }
