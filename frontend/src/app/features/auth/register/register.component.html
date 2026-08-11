@@ -12,37 +12,33 @@
       <p>Set up your account to get started.</p>
     </div>
 
-    
     <div class="auth-card">
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        
-      
         <div class="role-segmented-control">
-          <button 
-            type="button" 
-            class="role-btn" 
+          <button
+            type="button"
+            class="role-btn"
             [class.active]="registerForm.get('role')?.value === 'patient'"
             (click)="setRole('patient')">
             Patient
           </button>
-          <button 
-            type="button" 
-            class="role-btn" 
+          <button
+            type="button"
+            class="role-btn"
             [class.active]="registerForm.get('role')?.value === 'doctor'"
             (click)="setRole('doctor')">
             Doctor
           </button>
         </div>
 
-      
         <div class="form-group">
           <label for="register-email">EMAIL ADDRESS</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined input-icon">mail</span>
-            <input 
+            <input
               id="register-email"
-              type="email" 
-              formControlName="email" 
+              type="email"
+              formControlName="email"
               placeholder="jane@example.com"
             />
           </div>
@@ -52,15 +48,14 @@
           </div>
         </div>
 
-      
         <div class="form-group">
           <label for="register-password">PASSWORD</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined input-icon">lock</span>
-            <input 
+            <input
               id="register-password"
-              [type]="hidePassword ? 'password' : 'text'" 
-              formControlName="password" 
+              [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password"
               placeholder="••••••••"
             />
             <button type="button" class="password-toggle" (click)="hidePassword = !hidePassword">
@@ -75,14 +70,12 @@
           </div>
         </div>
 
-    
         <button type="submit" class="btn-primary">
           <span>Create Account</span>
           <span class="material-symbols-outlined btn-icon">arrow_forward</span>
         </button>
       </form>
     </div>
-
 
     <div class="auth-footer">
       Already have an account? <a routerLink="/auth/login">Log in</a>

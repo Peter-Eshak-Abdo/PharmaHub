@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'auth', 
+    path: 'auth',
     loadChildren: () => import('./auth.module').then(m => m.AuthModule)
   },
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
@@ -12,6 +12,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+
+export class AuthRoutingModule {}
