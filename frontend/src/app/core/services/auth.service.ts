@@ -5,32 +5,32 @@ import { User } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = '/api/auth'; 
+  private apiUrl = '/api/auth';
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromToken());
   public currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
   login(credentials: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe( //[cite: 1]
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe( 
       tap(response => {
-        localStorage.setItem('token', response.token); //[cite: 1]
+        localStorage.setItem('token', response.token);
         this.currentUserSubject.next(this.getUserFromToken());
       })
     );
   }
 
   register(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/register`, data).pipe( //[cite: 1]
+    return this.http.post<any>(`${this.apiUrl}/register`, data).pipe(
       tap(response => {
-        localStorage.setItem('token', response.token); //[cite: 1]
+        localStorage.setItem('token', response.token);
         this.currentUserSubject.next(this.getUserFromToken());
       })
     );
   }
 
   logout(): void {
-    localStorage.removeItem('token'); //[cite: 1]
+    localStorage.removeItem('token');
     this.currentUserSubject.next(null);
   }
 
