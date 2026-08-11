@@ -1,1 +1,177 @@
 /* You can add global styles to this file, and also import other style files */
+/* src/styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Colors - Clinical Precision Design System[cite: 7] */
+  --bg-level-0: #f9fafb;
+  --bg-level-1: #ffffff;
+  --text-heading: #1e293b;
+  --text-body: #475569;
+  --border-color: #e2e8f0;
+  
+  --primary-color: #0d9488;
+  --primary-hover: #0f766e;
+  --primary-glow: rgba(13, 148, 136, 0.2);
+  
+  --secondary-color: #0ea5e9;
+  
+  --success-bg: #d1fae5;
+  --success-text: #047857;
+  
+  --danger-bg: #fee2e2;
+  --danger-text: #b91c1c;
+  --danger-color: #ef4444;
+
+  --upcoming-bg: #e0f2fe;
+  --upcoming-text: #0369a1;
+
+  /* Typography[cite: 7] */
+  --font-family: 'Inter', sans-serif;
+  
+  /* Layout & Spacing[cite: 7] */
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+  --shadow-level-1: 0px 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-level-2: 0px 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-level-0);
+  color: var(--text-body);
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-heading);
+  font-weight: 600;
+  margin-top: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Base Card[cite: 7] */
+.clinical-card {
+  background-color: var(--bg-level-1);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-level-1);
+  padding: 24px;
+}
+
+/* Base Button[cite: 7] */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: #ffffff;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Form Inputs[cite: 7] */
+.form-control, .form-select {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family);
+  font-size: 16px;
+  color: var(--text-heading);
+  background-color: var(--bg-level-1);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+}
+
+.form-control:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+}
+
+/* Badges[cite: 7] */
+.badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-upcoming {
+  background-color: var(--upcoming-bg);
+  color: var(--upcoming-text);
+}
+
+.badge-completed {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+}
+
+.badge-cancelled {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+/* Grid & Layout Utilities[cite: 7] */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.grid-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.col-half {
+  flex: 1 1 calc(50% - 12px);
+}
