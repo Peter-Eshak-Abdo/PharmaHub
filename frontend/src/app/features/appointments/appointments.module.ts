@@ -1,7 +1,9 @@
 // features/appointments/appointments.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+
 import { AppointmentsRoutingModule } from './appointments-routing.module';
 import { BookingFormComponent } from './booking-form/booking-form.component';
 import { PatientAppointmentsComponent } from './patient-appointments/patient-appointments.component';
@@ -18,7 +20,7 @@ import { ReviewFormComponent } from './review-form/review-form.component';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule,
+    HttpClientModule,
     AppointmentsRoutingModule,
   ],
   exports: [ReviewFormComponent],

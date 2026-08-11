@@ -29,6 +29,18 @@ const routes: Routes = [
         (m) => m.AvailabilityModule,
       ),
   },
+  {
+    path: 'appointments',
+    loadChildren: () =>
+      import('./features/appointments/appointments.module').then(
+        (m) => m.AppointmentsModule,
+      ),
+  },
+  {
+    path: '',
+    redirectTo: 'appointments/patient',
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({

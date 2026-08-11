@@ -23,8 +23,11 @@ const routes: Routes = [
   {
     path: 'doctor',
     component: DoctorAppointmentsComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'doctor' },
+  },
+  {
+    path: '',
+    redirectTo: 'patient',
+    pathMatch: 'full',
   },
 ];
 
