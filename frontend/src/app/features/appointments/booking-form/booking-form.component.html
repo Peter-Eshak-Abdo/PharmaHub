@@ -1,99 +1,95 @@
 <!-- features/appointments/booking-form/booking-form.component.html -->
 <div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans dir-rtl">
   <div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden" [formGroup]="bookingForm">
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" [formGroup]="bookingForm">
-
-      <!-- Step 1: Date & Time -->
       <div *ngIf="step === 1" class="p-8">
-        <div class="mb-8 border-b border-gray-100 pb-6">
-          <h2 class="text-2xl font-bold text-gray-900">حجز موعد جديد</h2>
-          <p class="text-gray-500 mt-1">اختر التاريخ والوقت المناسبين لكشفك</p>
+        <div class="mb-8 border-b border-slate-100 pb-6">
+          <h2 class="text-2xl font-bold text-slate-800">حجز موعد جديد</h2>
+          <p class="text-slate-600 mt-1">اختر التاريخ والوقت المناسبين لكشفك</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">التاريخ</label>
-            <input type="date"title="Date" formControlName="date" (change)="onDateChange($event)"
-              class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors" />
+            <label class="block text-sm font-semibold text-slate-800 mb-2">التاريخ</label>
+            <input title="Date" type="date" formControlName="date" (change)="onDateChange($event)"
+              class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 outline-none transition-all text-slate-800" />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">المواعيد المتاحة</label>
-            <select formControlName="timeSlot" title="availableSlots"
-              class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors bg-white">
+            <label class="block text-sm font-semibold text-slate-800 mb-2">المواعيد المتاحة</label>
+            <select title="TimeSlot" formControlName="timeSlot"
+              class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 outline-none transition-all bg-white text-slate-800">
               <option value="" disabled selected>اختر الموعد</option>
               <option *ngFor="let slot of availableSlots" [value]="slot.time">{{ slot.time }}</option>
             </select>
           </div>
         </div>
 
-        <div class="mt-10 flex justify-end">
+        <div class="mt-8 flex justify-end">
           <button type="button" [disabled]="bookingForm.get('date')?.invalid || bookingForm.get('timeSlot')?.invalid"
             (click)="nextStep()"
-            class="bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-8 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
             التالي
           </button>
         </div>
       </div>
 
-      <!-- Step 2: Confirm Summary -->
       <div *ngIf="step === 2" class="p-8">
-        <div class="mb-8 border-b border-gray-100 pb-6">
-          <h2 class="text-2xl font-bold text-gray-900">مراجعة بيانات الحجز</h2>
-          <p class="text-gray-500 mt-1">تأكد من تفاصيل موعدك قبل التأكيد</p>
+        <div class="mb-8 border-b border-slate-100 pb-6">
+          <h2 class="text-2xl font-bold text-slate-800">مراجعة بيانات الحجز</h2>
+          <p class="text-slate-600 mt-1">تأكد من تفاصيل موعدك قبل التأكيد</p>
         </div>
 
-        <div class="bg-slate-50 rounded-xl p-6 mb-8">
-          <div class="flex justify-between items-center mb-4">
-            <span class="text-gray-500">التاريخ والوقت:</span>
-            <span class="font-medium text-gray-900">{{ bookingForm.get('date')?.value }} -
+        <div class="bg-slate-50 rounded-lg border border-slate-200 p-6 mb-8">
+          <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200">
+            <span class="text-slate-600 font-medium">التاريخ والوقت:</span>
+            <span class="font-bold text-slate-800">{{ bookingForm.get('date')?.value }} -
               {{ bookingForm.get('timeSlot')?.value }}</span>
           </div>
 
-          <div class="space-y-4">
+          <div class="space-y-5">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">نوع الكشف</label>
-              <select formControlName="consultationType" title="consultationType"
-                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors bg-white">
+              <label class="block text-sm font-semibold text-slate-800 mb-2">نوع الكشف</label>
+              <select title="consultationType" formControlName="consultationType"
+                class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 outline-none transition-all bg-white text-slate-800">
                 <option value="In-Clinic">في العيادة (In-Clinic)</option>
                 <option value="Online">أونلاين (Online)</option>
               </select>
             </div>
 
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">سبب الزيارة (اختياري)</label>
-              <textarea formControlName="reasonForVisit" rows="3" title="reasonForVisit"
-                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors"></textarea>
+              <label class="block text-sm font-semibold text-slate-800 mb-2">سبب الزيارة (اختياري)</label>
+              <textarea title="reasonForVisit" formControlName="reasonForVisit" rows="3"
+                class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 outline-none transition-all text-slate-800"></textarea>
             </div>
           </div>
         </div>
 
         <div class="flex justify-between items-center">
           <button type="button" (click)="step = 1"
-            class="text-teal-600 font-medium hover:text-teal-700 py-3 px-6 rounded-xl transition-colors">
+            class="text-teal-600 font-semibold hover:bg-teal-50 py-2 px-6 rounded-lg transition-colors border border-transparent hover:border-teal-100">
             العودة للتعديل
           </button>
           <button type="button" [disabled]="bookingForm.invalid" (click)="submitBooking()"
-            class="bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-8 rounded-xl transition-colors disabled:opacity-50">
+            class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 shadow-sm">
             تأكيد الحجز
           </button>
         </div>
       </div>
 
-      <!-- Step 3: Success Confirmation -->
       <div *ngIf="step === 3" class="p-12 text-center">
-        <div class="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-10 h-10 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
           </svg>
         </div>
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">تم تأكيد حجزك بنجاح!</h2>
-        <p class="text-gray-500 mb-8 max-w-md mx-auto">لقد تم إرسال رسالة تأكيد تحتوي على كافة تفاصيل الموعد إلى بريدك
+        <h2 class="text-2xl font-bold text-slate-800 mb-2">تم تأكيد حجزك بنجاح!</h2>
+        <p class="text-slate-600 mb-8 max-w-md mx-auto">لقد تم إرسال رسالة تأكيد تحتوي على كافة تفاصيل الموعد إلى بريدك
           الإلكتروني.</p>
 
         <button type="button" (click)="goToAppointments()"
-          class="bg-teal-600 hover:bg-teal-700 text-white font-medium py-3 px-8 rounded-xl transition-colors inline-flex items-center gap-2">
+          class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors shadow-sm">
           عرض حجوزاتي
         </button>
       </div>
