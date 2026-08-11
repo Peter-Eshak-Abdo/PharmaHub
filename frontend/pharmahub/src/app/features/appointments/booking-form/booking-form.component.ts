@@ -7,7 +7,7 @@ import { AppointmentService } from '../services/appointment.service';
 @Component({
   selector: 'app-booking-form',
   templateUrl: './booking-form.component.html',
-  styleUrls: ['./booking-form.component.css'],
+  // styleUrls: ['./booking-form.component.css'],
 })
 export class BookingFormComponent implements OnInit {
   bookingForm!: FormGroup;
@@ -58,8 +58,12 @@ export class BookingFormComponent implements OnInit {
         ...this.bookingForm.value,
       };
       this.appointmentService.createAppointment(payload).subscribe(() => {
-        this.router.navigate(['/appointments/patient']);
+        this.step = 3;
       });
     }
+  }
+
+  goToAppointments(): void {
+    this.router.navigate(['/appointments/patient']);
   }
 }
