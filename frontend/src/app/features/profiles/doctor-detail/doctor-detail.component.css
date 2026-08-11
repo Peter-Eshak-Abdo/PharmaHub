@@ -1,0 +1,98 @@
+/* src/app/features/profiles/doctor-detail/doctor-detail.component.css */
+.detail-container {
+  max-width: 1000px;
+  margin: 48px auto;
+}
+
+.detail-header-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.detail-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-pill);
+  background-color: var(--border-color);
+  object-fit: cover;
+}
+
+.detail-title h2 {
+  margin: 0 0 8px 0;
+  font-size: 32px; /* headline-lg[cite: 7] */
+}
+
+.detail-spec {
+  color: var(--primary-color);
+  font-size: 18px; /* body-lg[cite: 7] */
+  font-weight: 500;
+  margin: 0 0 16px 0;
+}
+
+.detail-metrics {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.fee-badge {
+  background-color: var(--bg-level-0);
+  border: 1px solid var(--border-color);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  color: var(--text-heading);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.info-block {
+  margin-bottom: 24px;
+}
+
+.info-block strong {
+  display: block;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+}
+
+.info-block p {
+  margin: 0;
+  color: var(--text-body);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 32px 0;
+}
+
+@media (max-width: 768px) {
+  .detail-header-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .info-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .detail-metrics {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

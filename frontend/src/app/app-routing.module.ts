@@ -7,6 +7,13 @@ import { MedicalHistoryComponent } from './features/medical/medical-history/medi
 
 const routes: Routes = [
   {
+    path: 'profiles',
+    loadChildren: () =>
+      import('./features/profiles/profiles.module').then(
+        (m) => m.ProfilesModule,
+      ),
+  },
+  {
     path: 'auth',
     loadChildren: () =>
       import('./features/auth/auth.module').then((m) => m.AuthModule),

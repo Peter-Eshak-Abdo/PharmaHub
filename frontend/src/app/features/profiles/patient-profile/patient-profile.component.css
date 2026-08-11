@@ -1,0 +1,35 @@
+/* src/app/features/profiles/patient-profile/patient-profile.component.css */
+.profile-container {
+  max-width: 800px;
+  margin: 48px auto;
+}
+
+.profile-form-wrapper {
+  margin-top: 24px;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-row {
+  display: flex;
+  gap: 24px;
+}
+
+.form-col {
+  flex: 1;
+}
+
+.submit-btn-wrapper {
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
