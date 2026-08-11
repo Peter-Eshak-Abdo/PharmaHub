@@ -14,13 +14,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">التاريخ</label>
-            <input type="date" formControlName="date" (change)="onDateChange($event)"
+            <input type="date"title="Date" formControlName="date" (change)="onDateChange($event)"
               class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors" />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">المواعيد المتاحة</label>
-            <select formControlName="timeSlot"
+            <select formControlName="timeSlot" title="availableSlots"
               class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors bg-white">
               <option value="" disabled selected>اختر الموعد</option>
               <option *ngFor="let slot of availableSlots" [value]="slot.time">{{ slot.time }}</option>
@@ -54,7 +54,7 @@
           <div class="space-y-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">نوع الكشف</label>
-              <select formControlName="consultationType"
+              <select formControlName="consultationType" title="consultationType"
                 class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors bg-white">
                 <option value="In-Clinic">في العيادة (In-Clinic)</option>
                 <option value="Online">أونلاين (Online)</option>
@@ -63,7 +63,7 @@
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">سبب الزيارة (اختياري)</label>
-              <textarea formControlName="reasonForVisit" rows="3"
+              <textarea formControlName="reasonForVisit" rows="3" title="reasonForVisit"
                 class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-teal-500 focus:border-teal-500 outline-none transition-colors"></textarea>
             </div>
           </div>
