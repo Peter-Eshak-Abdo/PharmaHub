@@ -20,7 +20,7 @@ export class BookingFormComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private appointmentService: AppointmentService,
+    private appointmentService: AppointmentService
   ) {}
 
   ngOnInit(): void {
@@ -29,24 +29,19 @@ export class BookingFormComponent implements OnInit {
       date: ['', Validators.required],
       timeSlot: ['', Validators.required],
       consultationType: ['In-Clinic', Validators.required],
-      reasonForVisit: [''],
+      reasonForVisit: ['']
     });
   }
 
   onDateChange(event: any): void {
     this.selectedDate = event.target.value;
-    this.appointmentService
-      .getAvailableSlots(this.doctorId, this.selectedDate)
-      .subscribe((res) => {
-        this.availableSlots = res.slots || [];
-      });
+    this.appointmentService.getAvailableSlots(this.doctorId, this.selectedDate).subscribe(res => {
+      this.availableSlots = res.slots || [];
+    });
   }
 
   nextStep(): void {
-    if (
-      this.bookingForm.get('date')?.valid &&
-      this.bookingForm.get('timeSlot')?.valid
-    ) {
+    if (this.bookingForm.get('date')?.valid && this.bookingForm.get('timeSlot')?.valid) {
       this.step = 2;
     }
   }
@@ -55,7 +50,7 @@ export class BookingFormComponent implements OnInit {
     if (this.bookingForm.valid) {
       const payload = {
         doctorId: this.doctorId,
-        ...this.bookingForm.value,
+        ...this.bookingForm.value
       };
       this.appointmentService.createAppointment(payload).subscribe(() => {
         this.step = 3;

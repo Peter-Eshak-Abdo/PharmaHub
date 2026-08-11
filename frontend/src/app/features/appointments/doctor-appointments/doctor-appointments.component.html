@@ -2,59 +2,59 @@
 <div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans dir-rtl">
   <div class="max-w-7xl mx-auto">
 
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-900">لوحة تحكم الطبيب</h1>
-        <p class="text-gray-500 mt-1">إدارة حجوزات المرضى ومتابعة المواعيد</p>
-      </div>
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-slate-800 tracking-tight">لوحة تحكم الطبيب</h1>
+      <p class="text-slate-600 mt-2">إدارة حجوزات المرضى ومتابعة المواعيد</p>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
       <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+        <table class="min-w-full divide-y divide-slate-200">
+          <thead class="bg-slate-50">
             <tr>
-              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                المريض</th>
-              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                التاريخ والوقت</th>
-              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                النوع</th>
-              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                الحالة</th>
-              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                الإجراءات</th>
+              <th scope="col"
+                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">المريض</th>
+              <th scope="col"
+                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">التاريخ
+                والوقت</th>
+              <th scope="col"
+                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">النوع</th>
+              <th scope="col"
+                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الحالة</th>
+              <th scope="col"
+                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الإجراءات
+              </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr *ngFor="let appt of appointments" class="hover:bg-gray-50 transition-colors">
+          <tbody class="bg-white divide-y divide-slate-200">
+            <tr *ngFor="let appt of appointments" class="hover:bg-slate-50 transition-colors">
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-gray-900">{{ appt.patientName }}</div>
+                <div class="text-sm font-bold text-slate-800">{{ appt.patientName }}</div>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900">{{ appt.date }}</div>
-                <div class="text-sm text-gray-500">{{ appt.timeSlot }}</div>
+                <div class="text-sm font-medium text-slate-800">{{ appt.date }}</div>
+                <div class="text-sm text-slate-500">{{ appt.timeSlot }}</div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
                 {{ appt.consultationType }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <span [ngClass]="getStatusClass(appt.status)"
-                  class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full">
+                <span [ngClass]="getStatusBadge(appt.status)"
+                  class="px-3 py-1 inline-flex text-xs font-semibold rounded-full">
                   {{ appt.status }}
                 </span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <div class="flex gap-2">
                   <button *ngIf="appt.status === 'Pending'" (click)="updateStatus(appt.id, appt.status, 'Confirmed')"
-                    class="text-teal-600 hover:text-teal-900 bg-teal-50 px-3 py-1 rounded-md transition-colors">تأكيد</button>
+                    class="text-teal-700 bg-teal-50 border border-teal-200 hover:bg-teal-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold">تأكيد</button>
                   <button *ngIf="appt.status === 'Pending' || appt.status === 'Confirmed'"
                     (click)="updateStatus(appt.id, appt.status, 'Cancelled')"
-                    class="text-red-600 hover:text-red-900 bg-red-50 px-3 py-1 rounded-md transition-colors">إلغاء</button>
+                    class="text-red-700 bg-red-50 border border-red-200 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold">إلغاء</button>
                   <button *ngIf="appt.status === 'Confirmed'" (click)="updateStatus(appt.id, appt.status, 'Completed')"
-                    class="text-green-600 hover:text-green-900 bg-green-50 px-3 py-1 rounded-md transition-colors">مكتمل</button>
+                    class="text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold">مكتمل</button>
                   <button *ngIf="appt.status === 'Confirmed'" (click)="updateStatus(appt.id, appt.status, 'No-Show')"
-                    class="text-gray-600 hover:text-gray-900 bg-gray-100 px-3 py-1 rounded-md transition-colors">لم
+                    class="text-slate-700 bg-slate-100 border border-slate-300 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold">لم
                     يحضر</button>
                 </div>
               </td>
@@ -62,7 +62,7 @@
           </tbody>
         </table>
         <div *ngIf="appointments.length === 0" class="text-center py-12">
-          <p class="text-gray-500">لا توجد حجوزات لعرضها حالياً.</p>
+          <p class="text-slate-500 font-medium">لا توجد حجوزات لعرضها حالياً.</p>
         </div>
       </div>
     </div>
