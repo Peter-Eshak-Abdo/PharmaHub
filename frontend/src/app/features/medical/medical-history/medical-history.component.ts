@@ -53,7 +53,7 @@ export class MedicalHistoryComponent implements OnInit {
     }
 
     this.http
-      .get<any>(`/api/patients/${this.patientId}/medical-history`)
+      .get<any>(`/api/patient/${this.patientId}/medical-history`)
       .subscribe({
         next: (res) => {
           this.history = res?.data ?? [];
