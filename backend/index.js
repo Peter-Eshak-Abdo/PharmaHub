@@ -17,6 +17,7 @@ const diagnosisRoutes = require("./routes/Diagnosisroutes");
 const medicationRoutes = require("./routes/Medicationroutes");
 const prescriptionRoutes = require("./routes/Prescriptionroutes");
 const reviewRoutes = require("./routes/ReviewRoutes");
+const medicalHistoryRoutes = require("./routes/medicalHistoryRoutes");
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use("/api/diagnoses", diagnosisRoutes);
 app.use("/api/medications", medicationRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/patients", medicalHistoryRoutes);
 
 const PORT = process.env.PORT || 8080;
 

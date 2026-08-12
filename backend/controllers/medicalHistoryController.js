@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Appointment = require('../models/Appointment'); // Assuming this will be created by Peter
+const Appointment = require('../models/Appointments');
 
 /**
  * @desc    Get complete medical history for a patient via Aggregation Pipeline
