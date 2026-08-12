@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AvailabilityService {
   // private apiUrl = 'http://localhost:8080/api/availability';
   private apiUrl = `${environment.apiUrl}/api/availability`;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   addAvailability(data: any) {
     return this.http.post(this.apiUrl, data);
