@@ -28,7 +28,7 @@ export class AuthService {
   register(data: any): Observable<any> {
     const payload = {
       email: data.email,
-      password_hash: data.password,
+      password: data.password,
       role: data.role,
     };
     return this.http.post<any>(`${this.apiUrl}/register`, payload).pipe(
@@ -55,7 +55,7 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
-  
+
   private getUserFromToken(): User | null {
     const token = this.getToken();
     if (!token) return null;
