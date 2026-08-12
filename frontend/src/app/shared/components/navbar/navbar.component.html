@@ -1,4 +1,4 @@
-<nav>
+<!-- <nav>
   <a routerLink="/">Doctor Appointment System</a>
   <ul *ngIf="currentUser">
     <li *ngIf="currentUser.role === 'admin'"><a routerLink="/admin/dashboard">Admin Dashboard</a></li>
@@ -14,4 +14,61 @@
 
 <main>
   <router-outlet></router-outlet>
-</main>
+</main> -->
+
+<!-- src/app/shared/components/navbar/navbar.component.html -->
+<nav class="bg-slate-900 text-slate-100 p-4 shadow-lg border-b border-slate-700">
+  <div class="container mx-auto flex flex-wrap items-center justify-between gap-4">
+    <a routerLink="/" class="text-xl font-bold text-teal-400 tracking-wide flex items-center gap-2">
+      💊 PharmaHub <span class="text-xs bg-teal-900 text-teal-300 px-2 py-0.5 rounded border border-teal-700">Test
+        Nav</span>
+    </a>
+
+    <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
+      <!-- Auth -->
+      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
+        <span class="text-slate-400 font-semibold px-1">Auth:</span>
+        <a routerLink="/auth/login" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Login</a>
+        <a routerLink="/auth/register" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Register</a>
+      </div>
+
+      <!-- Profiles -->
+      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
+        <span class="text-slate-400 font-semibold px-1">Profiles:</span>
+        <a routerLink="/doctors" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Doctor List</a>
+        <a routerLink="/patient-profile" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Patient Profile</a>
+      </div>
+
+      <!-- Schedule -->
+      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
+        <span class="text-slate-400 font-semibold px-1">Schedule:</span>
+        <a routerLink="/schedule" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Weekly Availability</a>
+      </div>
+
+      <!-- Appointments -->
+      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
+        <span class="text-slate-400 font-semibold px-1">Appointments:</span>
+        <a routerLink="/appointments/patient" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Patient View</a>
+        <a routerLink="/appointments/doctor" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Doctor View</a>
+        <a routerLink="/appointments/book/6a7a68e2039344ea7b05c884" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Book Form</a>
+      </div>
+
+      <!-- Medical -->
+      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
+        <span class="text-slate-400 font-semibold px-1">Medical:</span>
+        <a routerLink="/prescription/123" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Prescription View</a>
+        <a routerLink="/medical" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Medical Module</a>
+      </div>
+    </div>
+  </div>
+</nav>
