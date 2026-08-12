@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleService {
-  private availabilityUrl = '/api/availability';
-  private exceptionUrl = '/api/exceptions';
+  private baseUrl = environment.apiUrl.replace(/\/$/, '');
+  private availabilityUrl = `${this.baseUrl}/api/availability`;
+  private exceptionUrl = `${this.baseUrl}/api/exceptions`;
 
   constructor(private http: HttpClient) {}
 
