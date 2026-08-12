@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PatientService {
-  private apiUrl = '/api/patients';
+  private apiUrl = '/api/patient';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getPatientProfile(): Observable<any> {
     return this.http.get(`${this.apiUrl}/profile`);
