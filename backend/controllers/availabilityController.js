@@ -42,10 +42,7 @@ exports.addAvailability = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/belal-slot-engine
+
 // GET /api/availability/:doctorId
 // Returns all weekly slots for one doctor, ordered Mon->Sun by start time.
 // Used by the Appointments module to know when a doctor can be booked.
@@ -171,10 +168,6 @@ exports.getAvailableSlots = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
-<<<<<<< HEAD
+//<<<<<<< HEAD
 };
-=======
->>>>>>> origin/belal-slot-engine
-=======
-};
->>>>>>> origin/belal-slot-engine
+
