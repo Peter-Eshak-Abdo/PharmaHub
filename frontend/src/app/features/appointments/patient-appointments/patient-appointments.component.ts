@@ -5,7 +5,7 @@ import { AppointmentService } from '../services/appointment.service';
 @Component({
   selector: 'app-patient-appointments',
   templateUrl: './patient-appointments.component.html',
-  // styleUrls: ['./patient-appointments.component.css'],
+  styleUrls: ['./patient-appointments.component.css'],
 })
 export class PatientAppointmentsComponent implements OnInit {
   appointments: any[] = [];
@@ -14,8 +14,8 @@ export class PatientAppointmentsComponent implements OnInit {
   constructor(private appointmentService: AppointmentService) {}
 
   ngOnInit(): void {
-    this.appointmentService.getPatientAppointments().subscribe((res) => {
-      this.appointments = res;
+    this.appointmentService.getPatientAppointments().subscribe((res: any) => {
+      this.appointments = res.data || res || [];
     });
   }
 

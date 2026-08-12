@@ -12,7 +12,7 @@ export class WeeklyAvailabilityComponent implements OnInit {
 
   newSlot = {
     doctorId: '',
-    dayOfWeek: 'Monday',
+    dayOfWeek: 'Saturday',
     startTime: '',
     endTime: '',
     slotDurationMinutes: 30
@@ -30,7 +30,7 @@ export class WeeklyAvailabilityComponent implements OnInit {
 
   loadSlots() {
     this.availabilityService.getAvailabilityByDoctor(this.doctorId).subscribe((data: any) => {
-      this.slots = data.data || data;
+      this.slots = data.data || data || [];
     });
   }
 
