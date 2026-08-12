@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 
 const generateToken = (id) => {
   return jwt.sign(
-    { userId: id },
-    // { id: user._id, userId: user._id, email: user.email, role: user.role },
+    // { userId: id },
+    { id: user._id, userId: user._id, email: user.email, role: user.role },
     process.env.JWT_SECRET || "secret",
     {
       expiresIn: "30d",
@@ -15,7 +15,6 @@ const generateToken = (id) => {
 };
 
 // تسجيل حساب جديد (With Profile Coupling)
-// تسجيل حساب جديد
 const registerUser = async (req, res) => {
   try {
     const { email, password, role } = req.body;
