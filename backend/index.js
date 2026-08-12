@@ -17,6 +17,7 @@ const diagnosisRoutes = require("./routes/Diagnosisroutes");
 const medicationRoutes = require("./routes/Medicationroutes");
 const prescriptionRoutes = require("./routes/Prescriptionroutes");
 const reviewRoutes = require("./routes/ReviewRoutes");
+const medicalHistoryRoutes = require("./routes/medicalHistoryRoutes");
 
 dotenv.config();
 
@@ -32,6 +33,7 @@ connectDB();
 // مسارات المصادقة والمريض
 app.use("/api/auth", authRoutes);
 app.use("/api/patient", patientRoutes);
+app.use("/api/patient", medicalHistoryRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/api/availability", availabilityRoutes);
@@ -40,6 +42,7 @@ app.use("/api/diagnoses", diagnosisRoutes);
 app.use("/api/medications", medicationRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/reviews", reviewRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 
