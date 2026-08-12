@@ -29,19 +29,26 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   onSubmit(): void {
+    console.log('SUBMIT CLICKED - form valid:', this.loginForm.valid, 'values:', this.loginForm.value);
     this.submitted = true;
-    if (this.loginForm.invalid) return;
-
+    if (this.loginForm.invalid) {
+      console.log('FORM INVALID - stopping here');
+      return;
+    }
+    console.log('CALLING authService.login...');
     this.authService.login(this.loginForm.value).subscribe({
       next: () => {
+        console.log('LOGIN SUCCESS');
         let userRole = null;
         this.authService.currentUser$.subscribe(u => userRole = u?.role).unsubscribe();
-        
+
         if (userRole === 'doctor') this.router.navigate(['/doctor-dashboard']);
         else if (userRole === 'patient') this.router.navigate(['/appointments']);
         else if (userRole === 'admin') this.router.navigate(['/admin-dashboard']);
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.log('LOGIN ERROR:', err);
+      }
     });
   }
 }
