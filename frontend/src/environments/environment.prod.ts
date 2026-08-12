@@ -1,4 +1,4 @@
 export const environment = {
-    production: true,
-    apiUrl: 'https://pharma-hub-azure.vercel.app/' // Replace with your production API domain
+  production: true,
+  apiUrl: 'https://pharma-hub-azure.vercel.app/api', // Replace with your production API domain
 };
