@@ -4,15 +4,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ScheduleRoutingModule } from './schedule-routing.module';
 import { WeeklyAvailabilityComponent } from './weekly-availability/weekly-availability.component';
+import { ScheduleExceptionsComponent } from './schedule-exceptions/schedule-exceptions.component';
 
 @NgModule({
-  declarations: [WeeklyAvailabilityComponent],
+  declarations: [WeeklyAvailabilityComponent, ScheduleExceptionsComponent],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     ScheduleRoutingModule,
   ],
-  exports: [WeeklyAvailabilityComponent],
+  exports: [WeeklyAvailabilityComponent, ScheduleExceptionsComponent],
 })
 export class ScheduleModule {}
