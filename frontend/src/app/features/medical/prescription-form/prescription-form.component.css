@@ -53,10 +53,7 @@
 ul::-webkit-scrollbar {
   display: none;
 }
-ul {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
 
 /* ── Select custom styling ───────────────────────────────────── */
 select {
