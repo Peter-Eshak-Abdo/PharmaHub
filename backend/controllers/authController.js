@@ -3,46 +3,47 @@ const Patient = require("../models/Patients");
 const Doctor = require("../models/Doctors");
 const jwt = require("jsonwebtoken");
 
-const generateToken = (user) => {
+const generateToken = (id) => {
   return jwt.sign(
-    { id: user._id, userId: user._id, email: user.email, role: user.role },
+    { userId: id },
+    // { id: user._id, userId: user._id, email: user.email, role: user.role },
     process.env.JWT_SECRET || "secret",
-    { expiresIn: "30d" }
+    {
+      expiresIn: "30d",
+    },
   );
 };
 
 // تسجيل حساب جديد (With Profile Coupling)
+// تسجيل حساب جديد
 const registerUser = async (req, res) => {
   try {
-    const { email, password, role, fullName, ...profileData } = req.body;
-    
-    // 1. Validation
-    if (!fullName) {
-        return res.status(400).json({ message: "Full Name is required for profiles" });
+    const { email, password, role } = req.body;
+
+    // 1. Check required account data
+    if (!email || !password || !role) {
+      return res.status(400).json({
+        message: "Email, password and role are required",
+      });
     }
-    
+
+    // 2. Check if user already exists
     const userExists = await User.findOne({ email });
+
     if (userExists) {
-      return res.status(400).json({ message: "المستخدم موجود بالفعل" });
+      return res.status(400).json({
+        message: "المستخدم موجود بالفعل",
+      });
     }
 
-    // 2. Create User
-    const user = await User.create({ email, password, role });
+    // 3. Create User only
+    const user = await User.create({
+      email,
+      password,
+      role,
+    });
 
-    // 3. Profile Coupling (BR-AUTH-003)
-    try {
-        if (role === 'patient') {
-            await Patient.create({ userId: user._id, fullName, ...profileData });
-        } else if (role === 'doctor') {
-            await Doctor.create({ userId: user._id, fullName, ...profileData });
-        }
-        // If admin, no profile is created.
-    } catch (profileError) {
-        // If profile creation fails, we should ideally rollback user creation (simulate transaction)
-        await User.findByIdAndDelete(user._id);
-        return res.status(400).json({ message: "Failed to create profile, user creation rolled back: " + profileError.message });
-    }
-
+    // 4. Return account + token
     res.status(201).json({
       _id: user._id,
       email: user.email,
@@ -50,7 +51,9 @@ const registerUser = async (req, res) => {
       token: generateToken(user),
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
@@ -80,14 +83,14 @@ const getAdminStats = async (req, res) => {
         const userCount = await User.countDocuments();
         const patientCount = await Patient.countDocuments();
         const doctorCount = await Doctor.countDocuments();
-        
-        res.json({ 
-            success: true, 
-            stats: { 
+
+        res.json({
+            success: true,
+            stats: {
                 users: userCount,
                 patients: patientCount,
                 doctors: doctorCount
-            } 
+            }
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
