@@ -4,16 +4,19 @@ const {
   getDoctorProfile,
   createDoctorProfile,
   updateDoctorProfile,
+  getAllDoctors,
+  getDoctorById,
 } = require("../controllers/DoctorController");
 const { protect } = require("../middlewares/auth");
 
-// مسار جلب بيانات الدكتور
+// مسارات بروفايل الطبيب
 router.get("/profile", protect, getDoctorProfile);
-
-// مسار إنشاء بيانات الدكتور لأول مرة
 router.post("/profile", protect, createDoctorProfile);
-
-// مسار تحديث بيانات الدكتور
 router.put("/profile", protect, updateDoctorProfile);
 
+// مسارات تصفح الأطباء (عامة)
+router.get("/", getAllDoctors);
+router.get("/:id", getDoctorById);
+
 module.exports = router;
+

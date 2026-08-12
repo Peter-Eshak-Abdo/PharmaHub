@@ -10,22 +10,24 @@ import { Appointment, TimeSlot } from '../models/appointment.model';
 export class AppointmentService {
   private apiUrl = '/api/appointments';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  getPatientAppointments(): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(`${this.apiUrl}/patient`);
+  getPatientAppointments(patientId?: string): Observable<any> {
+    const url = patientId ? `${this.apiUrl}/patient/${patientId}` : `${this.apiUrl}/patient`;
+    return this.http.get<any>(url);
   }
 
-  getDoctorAppointments(): Observable<Appointment[]> {
-    return this.http.get<Appointment[]>(`${this.apiUrl}/doctor`);
+  getDoctorAppointments(doctorId?: string): Observable<any> {
+    const url = doctorId ? `${this.apiUrl}/doctor/${doctorId}` : `${this.apiUrl}/doctor`;
+    return this.http.get<any>(url);
   }
 
   getAvailableSlots(
     doctorId: string,
     date: string,
-  ): Observable<{ slots: TimeSlot[] }> {
-    return this.http.get<{ slots: TimeSlot[] }>(
-      `${this.apiUrl}/slots?doctorId=${doctorId}&date=${date}`,
+  ): Observable<any> {
+    return this.http.get<any>(
+      `/api/availability/${doctorId}/slots?date=${date}`,
     );
   }
 
@@ -39,3 +41,4 @@ export class AppointmentService {
     });
   }
 }
+

@@ -58,7 +58,8 @@ export class AuthService {
     if (!token) return null;
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      return { _id: payload.userId, email: payload.email, role: payload.role };
+      const userId = payload.userId || payload.id;
+      return { _id: userId, email: payload.email, role: payload.role };
     } catch (e) {
       return null;
     }

@@ -3,10 +3,12 @@ const Patient = require("../models/Patients");
 const Doctor = require("../models/Doctors");
 const jwt = require("jsonwebtoken");
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || "secret", {
-    expiresIn: "30d",
-  });
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user._id, userId: user._id, email: user.email, role: user.role },
+    process.env.JWT_SECRET || "secret",
+    { expiresIn: "30d" }
+  );
 };
 
 // تسجيل حساب جديد (With Profile Coupling)
@@ -45,7 +47,7 @@ const registerUser = async (req, res) => {
       _id: user._id,
       email: user.email,
       role: user.role,
-      token: generateToken(user._id),
+      token: generateToken(user),
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -62,7 +64,7 @@ const loginUser = async (req, res) => {
         _id: user._id,
         email: user.email,
         role: user.role,
-        token: generateToken(user._id),
+        token: generateToken(user),
       });
     } else {
       res.status(401).json({ message: "البريد أو كلمة المرور غير صحيحة" });

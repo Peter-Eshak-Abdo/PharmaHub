@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DoctorService {
-  private apiUrl = '/api/doctors';
+  private apiUrl = '/api/doctor';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getDoctors(specialization?: string): Observable<any[]> {
     let params = new HttpParams();
