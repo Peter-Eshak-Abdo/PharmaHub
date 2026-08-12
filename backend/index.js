@@ -24,7 +24,14 @@ dotenv.config();
 const app = express();
 
 // تمكين الطلبات المتقاطعة المصدر (CORS)
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "*", // بيسمح باستقبال الطلبات من أي دومين (حل ممتاز عشان روابط Vercel المتغيرة)
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.json());
 
 // الاتصال بقاعدة البيانات
