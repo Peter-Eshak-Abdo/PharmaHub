@@ -1,14 +1,25 @@
 const WeeklyAvailability = require('../models/WeeklyAvailability');
 const ScheduleException = require('../models/ScheduleException');
 const Appointment = require('../models/Appointments');
-const { generateTimeslots } = require('../utils/timeSlotGenerator');
 
 // POST /api/availability
 exports.addAvailability = async (req, res) => {
   try {
-    const { doctorId, dayOfWeek, startTime, endTime, slotDurationMinutes } = req.body;
+    const {
+      doctorId,
+      dayOfWeek,
+      startTime,
+      endTime,
+      slotDurationMinutes,
+    } = req.body;
 
-    if (!doctorId || !dayOfWeek || !startTime || !endTime || !slotDurationMinutes) {
+    if (
+      !doctorId ||
+      !dayOfWeek ||
+      !startTime ||
+      !endTime ||
+      !slotDurationMinutes
+    ) {
       return res.status(400).json({
         success: false,
         message:
@@ -24,67 +35,32 @@ exports.addAvailability = async (req, res) => {
       slotDurationMinutes,
     });
 
-    return res.status(201).json({ success: true, data: slot });
+    return res.status(201).json({
+      success: true,
+      data: slot,
+    });
   } catch (error) {
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
-        message: 'This doctor already has a weekly availability entry for that day',
+        message:
+          'This doctor already has a weekly availability entry for that day',
       });
     }
+
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ success: false, message: error.message });
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-    return res.status(500).json({ success: false, message: error.message });
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
-
-<<<<<<< HEAD
-=======
-// GET /api/availability/:doctorId/slots?date=YYYY-MM-DD
-exports.getAvailableSlots = async (req, res) => {
-  try {
-    const { doctorId } = req.params;
-    const { date } = req.query;
-
-    if (!date) {
-      return res.status(400).json({ error: 'date query param is required (YYYY-MM-DD)' });
-    }
-
-    const targetDate = new Date(date);
-    const dayOfWeek = targetDate.toLocaleDateString('en-US', { weekday: 'long' });
-
-    const weekly = await WeeklyAvailability.findOne({ doctorId, dayOfWeek });
-    if (!weekly) {
-      return res.json({ date, slots: [] });
-    }
-
-    const exception = await ScheduleException.findOne({
-      doctorId,
-      startDate: { $lte: targetDate },
-      endDate: { $gte: targetDate },
-    });
-    if (exception) {
-      return res.json({ date, slots: [], blocked: true, reason: exception.type });
-    }
-
-    let slots = generateTimeslots(weekly.startTime, weekly.endTime, weekly.slotDurationMinutes);
-
-    const bookedAppointments = await Appointment.find({
-      doctorId,
-      appointmentDate: date,
-      status: { $in: ['Pending', 'Confirmed', 'Completed'] },
-    });
-
-    const bookedTimes = bookedAppointments.map((a) => a.appointmentTime);
-    slots = slots.filter((slot) => !bookedTimes.includes(slot.start));
-
-    res.json({ date, dayOfWeek, slots });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
->>>>>>> 247d8b498c1075e597c59a24712dd2dde05b5503
 
 // GET /api/availability/:doctorId
 exports.getAvailabilityByDoctor = async (req, res) => {
@@ -96,9 +72,16 @@ exports.getAvailabilityByDoctor = async (req, res) => {
       startTime: 1,
     });
 
-    return res.status(200).json({ success: true, count: slots.length, data: slots });
+    return res.status(200).json({
+      success: true,
+      count: slots.length,
+      data: slots,
+    });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -108,25 +91,42 @@ exports.updateAvailability = async (req, res) => {
     const { id } = req.params;
 
     const existing = await WeeklyAvailability.findById(id);
+
     if (!existing) {
-      return res.status(404).json({ success: false, message: 'Slot not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Slot not found',
+      });
     }
 
     Object.assign(existing, req.body);
+
     const updated = await existing.save();
 
-    return res.status(200).json({ success: true, data: updated });
+    return res.status(200).json({
+      success: true,
+      data: updated,
+    });
   } catch (error) {
     if (error.code === 11000) {
       return res.status(409).json({
         success: false,
-        message: 'This doctor already has a weekly availability entry for that day',
+        message:
+          'This doctor already has a weekly availability entry for that day',
       });
     }
+
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ success: false, message: error.message });
+      return res.status(400).json({
+        success: false,
+        message: error.message,
+      });
     }
-    return res.status(500).json({ success: false, message: error.message });
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -134,15 +134,25 @@ exports.updateAvailability = async (req, res) => {
 exports.deleteAvailability = async (req, res) => {
   try {
     const { id } = req.params;
+
     const deleted = await WeeklyAvailability.findByIdAndDelete(id);
 
     if (!deleted) {
-      return res.status(404).json({ success: false, message: 'Slot not found' });
+      return res.status(404).json({
+        success: false,
+        message: 'Slot not found',
+      });
     }
 
-    return res.status(200).json({ success: true, message: 'Slot deleted' });
+    return res.status(200).json({
+      success: true,
+      message: 'Slot deleted',
+    });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -151,63 +161,103 @@ exports.deleteAvailability = async (req, res) => {
 exports.getAvailableSlots = async (req, res) => {
   try {
     const { doctorId } = req.params;
-    const { date } = req.query; // expected format: YYYY-MM-DD
+    const { date } = req.query;
+
     if (!date) {
-      return res.status(400).json({ success: false, message: 'Date query parameter is required' });
+      return res.status(400).json({
+        success: false,
+        message: 'Date query parameter is required',
+      });
     }
-    const dayOfWeek = new Date(date).getUTCDay(); // 0 (Sun) - 6 (Sat)
-    // Convert to ISO day (1=Mon, 7=Sun)
+
+    const dayOfWeek = new Date(date).getUTCDay();
+
+    // Convert to ISO day:
+    // 1 = Monday ... 7 = Sunday
     const isoDay = dayOfWeek === 0 ? 7 : dayOfWeek;
-    const weeklySlot = await WeeklyAvailability.findOne({ doctorId, dayOfWeek: isoDay });
+
+    const weeklySlot = await WeeklyAvailability.findOne({
+      doctorId,
+      dayOfWeek: isoDay,
+    });
+
     if (!weeklySlot) {
-      return res.status(404).json({ success: false, message: 'No weekly availability for this day' });
+      return res.status(404).json({
+        success: false,
+        message: 'No weekly availability for this day',
+      });
     }
-    // Check schedule exceptions (doctor on vacation etc.)
-    const ScheduleException = require('../models/ScheduleException');
+
+    // Check schedule exceptions
     const exception = await ScheduleException.findOne({
       doctorId,
       startDate: { $lte: new Date(date) },
       endDate: { $gte: new Date(date) },
     });
+
     if (exception) {
-      return res.status(200).json({ success: true, slots: [] }); // doctor unavailable
+      return res.status(200).json({
+        success: true,
+        slots: [],
+      });
     }
-    const Appointment = require('../models/Appointments');
+
     const appointments = await Appointment.find({
       doctorId,
       appointmentDate: new Date(date),
       status: { $ne: 'Cancelled' },
     }).select('appointmentTime');
-    const start = weeklySlot.startTime; // HH:MM
+
+    const start = weeklySlot.startTime;
     const end = weeklySlot.endTime;
     const slotDuration = weeklySlot.slotDurationMinutes;
-    const toMinutes = (t) => {
-      const [h, m] = t.split(':').map(Number);
-      return h * 60 + m;
+
+    const toMinutes = (time) => {
+      const [hours, minutes] = time.split(':').map(Number);
+      return hours * 60 + minutes;
     };
-    const fromMinutes = (m) => {
-      const h = Math.floor(m / 60).toString().padStart(2, '0');
-      const min = (m % 60).toString().padStart(2, '0');
-      return `${h}:${min}`;
+
+    const fromMinutes = (minutes) => {
+      const hours = Math.floor(minutes / 60)
+        .toString()
+        .padStart(2, '0');
+
+      const mins = (minutes % 60)
+        .toString()
+        .padStart(2, '0');
+
+      return `${hours}:${mins}`;
     };
+
     const startMin = toMinutes(start);
     const endMin = toMinutes(end);
-    const occupied = appointments.map(a => a.appointmentTime);
+
+    const occupied = appointments.map(
+      (appointment) => appointment.appointmentTime
+    );
+
     const availableSlots = [];
-    for (let cur = startMin; cur + slotDuration <= endMin; cur += slotDuration) {
-      const slotTime = fromMinutes(cur);
+
+    for (
+      let current = startMin;
+      current + slotDuration <= endMin;
+      current += slotDuration
+    ) {
+      const slotTime = fromMinutes(current);
+
       if (!occupied.includes(slotTime)) {
         availableSlots.push(slotTime);
       }
     }
-    return res.status(200).json({ success: true, slots: availableSlots });
-  } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
-  }
-<<<<<<< HEAD
-//<<<<<<< HEAD
-};
 
-=======
+    return res.status(200).json({
+      success: true,
+      slots: availableSlots,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
 };
->>>>>>> 247d8b498c1075e597c59a24712dd2dde05b5503
