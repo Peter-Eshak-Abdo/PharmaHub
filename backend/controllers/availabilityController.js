@@ -39,6 +39,8 @@ exports.addAvailability = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
+=======
 // GET /api/availability/:doctorId/slots?date=YYYY-MM-DD
 exports.getAvailableSlots = async (req, res) => {
   try {
@@ -82,6 +84,7 @@ exports.getAvailableSlots = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+>>>>>>> 247d8b498c1075e597c59a24712dd2dde05b5503
 
 // GET /api/availability/:doctorId
 exports.getAvailabilityByDoctor = async (req, res) => {
@@ -201,4 +204,10 @@ exports.getAvailableSlots = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
+<<<<<<< HEAD
+//<<<<<<< HEAD
 };
+
+=======
+};
+>>>>>>> 247d8b498c1075e597c59a24712dd2dde05b5503
