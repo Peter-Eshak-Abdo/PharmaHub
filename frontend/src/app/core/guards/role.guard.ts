@@ -7,22 +7,29 @@ export class RoleGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    let userRole = null;
+    let userRole: string | null = null;
     this.authService.currentUser$.subscribe(user => {
-       if(user) userRole = user.role;
+       if (user) userRole = user.role;
     }).unsubscribe();
-    
-    const expectedRole = route.data['expectedRole'];
+
+    // Route data uses the key 'role' (e.g. data: { role: 'patient' })
+    const expectedRole = route.data['role'];
+
     if (userRole === expectedRole) {
       return true;
     }
-    
-  
-    if (userRole === 'doctor') this.router.navigate(['/doctor-dashboard']);
-    else if (userRole === 'patient') this.router.navigate(['/appointments']);
-    else if (userRole === 'admin') this.router.navigate(['/admin/dashboard']);
-    else this.router.navigate(['/auth/login']);
-    this.router.navigate(['/auth/login']);
+
+    // Redirect based on actual role — never fall through to login for authenticated users
+    if (userRole === 'doctor') {
+      this.router.navigate(['/appointments/doctor']);
+    } else if (userRole === 'patient') {
+      this.router.navigate(['/appointments/patient']);
+    } else if (userRole === 'admin') {
+      this.router.navigate(['/auth/login']);
+    } else {
+      this.router.navigate(['/auth/login']);
+    }
+
     return false;
   }
 }
