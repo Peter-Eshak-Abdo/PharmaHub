@@ -39,7 +39,6 @@ exports.addAvailability = async (req, res) => {
   }
 };
 
-
 // GET /api/availability/:doctorId
 exports.getAvailabilityByDoctor = async (req, res) => {
   try {
@@ -117,7 +116,6 @@ exports.getAvailableSlots = async (req, res) => {
       return res.status(404).json({ success: false, message: 'No weekly availability for this day' });
     }
     // Check schedule exceptions (doctor on vacation etc.)
-    const ScheduleException = require('../models/ScheduleException');
     const exception = await ScheduleException.findOne({
       doctorId,
       startDate: { $lte: new Date(date) },
@@ -126,7 +124,6 @@ exports.getAvailableSlots = async (req, res) => {
     if (exception) {
       return res.status(200).json({ success: true, slots: [] }); // doctor unavailable
     }
-    const Appointment = require('../models/Appointments');
     const appointments = await Appointment.find({
       doctorId,
       appointmentDate: new Date(date),
@@ -159,4 +156,3 @@ exports.getAvailableSlots = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-

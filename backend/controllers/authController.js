@@ -3,10 +3,9 @@ const Patient = require("../models/Patients");
 const Doctor = require("../models/Doctors");
 const jwt = require("jsonwebtoken");
 
-const generateToken = (id) => {
+const generateToken = (user) => {
   return jwt.sign(
-    // { userId: id },
-    { id: user._id, userId: user._id, email: user.email, role: user.role },
+    { userId: user._id, id: user._id, email: user.email, role: user.role },
     process.env.JWT_SECRET || "secret",
     {
       expiresIn: "30d",
