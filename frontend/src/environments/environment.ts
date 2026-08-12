@@ -1,5 +1,6 @@
 export const environment = {
-    production: false,
+  production: false,
   // apiUrl: 'http://localhost:8080/api'
-  apiUrl:'/api'
+  // apiUrl:'/api'
+  apiUrl: 'https://pharma-hub-azure.vercel.app/api',
 };
