@@ -50,7 +50,7 @@
         <form class="flex flex-col gap-sm">
           <div class="flex flex-col gap-base">
             <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Day of Week</label>
-            <select [(ngModel)]="newSlot.dayOfWeek" name="dayOfWeek"
+            <select title ="newSlot.dayOfWeek" name="dayOfWeek"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
               <option *ngFor="let day of days" [value]="day">{{ day }}</option>
             </select>
@@ -58,19 +58,19 @@
 
           <div class="flex flex-col gap-base">
             <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Start Time</label>
-            <input type="time" [(ngModel)]="newSlot.startTime" name="startTime"
+            <input title="time" type="time" [(ngModel)]="newSlot.startTime" name="startTime"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
           </div>
 
           <div class="flex flex-col gap-base">
             <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">End Time</label>
-            <input type="time" [(ngModel)]="newSlot.endTime" name="endTime"
+            <input title="time" type="time" [(ngModel)]="newSlot.endTime" name="endTime"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
           </div>
 
           <div class="flex flex-col gap-base">
             <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Slot Duration (minutes)</label>
-            <input type="number" [(ngModel)]="newSlot.slotDurationMinutes" name="slotDurationMinutes"
+            <input title="number" type="number" [(ngModel)]="newSlot.slotDurationMinutes" name="slotDurationMinutes"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
           </div>
 

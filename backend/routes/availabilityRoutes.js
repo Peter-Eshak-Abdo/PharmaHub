@@ -6,7 +6,6 @@ const {
   getAvailabilityByDoctor,
   updateAvailability,
   deleteAvailability,
-  getAvailableSlots,
 } = require("../controllers/availabilityController");
 const { protect, checkRole } = require("../middlewares/auth");
 
