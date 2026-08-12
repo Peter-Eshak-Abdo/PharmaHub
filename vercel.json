@@ -1,11 +1,12 @@
 {
+  "version" : 2,
   "services": {
     "frontend": {
       "root": "frontend",
       "framework": "angular"
     },
     "backend": {
-      "root": "backend"
+      "root": "backend/index.js"
     }
   },
   "rewrites": [
