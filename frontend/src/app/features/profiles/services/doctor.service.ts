@@ -6,19 +6,28 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class DoctorService {
-  private apiUrl = '/api/doctors';
+  private apiUrl = '/api/doctor';
 
   constructor(private http: HttpClient) {}
 
-  getDoctors(specialization?: string): Observable<any[]> {
+  getDoctors(specialization?: string): Observable<any> {
     let params = new HttpParams();
     if (specialization) {
       params = params.set('specialization', specialization);
     }
-    return this.http.get<any[]>(this.apiUrl, { params });
+    return this.http.get<any>(this.apiUrl, { params });
   }
 
   getDoctorById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
+
+  getDoctorProfile(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/profile`);
+  }
+
+  updateDoctorProfile(data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/profile`, data);
+  }
 }
+
