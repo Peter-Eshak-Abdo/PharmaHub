@@ -34,13 +34,13 @@ const routes: Routes = [
   { path: 'catalog-management', component: CatalogManagementComponent },
   { path: 'medical-history/:patientId', component: MedicalHistoryComponent },
   { path: 'medical-history', component: MedicalHistoryComponent },
-  {
-    path: 'availability',
-    loadChildren: () =>
-      import('./features/availability/availability.module').then(
-        (m) => m.AvailabilityModule,
-      ),
-  },
+ {
+  path: 'schedule',
+  loadChildren: () =>
+    import('./features/schedule/schedule.module').then(
+      (m) => m.ScheduleModule,
+    ),
+},
   {
     path: 'appointments',
     loadChildren: () =>

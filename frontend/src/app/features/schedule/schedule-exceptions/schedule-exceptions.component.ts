@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ExceptionService } from '../services/exception.service';
+import { ScheduleService } from '../services/schedule.service';
 
 @Component({
   selector: 'app-schedule-exceptions',
@@ -8,7 +8,7 @@ import { ExceptionService } from '../services/exception.service';
 })
 export class ScheduleExceptionsComponent implements OnInit {
   exceptions: any[] = [];
-  doctorId: string = '6a7a68e2039344ea7b05c884'; // TODO: get this from the logged-in user via AuthService later
+  doctorId: string = '6a7a68e2039344ea7b05c884'; // TODO: replace with real logged-in doctor's ID via AuthService later
 
   newException = {
     doctorId: '',
@@ -20,7 +20,7 @@ export class ScheduleExceptionsComponent implements OnInit {
 
   types = ['Vacation', 'Blocked', 'Emergency'];
 
-  constructor(private exceptionService: ExceptionService) {}
+  constructor(private scheduleService: ScheduleService) {}
 
   ngOnInit() {
     if (this.doctorId) {
@@ -29,20 +29,20 @@ export class ScheduleExceptionsComponent implements OnInit {
   }
 
   loadExceptions() {
-    this.exceptionService.getExceptionsByDoctor(this.doctorId).subscribe((data: any) => {
+    this.scheduleService.getExceptionsByDoctor(this.doctorId).subscribe((data: any) => {
       this.exceptions = data.data || data;
     });
   }
 
   addException() {
     this.newException.doctorId = this.doctorId;
-    this.exceptionService.addException(this.newException).subscribe(() => {
+    this.scheduleService.addException(this.newException).subscribe(() => {
       this.loadExceptions();
     });
   }
 
   deleteException(id: string) {
-    this.exceptionService.deleteException(id).subscribe(() => {
+    this.scheduleService.deleteException(id).subscribe(() => {
       this.loadExceptions();
     });
   }

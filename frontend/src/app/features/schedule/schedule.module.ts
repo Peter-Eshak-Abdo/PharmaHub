@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { AvailabilityRoutingModule } from './availability-routing.module';
+import { ScheduleRoutingModule } from './schedule-routing.module';
 import { WeeklyAvailabilityComponent } from './weekly-availability/weekly-availability.component';
 import { ScheduleExceptionsComponent } from './schedule-exceptions/schedule-exceptions.component';
 
@@ -14,7 +14,7 @@ import { ScheduleExceptionsComponent } from './schedule-exceptions/schedule-exce
   imports: [
     CommonModule,
     FormsModule,
-    AvailabilityRoutingModule
+    ScheduleRoutingModule
   ]
 })
-export class AvailabilityModule { }
+export class ScheduleModule { }

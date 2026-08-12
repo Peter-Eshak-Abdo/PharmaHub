@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AvailabilityService } from '../services/availability.service';
+import { ScheduleService } from '../services/schedule.service';
 
 @Component({
   selector: 'app-weekly-availability',
@@ -20,7 +20,7 @@ export class WeeklyAvailabilityComponent implements OnInit {
 
   days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-  constructor(private availabilityService: AvailabilityService) {}
+  constructor(private scheduleService: ScheduleService) {}
 
   ngOnInit() {
     if (this.doctorId) {
@@ -29,20 +29,20 @@ export class WeeklyAvailabilityComponent implements OnInit {
   }
 
   loadSlots() {
-    this.availabilityService.getAvailabilityByDoctor(this.doctorId).subscribe((data: any) => {
+    this.scheduleService.getAvailabilityByDoctor(this.doctorId).subscribe((data: any) => {
       this.slots = data.data || data;
     });
   }
 
   addSlot() {
     this.newSlot.doctorId = this.doctorId;
-    this.availabilityService.addAvailability(this.newSlot).subscribe(() => {
+    this.scheduleService.addAvailability(this.newSlot).subscribe(() => {
       this.loadSlots();
     });
   }
 
   deleteSlot(id: string) {
-    this.availabilityService.deleteAvailability(id).subscribe(() => {
+    this.scheduleService.deleteAvailability(id).subscribe(() => {
       this.loadSlots();
     });
   }
