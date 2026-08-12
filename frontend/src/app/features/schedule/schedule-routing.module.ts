@@ -5,12 +5,12 @@ import { WeeklyAvailabilityComponent } from './weekly-availability/weekly-availa
 import { ScheduleExceptionsComponent } from './schedule-exceptions/schedule-exceptions.component';
 
 const routes: Routes = [
-  { path: 'weekly-availability', component: WeeklyAvailabilityComponent },
-  { path: 'schedule-exceptions', component: ScheduleExceptionsComponent }
+  { path: 'weekly-Schedule', component: WeeklyAvailabilityComponent },
+  { path: 'schedule-exceptions', component: ScheduleExceptionsComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AvailabilityRoutingModule { }
+export class ScheduleRoutingModule { }

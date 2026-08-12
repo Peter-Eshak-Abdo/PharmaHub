@@ -6,7 +6,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-review-form',
   templateUrl: './review-form.component.html',
-  // styleUrls: ['./review-form.component.css'],
+  styleUrls: ['./review-form.component.css'],
 })
 export class ReviewFormComponent {
   @Input() appointmentId!: string;

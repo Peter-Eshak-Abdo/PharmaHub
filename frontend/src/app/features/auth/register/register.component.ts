@@ -6,28 +6,31 @@ import { AuthService } from '../../../core/services/auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   submitted = false;
   hidePassword = true;
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      role: ['patient', Validators.required]
+      role: ['patient', Validators.required],
     });
   }
 
-  get f() { return this.registerForm.controls; }
+  get f() {
+    return this.registerForm.controls;
+  }
 
   setRole(role: string): void {
     this.registerForm.patchValue({ role });
@@ -35,15 +38,27 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
+    this.errorMessage = '';
     if (this.registerForm.invalid) return;
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
         const role = this.registerForm.value.role;
-        if (role === 'doctor') this.router.navigate(['/doctor-dashboard']);
-        else this.router.navigate(['/appointments']);
+      if (this.authService.isLoggedIn()) {
+          if (role === 'doctor') {
+            this.router.navigate(['/schedule']); // توجيه الطبيب لجدول عمله
+          } else {
+            this.router.navigate(['/doctors']); // توجيه المريض لقائمة الأطباء
+          }
+      }
+        else {
+          this.router.navigate(['/auth/login']);
+        }
       },
-      error: (err) => console.error(err)
+      error: (err) => {
+        console.error('Registration error:', err);
+        this.errorMessage = err.error?.message || 'حدث خطأ أثناء إنشاء الحساب';
+      },
     });
   }
 }
