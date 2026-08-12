@@ -1,5 +1,6 @@
 const Appointment = require("../models/Appointments");
 const Doctor = require("../models/Doctors");
+const Patient = require("../models/Patients");
 
 // Create a new appointment, ensuring doctor exists and slot is free
 exports.createAppointment = async (req, res) => {
@@ -62,7 +63,14 @@ exports.createAppointment = async (req, res) => {
 // List all appointments for a patient
 exports.getPatientAppointments = async (req, res) => {
   try {
-    const { patientId } = req.params;
+    let patientId = req.params.patientId;
+    if (!patientId && req.user) {
+      const patient = await Patient.findOne({ userId: req.user._id });
+      if (patient) patientId = patient._id;
+    }
+    if (!patientId) {
+      return res.status(400).json({ success: false, message: "Patient ID is required" });
+    }
     const appointments = await Appointment.find({ patientId })
       .populate("doctorId", "fullName specialization rating")
       .sort({ appointmentDate: -1 });
@@ -75,7 +83,14 @@ exports.getPatientAppointments = async (req, res) => {
 // List all appointments for a doctor
 exports.getDoctorAppointments = async (req, res) => {
   try {
-    const { doctorId } = req.params;
+    let doctorId = req.params.doctorId;
+    if (!doctorId && req.user) {
+      const doctor = await Doctor.findOne({ userId: req.user._id });
+      if (doctor) doctorId = doctor._id;
+    }
+    if (!doctorId) {
+      return res.status(400).json({ success: false, message: "Doctor ID is required" });
+    }
     const appointments = await Appointment.find({ doctorId })
       .populate("patientId", "fullName phoneNumber age gender")
       .sort({ appointmentDate: -1 });
@@ -84,6 +99,7 @@ exports.getDoctorAppointments = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 // Update appointment status with strict state‑machine validation
 exports.updateAppointmentStatus = async (req, res) => {

@@ -114,4 +114,39 @@ const updateDoctorProfile = async (req, res) => {
   }
 };
 
-module.exports = { getDoctorProfile, createDoctorProfile, updateDoctorProfile };
+// جلب قائمة الأطباء (مع إمكانية الفلترة بالتخصص)
+const getAllDoctors = async (req, res) => {
+  try {
+    const { specialization } = req.query;
+    const filter = {};
+    if (specialization) {
+      filter.specialization = new RegExp(specialization, "i");
+    }
+    const doctors = await Doctor.find(filter).populate("userId", "email role");
+    res.status(200).json({ success: true, data: doctors });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// جلب طبيب محدد بالمعرف
+const getDoctorById = async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id).populate("userId", "email role");
+    if (!doctor) {
+      return res.status(404).json({ message: "الدكتور غير موجود" });
+    }
+    res.status(200).json({ success: true, data: doctor });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  getDoctorProfile,
+  createDoctorProfile,
+  updateDoctorProfile,
+  getAllDoctors,
+  getDoctorById,
+};
+
