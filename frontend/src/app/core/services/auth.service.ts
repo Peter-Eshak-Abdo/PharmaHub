@@ -19,6 +19,7 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
       tap((response) => {
         localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
         this.currentUserSubject.next(this.getUserFromToken());
       }),
     );
@@ -35,14 +36,15 @@ export class AuthService {
         if (response.token) {
           localStorage.setItem('token', response.token);
           localStorage.setItem('user', JSON.stringify(response.user));
+          this.currentUserSubject.next(this.getUserFromToken());
         }
-        this.currentUserSubject.next(this.getUserFromToken());
       }),
     );
   }
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }
 
@@ -53,6 +55,7 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
+  
   private getUserFromToken(): User | null {
     const token = this.getToken();
     if (!token) return null;
