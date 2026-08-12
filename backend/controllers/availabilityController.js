@@ -201,10 +201,4 @@ exports.getAvailableSlots = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
-<<<<<<< HEAD
 };
-=======
->>>>>>> origin/belal-slot-engine
-=======
-};
->>>>>>> origin/belal-slot-engine
