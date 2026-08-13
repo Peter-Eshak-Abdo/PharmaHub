@@ -44,15 +44,19 @@ export class LoginComponent implements OnInit {
         this.authService.currentUser$
           .subscribe((u) => (userRole = u?.role))
           .unsubscribe();
-        this.authService.currentUser$
-          .subscribe((u) => (userRole = u?.role))
-          .unsubscribe();
 
-        if (userRole === 'doctor') this.router.navigate(['/profiles/doctor-profile']);
-        else if (userRole === 'patient')
+        if (userRole === 'doctor') {
+          console.log("Your are a Doctor")
+          this.router.navigate(['/profiles/doctor-profile']);
+        }
+        else if (userRole === 'patient'){
+          console.log("Your are a Patient")
           this.router.navigate(['/profiles/patient-profile']);
-        else if (userRole === 'admin')
+        }
+        else if (userRole === 'admin'){
+          console.log("Your are a Admin")
           this.router.navigate(['/admin-dashboard']);
+        }
       },
       error: (err) => {
         console.log('LOGIN ERROR:', err);
