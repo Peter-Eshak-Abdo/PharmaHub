@@ -48,6 +48,21 @@
 
     <!-- وضع العرض: شكل البروفايل بعد الحفظ -->
     <div *ngIf="!isEditMode">
+      <nav style="padding: 16px; display: flex; gap: 16px; background: #f3f4f5;">
+        <a routerLink="/appointments/booking-form">Weekly Availability</a>
+        <a routerLink="/appointments/doctor-appointments">doctor-appointments</a>
+        <a routerLink="/appointments/review-form">review-form</a>
+        <a routerLink="/medical/catalog-management">catalog-management</a>
+        <a routerLink="/medical/patient-appointments">patient-appointments</a>
+        <a routerLink="/medical/medical-history">medical-history</a>
+        <a routerLink="/medical/prescription-form">prescription-form</a>
+        <a routerLink="/medical/prescription-view">prescription-view</a>
+        <a routerLink="/schedule/schedule-exceptions">Schedule Exceptions</a>
+        <a routerLink="/schedule/weekly-availability">weekly-availability</a>
+        <a routerLink="/profiles/doctor-detail">doctor-detail</a>
+        <a routerLink="/profiles/doctor-list">doctor-list</a>
+        <a routerLink="/auth/login">Login</a>
+      </nav>
       <div class="d-flex justify-content-between align-items-center mb-4" dir="rtl">
         <button class="btn btn-outline-secondary" (click)="toggleEditMode()">تعديل البيانات ✏️</button>
       </div>
