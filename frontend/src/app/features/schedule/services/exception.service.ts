@@ -6,8 +6,8 @@ import { environment } from 'src/environments/environment';
 })
 export class ExceptionService {
   // private apiUrl = 'http://localhost:8080/api/exceptions';
-  private apiUrl = `${environment.apiUrl}/api/exceptions`;
-  
+  private apiUrl = `${environment.apiUrl}/exceptions`;
+
   constructor(private http: HttpClient) {}
 
   addException(data: any) {
