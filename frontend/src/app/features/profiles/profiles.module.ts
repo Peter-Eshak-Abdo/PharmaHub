@@ -5,12 +5,14 @@ import { ProfilesRoutingModule } from './profiles-routing.module';
 import { PatientProfileComponent } from './patient-profile/patient-profile.component';
 import { DoctorListComponent } from './doctor-list/doctor-list.component';
 import { DoctorDetailComponent } from './doctor-detail/doctor-detail.component';
+import { DoctorProfileComponent } from './doctor-profile/doctor-profile.component';
 
 @NgModule({
   declarations: [
     PatientProfileComponent,
     DoctorListComponent,
-    DoctorDetailComponent
+    DoctorDetailComponent,
+    DoctorProfileComponent
   ],
   imports: [
     CommonModule,
