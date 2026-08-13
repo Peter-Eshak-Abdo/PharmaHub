@@ -18,11 +18,11 @@ const getPatientProfile = async (req, res) => {
     console.log("User Data from Request:", req.user);
     const userId = new mongoose.Types.ObjectId(req.user._id);
     const patient = await Patient.findOne({ userId: userId });
-    
-    const patient = await Patient.findOne({ userId: req.user._id }).populate(
-      "userId",
-      "email role",
-    );
+
+    // const patient = await Patient.findOne({ userId: req.user._id }).populate(
+    //   "userId",
+    //   "email role",
+    // );
 
     if (!patient) {
       return res.status(404).json({ message: "ملف المريض غير موجود" });
