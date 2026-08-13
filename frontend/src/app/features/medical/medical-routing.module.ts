@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CatalogManagementComponent } from './catalog-management/catalog-management.component';
 import { PrescriptionFormComponent } from './prescription-form/prescription-form.component';
 import { PrescriptionViewComponent } from './prescription-view/prescription-view.component';
+import { MedicalHistoryComponent } from './medical-history/medical-history.component';
 
 const routes: Routes = [
   { path: 'catalog', component: CatalogManagementComponent },
@@ -15,6 +16,10 @@ const routes: Routes = [
     path: 'prescription/view/:appointmentId',
     component: PrescriptionViewComponent,
   },
+  {
+    path: 'history/:patientId',
+    component: MedicalHistoryComponent,
+  },
   { path: '', redirectTo: 'catalog', pathMatch: 'full' },
 ];
 
@@ -23,3 +28,4 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class MedicalRoutingModule {}
+

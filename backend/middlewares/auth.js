@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/users"); // الربط بملف المستخدمين
+const User = require("../models/Users"); // الربط بملف المستخدمين
 
 // Middleware للتحقق من التوكن (Token) وحماية المسارات
 const protect = async (req, res, next) => {
@@ -35,9 +35,9 @@ const protect = async (req, res, next) => {
 const checkRole = (roles) => {
   return (req, res, next) => {
     if (!req.user || !roles.includes(req.user.role)) {
-      return res.status(403).json({ 
-          success: false, 
-          message: `User role ${req.user ? req.user.role : 'unknown'} is not authorized to access this route` 
+      return res.status(403).json({
+          success: false,
+          message: `User role ${req.user ? req.user.role : 'unknown'} is not authorized to access this route`
       });
     }
     next();

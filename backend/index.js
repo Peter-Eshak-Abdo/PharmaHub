@@ -12,18 +12,26 @@ const patientRoutes = require("./routes/PatientRoutes");
 const doctorRoutes = require("./routes/DoctorRoutes");
 const appointmentRoutes = require("./routes/AppoinmentRoutes");
 const availabilityRoutes = require("./routes/AvailabilityRoutes");
-const exceptionRoutes = require("./routes/ExceptionRoutes");
+const exceptionRoutes = require("./routes/exceptionRoutes");
 const diagnosisRoutes = require("./routes/Diagnosisroutes");
 const medicationRoutes = require("./routes/Medicationroutes");
 const prescriptionRoutes = require("./routes/Prescriptionroutes");
 const reviewRoutes = require("./routes/ReviewRoutes");
+const medicalHistoryRoutes = require("./routes/medicalHistoryRoutes");
 
 dotenv.config();
 
 const app = express();
 
 // تمكين الطلبات المتقاطعة المصدر (CORS)
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: "*", // بيسمح باستقبال الطلبات من أي دومين (حل ممتاز عشان روابط Vercel المتغيرة)
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 app.use(express.json());
 
 // الاتصال بقاعدة البيانات
@@ -40,9 +48,14 @@ app.use("/api/diagnoses", diagnosisRoutes);
 app.use("/api/medications", medicationRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/patients", medicalHistoryRoutes);
 
 const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

@@ -1,4 +1,4 @@
-const user = require("../models/users");
+const user = require("../models/Users");
 const Patient = require("../models/Patients");
 
 const assertPatientRole = (req, res) => {
