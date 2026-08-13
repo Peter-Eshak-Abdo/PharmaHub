@@ -9,6 +9,8 @@ import { PatientService } from '../services/patient.service';
 })
 export class PatientProfileComponent implements OnInit {
   profileForm!: FormGroup;
+  patientData: any = null;
+  isEditMode: boolean = true;
 
   constructor(private fb: FormBuilder, private patientService: PatientService) {}
 
@@ -27,17 +29,35 @@ export class PatientProfileComponent implements OnInit {
   }
 
   loadProfile(): void {
-    this.patientService.getPatientProfile().subscribe(data => {
-      this.profileForm.patchValue(data);
+    this.patientService.getPatientProfile().subscribe({
+      next: (data: any) => {
+        if (data && data.fullName) {
+          this.patientData = data;
+          this.profileForm.patchValue(data);
+          this.isEditMode = false;
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching profile', err);
+        this.isEditMode = true;
+      }
     });
   }
 
   onSubmit(): void {
     if (this.profileForm.valid) {
       this.patientService.updatePatientProfile(this.profileForm.value).subscribe({
-        next: () => alert('تم التحديث بنجاح'),
+        next: (res: any) => {
+          this.patientData = res && res.fullName ? res : this.profileForm.value;
+          this.isEditMode = false;
+          alert('تم التحديث بنجاح');
+        },
         error: (err) => console.error(err)
       });
     }
+  }
+
+  toggleEditMode(): void {
+    this.isEditMode = true;
   }
 }
