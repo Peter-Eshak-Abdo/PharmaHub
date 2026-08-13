@@ -23,4 +23,16 @@ export class DoctorService {
   getDoctorById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
+
+  getDoctorProfile(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/profile`);
+  }
+
+  createDoctorProfile(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/profile`, data);
+  }
+
+  updateDoctorProfile(data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/profile`, data);
+  }
 }

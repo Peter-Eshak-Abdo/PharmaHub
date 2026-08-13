@@ -16,6 +16,10 @@ export class PatientService {
     return this.http.get(`${this.apiUrl}/profile`);
   }
 
+  createPatientProfile(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/profile`, data);
+  }
+  
   updatePatientProfile(data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/profile`, data);
   }
