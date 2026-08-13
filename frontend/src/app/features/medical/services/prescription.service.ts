@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 export interface MedicationItem {
   medicationId: string;
@@ -21,12 +22,13 @@ export interface PrescriptionPayload {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PrescriptionService {
-  private apiUrl = '/api/prescriptions';
+  private apiUrl = `${environment.apiUrl}/api/prescriptions`;
+  // private apiUrl = '/api/prescriptions';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Fetch prescription for a specific appointment
@@ -43,7 +45,7 @@ export class PrescriptionService {
   createPrescription(appointmentId: string, payload: any): Observable<any> {
     const body = {
       ...payload,
-      appointmentId: appointmentId || payload?.appointmentId
+      appointmentId: appointmentId || payload?.appointmentId,
     };
     return this.http.post<any>(this.apiUrl, body);
   }

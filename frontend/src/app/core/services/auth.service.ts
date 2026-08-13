@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   // private apiUrl = '/api/auth';
+  
   private currentUserSubject = new BehaviorSubject<User | null>(
     this.getUserFromToken(),
   );
