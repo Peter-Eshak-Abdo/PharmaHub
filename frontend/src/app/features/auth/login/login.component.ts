@@ -40,6 +40,9 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         console.log('LOGIN SUCCESS', response);
         // const userRole = response.user.role;
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('role', response.role);
+        
         let userRole = null;
         this.authService.currentUser$
           .subscribe((u) => (userRole = u?.role))
