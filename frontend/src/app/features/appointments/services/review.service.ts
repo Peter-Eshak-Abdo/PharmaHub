@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root',
 })
 export class ReviewService {
-  private apiUrl = `${environment.apiUrl}/api/reviews`;
+  private apiUrl = `${environment.apiUrl}/reviews`;
   // private apiUrl = '/api/reviews';
 
   constructor(private http: HttpClient) {}
