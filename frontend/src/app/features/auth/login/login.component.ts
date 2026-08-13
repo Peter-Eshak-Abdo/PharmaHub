@@ -37,18 +37,30 @@ export class LoginComponent implements OnInit {
     }
     console.log('CALLING authService.login...');
     this.authService.login(this.loginForm.value).subscribe({
-      next: () => {
-        console.log('LOGIN SUCCESS');
+      next: (response) => {
+        console.log('LOGIN SUCCESS', response);
+        // const userRole = response.user.role;
         let userRole = null;
-        this.authService.currentUser$.subscribe(u => userRole = u?.role).unsubscribe();
+        this.authService.currentUser$
+          .subscribe((u) => (userRole = u?.role))
+          .unsubscribe();
 
-        if (userRole === 'doctor') this.router.navigate(['/doctor-dashboard']);
-        else if (userRole === 'patient') this.router.navigate(['/appointments']);
-        else if (userRole === 'admin') this.router.navigate(['/admin-dashboard']);
+        if (userRole === 'doctor') {
+          console.log("Your are a Doctor")
+          this.router.navigate(['/profiles/doctor-profile']);
+        }
+        else if (userRole === 'patient'){
+          console.log("Your are a Patient")
+          this.router.navigate(['/profiles/patient-profile']);
+        }
+        else if (userRole === 'admin'){
+          console.log("Your are a Admin")
+          this.router.navigate(['/admin-dashboard']);
+        }
       },
       error: (err) => {
         console.log('LOGIN ERROR:', err);
-      }
+      },
     });
   }
 }
