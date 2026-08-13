@@ -10,6 +10,8 @@ const routes: Routes = [
   { path: 'doctor-list', component: DoctorListComponent },
   { path: 'doctor-profile', component: DoctorProfileComponent },
   { path: 'doctor-detail/:id', component: DoctorDetailComponent },
+  { path: 'doctor-detail', component: DoctorDetailComponent },
+  { path: '', redirectTo: 'doctor-list', pathMatch: 'full' },
 ];
 
 @NgModule({
