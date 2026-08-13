@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PatientService {
-  private apiUrl = '/api/patient';
+  // private apiUrl = '/api/patient';
+  private apiUrl = `${environment.apiUrl}/patient/profile`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   getPatientProfile(): Observable<any> {
     return this.http.get(`${this.apiUrl}/profile`);
