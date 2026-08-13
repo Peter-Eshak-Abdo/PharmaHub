@@ -5,8 +5,9 @@ import { WeeklyAvailabilityComponent } from './weekly-availability/weekly-availa
 import { ScheduleExceptionsComponent } from './schedule-exceptions/schedule-exceptions.component';
 
 const routes: Routes = [
-  { path: 'weekly-Schedule', component: WeeklyAvailabilityComponent },
+  { path: 'weekly-availability', component: WeeklyAvailabilityComponent },
   { path: 'schedule-exceptions', component: ScheduleExceptionsComponent },
+  { path: '', redirectTo: 'weekly-availability', pathMatch: 'full' },
 ];
 
 @NgModule({

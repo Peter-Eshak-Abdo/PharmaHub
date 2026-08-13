@@ -44,8 +44,12 @@ export class PatientProfileComponent implements OnInit {
         }
       },
       error: (err) => {
+      if (err.status === 404) {
         this.hasProfile = false;
         this.isEditMode = true;
+      } else {
+        console.error('Error loading profile', err);
+      }
       },
     });
   }

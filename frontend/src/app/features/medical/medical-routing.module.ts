@@ -8,10 +8,14 @@ import { MedicalHistoryComponent } from './medical-history/medical-history.compo
 
 const routes: Routes = [
   { path: 'catalog', component: CatalogManagementComponent },
+  { path: 'catalog-management', component: CatalogManagementComponent },
   {
     path: 'prescription/create/:appointmentId',
     component: PrescriptionFormComponent,
   },
+  { path: 'medical-history', component: MedicalHistoryComponent },
+  { path: 'prescription-form', component: PrescriptionFormComponent },
+  { path: 'prescription-view', component: PrescriptionViewComponent },
   {
     path: 'prescription/view/:appointmentId',
     component: PrescriptionViewComponent,
@@ -21,6 +25,7 @@ const routes: Routes = [
     component: MedicalHistoryComponent,
   },
   { path: '', redirectTo: 'catalog', pathMatch: 'full' },
+  { path: '', redirectTo: 'medical-history', pathMatch: 'full' },
 ];
 
 @NgModule({

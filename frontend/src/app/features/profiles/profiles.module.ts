@@ -12,13 +12,19 @@ import { DoctorProfileComponent } from './doctor-profile/doctor-profile.componen
     PatientProfileComponent,
     DoctorListComponent,
     DoctorDetailComponent,
-    DoctorProfileComponent
+    DoctorProfileComponent,
   ],
   imports: [
     CommonModule,
     ProfilesRoutingModule,
     ReactiveFormsModule,
-    FormsModule
-  ]
+    FormsModule,
+  ],
+  exports: [
+    PatientProfileComponent,
+    DoctorListComponent,
+    DoctorDetailComponent,
+    DoctorProfileComponent,
+  ],
 })
-export class ProfilesModule { }
+export class ProfilesModule {}
