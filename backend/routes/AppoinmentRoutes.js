@@ -11,8 +11,8 @@ const {
   getAvailableSlots,
 } = require("../controllers/appointmentController");
 
-// Public: Available slots
-router.get("/available-slots", getAvailableSlots);
+// Public: Available slots (authenticated)
+router.get("/available-slots", protect, getAvailableSlots);
 
 // Patient routes
 router.post("/", protect, authorize("patient"), createAppointment);

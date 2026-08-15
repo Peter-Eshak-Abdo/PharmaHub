@@ -42,6 +42,7 @@ const reviewSchema = new mongoose.Schema(
 // =============================================
 // Indexes
 // =============================================
+// reviewSchema.index({ appointmentId: 1 }, { unique: true });
 reviewSchema.index({ doctorId: 1, submittedDate: -1 });
 reviewSchema.index({ patientId: 1 });
 
