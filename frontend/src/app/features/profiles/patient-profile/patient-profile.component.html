@@ -1,48 +1,124 @@
-<div class="container mt-4">
-  <h2>الملف الشخصي للمريض</h2>
-  <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-    
-    <div class="mb-3">
-      <label>الاسم الكامل</label>
-      <input type="text" formControlName="fullName" class="form-control" />
-    </div>
+<div class="container mt-4" dir="rtl">
 
-    <div class="mb-3">
-      <label>العنوان</label>
-      <input type="text" formControlName="address" class="form-control" />
-    </div>
+  <!-- وضع التعديل: إدخال وتحديث البيانات -->
+  <div *ngIf="isEditMode" class="card p-4 shadow-sm border-0">
+    <h3 class="mb-4 text-primary">تحديث الملف الشخصي للمريض</h3>
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
 
-    <div class="row mb-3">
-      <div class="col">
-        <label>العمر</label>
-        <input type="number" formControlName="age" class="form-control" />
+      <div class="mb-3">
+        <label class="form-label fw-bold">الاسم الكامل</label>
+        <input type="text" formControlName="fullName" class="form-control" />
       </div>
-      <div class="col">
-        <label>الجنس</label>
-        <select formControlName="gender" class="form-select">
-          <option value="Male">ذكر</option>
-          <option value="Female">أنثى</option>
-          <option value="Other">آخر</option>
-        </select>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">العنوان</label>
+        <input type="text" formControlName="address" class="form-control" />
       </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">العمر</label>
+          <input type="number" formControlName="age" class="form-control" />
+        </div>
+        <div class="col-md-6 mt-3 mt-md-0">
+          <label class="form-label fw-bold">الجنس</label>
+          <select formControlName="gender" class="form-select">
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-bold">رقم الهاتف</label>
+        <input type="text" formControlName="phoneNumber" class="form-control" />
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold">الوظيفة</label>
+          <input type="text" formControlName="occupation" class="form-control" />
+        </div>
+        <div class="col-md-6 mt-3 mt-md-0">
+          <label class="form-label fw-bold">جهة العمل (الشركة)</label>
+          <input type="text" formControlName="companyName" class="form-control" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary px-4 py-2" [disabled]="profileForm.invalid">حفظ التعديلات</button>
+    </form>
+  </div>
+
+  <!-- وضع العرض: شكل البيانات بعد الحفظ -->
+  <div *ngIf="!isEditMode">
+    <nav style="padding: 16px; display: flex; gap: 16px; background: #f3f4f5;">
+      <a routerLink="/appointments/booking-form">booking-form</a>
+      <a routerLink="/appointments/patient-appointments">patient-appointments</a>
+      <!-- <a routerLink="/appointments/review-form">review-form</a> -->
+      <a routerLink="/medical/catalog-management">catalog-management</a>
+      <a routerLink="/medical/medical-history">medical-history</a>
+      <a routerLink="/medical/prescription-form">prescription-form</a>
+      <a routerLink="/medical/prescription-view">prescription-view</a>
+      <a routerLink="/schedule/schedule-exceptions">Schedule Exceptions</a>
+      <a routerLink="/schedule/weekly-availability">weekly-availability</a>
+      <!-- <a routerLink="/profiles/doctor-detail">doctor-detail</a> -->
+      <a routerLink="/profiles/doctor-list">doctor-list</a>
+    </nav>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="text-primary m-0">الملف الشخصي للمريض</h2>
+      <button class="btn btn-outline-secondary" (click)="toggleEditMode()">تعديل البيانات ✏️</button>
     </div>
 
-    <div class="mb-3">
-      <label>رقم الهاتف</label>
-      <input type="text" formControlName="phoneNumber" class="form-control" />
-    </div>
+    <div class="card p-4 shadow-sm border-0">
 
-    <div class="row mb-3">
-      <div class="col">
-        <label>الوظيفة</label>
-        <input type="text" formControlName="occupation" class="form-control" />
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">الاسم الكامل:</div>
+        <div class="col-sm-9 fw-bold fs-5">{{ patientData?.fullName }}</div>
       </div>
-      <div class="col">
-        <label>جهة العمل (الشركة)</label>
-        <input type="text" formControlName="companyName" class="form-control" />
-      </div>
-    </div>
+      <hr class="text-muted">
 
-    <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid">حفظ التعديلات</button>
-  </form>
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">العنوان:</div>
+        <div class="col-sm-9 fw-bold">{{ patientData?.address || 'لا يوجد' }}</div>
+      </div>
+      <hr class="text-muted">
+
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">العمر:</div>
+        <div class="col-sm-9 fw-bold">{{ patientData?.age || 'لا يوجد' }}</div>
+      </div>
+      <hr class="text-muted">
+
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">الجنس:</div>
+        <div class="col-sm-9 fw-bold">
+          <span *ngIf="patientData?.gender === 'Male'">ذكر</span>
+          <span *ngIf="patientData?.gender === 'Female'">أنثى</span>
+          <span *ngIf="patientData?.gender === 'Other'">آخر</span>
+          <span *ngIf="!patientData?.gender">لا يوجد</span>
+        </div>
+      </div>
+      <hr class="text-muted">
+
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">رقم الهاتف:</div>
+        <div class="col-sm-9 fw-bold" dir="ltr" style="text-align: right;">{{ patientData?.phoneNumber || 'لا يوجد' }}
+        </div>
+      </div>
+      <hr class="text-muted">
+
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">الوظيفة:</div>
+        <div class="col-sm-9 fw-bold">{{ patientData?.occupation || 'لا يوجد' }}</div>
+      </div>
+      <hr class="text-muted">
+
+      <div class="row mb-3">
+        <div class="col-sm-3 text-muted">جهة العمل:</div>
+        <div class="col-sm-9 fw-bold">{{ patientData?.companyName || 'لا يوجد' }}</div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
