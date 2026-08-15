@@ -1,70 +1,140 @@
-<!-- features/appointments/doctor-appointments/doctor-appointments.component.html -->
-<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans dir-rtl">
-  <div class="max-w-7xl mx-auto">
+<div class="min-h-screen bg-background" dir="rtl">
 
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-slate-800 tracking-tight">لوحة تحكم الطبيب</h1>
-      <p class="text-slate-600 mt-2">إدارة حجوزات المرضى ومتابعة المواعيد</p>
+  <!-- Header -->
+  <div class="px-sm md:px-xl py-lg">
+    <h1 class="font-display text-display text-on-surface mb-sm">جدول الحجوزات</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px]">
+      إدارة مواعيد مرضاك وتحديث حالات الحجوزات
+    </p>
+  </div>
+
+  <!-- Filters Row -->
+  <div class="px-sm md:px-xl pb-md flex flex-wrap items-center gap-md">
+    <div
+      class="flex items-center gap-xs bg-surface-container-lowest rounded-lg border border-outline-variant px-sm py-xs">
+      <span class="material-symbols-outlined text-on-surface-variant text-[18px]">calendar_today</span>
+      <input type="date" [(ngModel)]="selectedDate" (change)="loadAppointments()" title="Date"
+        class="font-body-sm text-body-sm text-on-surface bg-transparent outline-none" />
+    </div>
+    <button *ngIf="selectedDate" (click)="selectedDate = ''; loadAppointments()"
+      class="font-label-sm text-label-sm text-primary hover:underline">
+      مسح الفلتر
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="px-sm md:px-xl border-b border-surface-container-highest flex gap-lg overflow-x-auto">
+    <button *ngFor="let tab of tabs" (click)="setTab(tab.value)"
+      [class]="activeTab === tab.value
+        ? 'pb-sm font-label-md text-label-md text-primary border-b-[3px] border-primary whitespace-nowrap px-base'
+        : 'pb-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap px-base'">
+      {{ tab.label }}
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="px-sm md:px-xl py-xl bg-surface-bright min-h-[500px]">
+
+    <!-- Feedback Messages -->
+    <div *ngIf="errorMessage"
+      class="bg-error-container text-on-error-container rounded-lg px-md py-sm mb-md flex items-center gap-sm">
+      <span class="material-symbols-outlined text-[20px]">error</span>
+      <span class="font-body-sm text-body-sm">{{ errorMessage }}</span>
+    </div>
+    <div *ngIf="successMessage"
+      class="bg-tertiary-container text-on-tertiary-container rounded-lg px-md py-sm mb-md flex items-center gap-sm">
+      <span class="material-symbols-outlined text-[20px]">check_circle</span>
+      <span class="font-body-sm text-body-sm">{{ successMessage }}</span>
     </div>
 
-    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-slate-200">
-          <thead class="bg-slate-50">
-            <tr>
-              <th scope="col"
-                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">المريض</th>
-              <th scope="col"
-                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">التاريخ
-                والوقت</th>
-              <th scope="col"
-                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">النوع</th>
-              <th scope="col"
-                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الحالة</th>
-              <th scope="col"
-                class="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">الإجراءات
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-slate-200">
-            <tr *ngFor="let appt of appointments" class="hover:bg-slate-50 transition-colors">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-bold text-slate-800">{{ appt.patientName }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm font-medium text-slate-800">{{ appt.date }}</div>
-                <div class="text-sm text-slate-500">{{ appt.timeSlot }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                {{ appt.consultationType }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span [ngClass]="getStatusBadge(appt.status)"
-                  class="px-3 py-1 inline-flex text-xs font-semibold rounded-full">
-                  {{ appt.status }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <div class="flex gap-2">
-                  <button *ngIf="appt.status === 'Pending'" (click)="updateStatus(appt.id, appt.status, 'Confirmed')"
-                    class="text-teal-700 bg-teal-50 border border-teal-200 hover:bg-teal-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold">تأكيد</button>
-                  <button *ngIf="appt.status === 'Pending' || appt.status === 'Confirmed'"
-                    (click)="updateStatus(appt.id, appt.status, 'Cancelled')"
-                    class="text-red-700 bg-red-50 border border-red-200 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold">إلغاء</button>
-                  <button *ngIf="appt.status === 'Confirmed'" (click)="updateStatus(appt.id, appt.status, 'Completed')"
-                    class="text-emerald-700 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold">مكتمل</button>
-                  <button *ngIf="appt.status === 'Confirmed'" (click)="updateStatus(appt.id, appt.status, 'No-Show')"
-                    class="text-slate-700 bg-slate-100 border border-slate-300 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors text-xs font-semibold">لم
-                    يحضر</button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <div *ngIf="appointments.length === 0" class="text-center py-12">
-          <p class="text-slate-500 font-medium">لا توجد حجوزات لعرضها حالياً.</p>
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+      <div *ngFor="let i of [1,2,3,4]" class="bg-surface-container-lowest rounded-xl p-md animate-pulse">
+        <div class="flex items-center gap-md mb-md">
+          <div class="w-12 h-12 rounded-full bg-surface-container-high"></div>
+          <div class="flex-1 space-y-xs">
+            <div class="h-4 bg-surface-container-high rounded w-3/4"></div>
+            <div class="h-3 bg-surface-container-high rounded w-1/2"></div>
+          </div>
+        </div>
+        <div class="h-8 bg-surface-container-high rounded mt-md"></div>
+      </div>
+    </div>
+
+    <!-- Appointments -->
+    <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+
+      <!-- Empty -->
+      <div *ngIf="appointments.length === 0" class="col-span-full text-center py-xl text-on-surface-variant">
+        <span class="material-symbols-outlined text-6xl block mb-md opacity-40">event_available</span>
+        <h3 class="font-headline-sm text-headline-sm mb-xs">لا توجد حجوزات</h3>
+        <p class="font-body-sm text-body-sm">لا توجد حجوزات في هذه الفئة</p>
+      </div>
+
+      <!-- Card -->
+      <div *ngFor="let appt of appointments"
+        class="bg-surface-container-lowest rounded-xl shadow-sm p-md flex flex-col gap-sm">
+        <!-- Patient Info -->
+        <div class="flex justify-between items-start">
+          <div class="flex items-center gap-md">
+            <div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-on-secondary-fixed">person</span>
+            </div>
+            <div>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface">{{ getPatientName(appt) }}</h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">{{ getPatientInfo(appt) }}</p>
+            </div>
+          </div>
+          <span class="px-sm py-xs rounded-full font-label-sm text-label-sm shrink-0"
+            [ngClass]="STATUS_COLORS[appt.status]">
+            {{ STATUS_LABELS[appt.status] }}
+          </span>
+        </div>
+
+        <!-- Details -->
+        <div class="border-t border-surface-container-highest pt-sm space-y-xs">
+          <div class="flex items-center gap-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+            <span class="font-label-md text-label-md text-on-surface">{{ formatDate(appt.appointmentDate) }}</span>
+          </div>
+          <div class="flex items-center gap-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-[18px]">schedule</span>
+            <span class="font-body-md text-body-md">{{ formatTime(appt.appointmentTime) }}</span>
+          </div>
+          <div class="flex items-center gap-xs">
+            <span
+              class="material-symbols-outlined text-[18px] text-on-surface-variant">{{ appt.consultationType === 'Online' ? 'videocam' : 'local_hospital' }}</span>
+            <span
+              class="font-body-sm text-body-sm text-on-surface-variant">{{ appt.consultationType === 'Online' ? 'أونلاين' : 'عيادة' }}</span>
+          </div>
+          <div *ngIf="appt.reasonForVisit" class="flex items-start gap-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-[18px] mt-0.5">notes</span>
+            <span class="font-body-sm text-body-sm">{{ appt.reasonForVisit }}</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons (State Machine) -->
+        <div *ngIf="getActions(appt).length > 0" class="flex flex-wrap gap-sm mt-sm">
+          <button *ngFor="let action of getActions(appt)" (click)="updateStatus(appt._id, action.value)"
+            [disabled]="updatingId === appt._id"
+            class="px-sm py-xs rounded-lg font-label-md text-label-md transition-all disabled:opacity-40 flex items-center gap-xs"
+            [ngClass]="action.color">
+            <div *ngIf="updatingId === appt._id"
+              class="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+            {{ action.label }}
+          </button>
         </div>
       </div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="!isLoading && pagination.pages > 1" class="flex justify-center gap-sm mt-lg">
+      <button *ngFor="let p of [].constructor(pagination.pages); let i = index" (click)="loadAppointments(i + 1)"
+        [class]="pagination.page === i + 1
+          ? 'w-10 h-10 rounded-lg bg-primary text-on-primary font-label-md text-label-md'
+          : 'w-10 h-10 rounded-lg border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-colors'">
+        {{ i + 1 }}
+      </button>
     </div>
 
   </div>

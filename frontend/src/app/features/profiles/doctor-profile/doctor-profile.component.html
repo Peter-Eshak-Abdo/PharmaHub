@@ -8,22 +8,22 @@
 
         <div class="mb-3">
           <label class="form-label fw-bold">الاسم الكامل</label>
-          <input type="text" formControlName="fullName" class="form-control" />
+          <input type="text" title="fullName" formControlName="fullName" class="form-control" />
         </div>
 
         <div class="mb-3">
           <label class="form-label fw-bold">التخصص</label>
-          <input type="text" formControlName="specialization" class="form-control" />
+          <input type="text" title="specialization" formControlName="specialization" class="form-control" />
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
             <label class="form-label fw-bold">سنوات الخبرة</label>
-            <input type="number" formControlName="yearsOfExperience" class="form-control" />
+            <input type="number" title="yearsOfExperience" formControlName="yearsOfExperience" class="form-control" />
           </div>
           <div class="col-md-6 mt-3 mt-md-0">
             <label class="form-label fw-bold">رسوم الاستشارة ($)</label>
-            <input type="number" formControlName="consultationFeeSnapshot" class="form-control" />
+            <input type="number" title="consultationFeeSnapshot" formControlName="consultationFeeSnapshot" class="form-control" />
           </div>
         </div>
 
@@ -34,12 +34,12 @@
 
         <div class="mb-3">
           <label class="form-label fw-bold">المؤهلات الإضافية</label>
-          <input type="text" formControlName="qualifications" class="form-control" />
+          <input type="text" title="qualifications" formControlName="qualifications" class="form-control" />
         </div>
 
         <div class="mb-4">
           <label class="form-label fw-bold">نبذة عنك (Bio)</label>
-          <textarea formControlName="bio" class="form-control" rows="4"></textarea>
+          <textarea formControlName="bio" title="bio" class="form-control" rows="4"></textarea>
         </div>
 
         <button type="submit" class="btn btn-primary px-4 py-2" [disabled]="doctorForm.invalid">حفظ التعديلات</button>
@@ -48,17 +48,18 @@
 
     <!-- وضع العرض: شكل البروفايل بعد الحفظ -->
     <div *ngIf="!isEditMode">
-      <nav style="padding: 16px; display: flex; gap: 16px; background: #f3f4f5;">
-        <a routerLink="/appointments/booking-form">booking-form</a>
-        <a routerLink="/appointments/patient-appointments">patient-appointments</a>
-        <!-- <a routerLink="/appointments/review-form">review-form</a> -->
+      <nav style="padding: 16px; display: flex; flex-wrap: wrap; gap: 16px; background: #f3f4f5;">
+        <a routerLink="/appointments/book">booking-form</a>
+        <a routerLink="/appointments/patient">patient-appointments</a>
+        <a routerLink="/appointments/doctor">doctor-appointments</a>
+        <a routerLink="/appointments/review">review-form</a>
         <a routerLink="/medical/catalog-management">catalog-management</a>
         <a routerLink="/medical/medical-history">medical-history</a>
         <a routerLink="/medical/prescription-form">prescription-form</a>
         <a routerLink="/medical/prescription-view">prescription-view</a>
         <a routerLink="/schedule/schedule-exceptions">Schedule Exceptions</a>
         <a routerLink="/schedule/weekly-availability">weekly-availability</a>
-        <!-- <a routerLink="/profiles/doctor-detail">doctor-detail</a> -->
+        <a routerLink="/profiles/doctor-detail">doctor-detail</a>
         <a routerLink="/profiles/doctor-list">doctor-list</a>
       </nav>
       <div class="d-flex justify-content-between align-items-center mb-4" dir="rtl">

@@ -1,4 +1,4 @@
-const Medication = require("../models/Medications");
+const Medication = require("../models/Medication");
 
 // POST /api/medications
 // Add a new medication to the catalog (Admin only)

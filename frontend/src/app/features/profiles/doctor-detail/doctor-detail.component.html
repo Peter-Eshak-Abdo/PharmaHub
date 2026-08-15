@@ -19,10 +19,34 @@
           <p><strong>نبذة:</strong> {{ doctor.bio }}</p>
         </div>
       </div>
-      
+
+      <!-- زر حجز موعد -->
+      <div class="mt-4 pt-3 border-top d-flex gap-2">
+        <a [routerLink]="['/appointments/book']"
+           [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
+           class="btn btn-primary px-4 py-2">
+          🗓️ حجز موعد مع الطبيب
+        </a>
+        <a routerLink="/profiles/doctor-list" class="btn btn-outline-secondary px-3 py-2">
+          العودة للقائمة
+        </a>
+      </div>
+
       <!-- Component مكان حقن تقييمات الطبيب لاحقاً -->
       <!-- <app-reviews [doctorId]="doctor._id"></app-reviews> -->
       
     </div>
   </div>
-</div><p>doctor-detail works!</p>
+</div>
+
+<div class="container mt-4 text-center" *ngIf="!doctor">
+  <div class="card p-4 shadow-sm border-0">
+    <h4 class="text-muted mb-3">لم يتم تحديد طبيب</h4>
+    <p class="text-secondary mb-3">يرجى اختيار طبيب من قائمة الأطباء لعرض التفاصيل الكاملة.</p>
+    <div>
+      <a routerLink="/profiles/doctor-list" class="btn btn-primary">
+        الانتقال لقائمة الأطباء
+      </a>
+    </div>
+  </div>
+</div>
