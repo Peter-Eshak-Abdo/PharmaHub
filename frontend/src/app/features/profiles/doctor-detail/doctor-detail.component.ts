@@ -18,8 +18,13 @@ export class DoctorDetailComponent implements OnInit {
   ngOnInit(): void {
     const doctorId = this.route.snapshot.paramMap.get('id');
     if (doctorId) {
-      this.doctorService.getDoctorById(doctorId).subscribe(data => {
-        this.doctor = data;
+      this.doctorService.getDoctorById(doctorId).subscribe({
+        next: (res: any) => {
+          this.doctor = res?.data || res;
+        },
+        error: () => {
+          this.doctor = null;
+        },
       });
     }
   }

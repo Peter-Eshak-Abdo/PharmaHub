@@ -5,27 +5,29 @@ const reviewSchema = new mongoose.Schema(
     patientId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Patient",
-      required: [true, "Patient ID is required"],
+      required: [true, "معرف المريض مطلوب"],
     },
     doctorId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Doctor",
-      required: [true, "Doctor ID is required"],
+      required: [true, "معرف الطبيب مطلوب"],
     },
     appointmentId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Appointment", // 1:1 Reference to completed Appointment
-      required: [true, "Appointment ID is required"],
-      unique: true, // Enforces strictly 1 review per appointment
+      ref: "Appointment",
+      required: [true, "معرف الموعد مطلوب"],
+      unique: true, // BR-REV-002: One review per appointment
     },
     rating: {
       type: Number,
-      required: [true, "Rating is required"],
-      min: [1, "Rating must be at least 1"],
-      max: [5, "Rating cannot exceed 5"],
+      required: [true, "التقييم مطلوب"],
+      min: [1, "التقييم يجب أن يكون على الأقل 1"],
+      max: [5, "التقييم لا يمكن أن يتجاوز 5"],
     },
     comment: {
       type: String,
+      trim: true,
+      maxlength: [1000, "التعليق لا يمكن أن يتجاوز 1000 حرف"],
     },
     submittedDate: {
       type: Date,
@@ -37,7 +39,9 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
-// Indexes for optimal retrieval of doctor and patient reviews
+// =============================================
+// Indexes
+// =============================================
 reviewSchema.index({ doctorId: 1, submittedDate: -1 });
 reviewSchema.index({ patientId: 1 });
 

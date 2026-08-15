@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/Users"); // الربط بملف المستخدمين
+const User = require("../models/User"); // الربط بملف المستخدمين
 
 // Middleware للتحقق من التوكن (Token) وحماية المسارات
 const protect = async (req, res, next) => {
@@ -31,17 +31,20 @@ const protect = async (req, res, next) => {
   }
 };
 
-// Reusable Role Checker (BR-AUTH-005 - checkRole)
-const checkRole = (roles) => {
+// Reusable Role Checker (BR-AUTH-005 - checkRole / authorize)
+const checkRole = (...roles) => {
+  const flatRoles = roles.flat();
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    if (!req.user || !flatRoles.includes(req.user.role)) {
       return res.status(403).json({
-          success: false,
-          message: `User role ${req.user ? req.user.role : 'unknown'} is not authorized to access this route`
+        success: false,
+        message: `User role ${req.user ? req.user.role : 'unknown'} is not authorized to access this route`,
       });
     }
     next();
   };
 };
 
-module.exports = { protect, checkRole };
+const authorize = checkRole;
+
+module.exports = { protect, checkRole, authorize };

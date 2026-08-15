@@ -1,8 +1,7 @@
-// features/appointments/appointments.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule,ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 import { AppointmentsRoutingModule } from './appointments-routing.module';
 import { BookingFormComponent } from './booking-form/booking-form.component';
@@ -21,10 +20,11 @@ import { ReviewFormComponent } from './review-form/review-form.component';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule,
+    RouterModule,
     AppointmentsRoutingModule,
   ],
-  // exports: [ReviewFormComponent],
-  exports: [PatientAppointmentsComponent, ReviewFormComponent],
+  exports: [
+    ReviewFormComponent, // Exportable standalone for doctor-profile to embed
+  ],
 })
 export class AppointmentsModule {}
