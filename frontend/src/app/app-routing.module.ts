@@ -5,13 +5,19 @@ import { AuthGuard } from './core/guards/auth.guard';
 const routes: Routes = [
   {
     path: 'schedule',
-    loadChildren: () => import('./features/schedule/schedule.module').then(m => m.ScheduleModule),
+    loadChildren: () =>
+      import('./features/schedule/schedule.module').then(
+        (m) => m.ScheduleModule,
+      ),
     // component: WeeklyAvailabilityComponent,
     canActivate: [AuthGuard],
   },
   {
     path: 'appointments',
-    loadChildren: () => import('./features/appointments/appointments.module').then(m => m.AppointmentsModule),
+    loadChildren: () =>
+      import('./features/appointments/appointments.module').then(
+        (m) => m.AppointmentsModule,
+      ),
     // component: PatientAppointmentsComponent,
     canActivate: [AuthGuard],
   },
@@ -35,6 +41,7 @@ const routes: Routes = [
   },
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/auth/login' },
+
 ];
 
 @NgModule({

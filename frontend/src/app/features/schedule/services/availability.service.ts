@@ -6,8 +6,8 @@ import { environment } from 'src/environments/environment';
 })
 export class AvailabilityService {
   // private apiUrl = 'http://localhost:8080/api/availability';
-  private apiUrl = `${environment.apiUrl}/api/availability`;
-  
+  private apiUrl = `${environment.apiUrl}/availability`;
+
   constructor(private http: HttpClient) {}
 
   addAvailability(data: any) {

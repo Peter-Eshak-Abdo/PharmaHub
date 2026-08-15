@@ -15,6 +15,10 @@ const getPatientProfile = async (req, res) => {
   try {
     if (!assertPatientRole(req, res)) return;
 
+    console.log("User Data from Request:", req.user);
+    // const userId = new mongoose.Types.ObjectId(req.user._id);
+    // const patient = await Patient.findOne({ userId: userId });
+
     const patient = await Patient.findOne({ userId: req.user._id }).populate(
       "userId",
       "email role",

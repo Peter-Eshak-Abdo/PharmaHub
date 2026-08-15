@@ -1,35 +1,60 @@
-/* src/app/features/profiles/patient-profile/patient-profile.component.css */
-.profile-container {
+.container {
   max-width: 800px;
-  margin: 48px auto;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.profile-form-wrapper {
-  margin-top: 24px;
+.card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
 }
 
-.form-group {
-  margin-bottom: 24px;
+.text-primary {
+  color: #0d7d73 !important;
 }
 
-.form-row {
-  display: flex;
-  gap: 24px;
+.btn-primary {
+  background-color: #0d7d73;
+  border-color: #0d7d73;
 }
 
-.form-col {
-  flex: 1;
+.btn-primary:hover {
+  background-color: #0a635b;
+  border-color: #0a635b;
 }
 
-.submit-btn-wrapper {
-  margin-top: 32px;
-  display: flex;
-  justify-content: flex-end;
+.btn-outline-secondary {
+  color: #4b5563;
+  border-color: #d1d5db;
 }
 
-@media (max-width: 768px) {
-  .form-row {
-    flex-direction: column;
-    gap: 0;
-  }
+.btn-outline-secondary:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.form-label {
+  color: #374151;
+}
+
+.form-control,
+.form-select {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 10px 15px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0d7d73;
+  box-shadow: 0 0 0 0.25rem rgba(13, 125, 115, 0.25);
+}
+
+hr {
+  margin: 1rem 0;
+  color: inherit;
+  background-color: currentColor;
+  border: 0;
+  opacity: .15;
 }

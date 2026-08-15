@@ -7,8 +7,8 @@ import { environment } from '../../../../environments/environment';
 })
 export class ScheduleService {
   private baseUrl = environment.apiUrl.replace(/\/$/, '');
-  private availabilityUrl = `${this.baseUrl}/api/availability`;
-  private exceptionUrl = `${this.baseUrl}/api/exceptions`;
+  private availabilityUrl = `${this.baseUrl}/availability`;
+  private exceptionUrl = `${this.baseUrl}/exceptions`;
 
   constructor(private http: HttpClient) {}
 

@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class PatientService {
   // private apiUrl = '/api/patient';
-  private apiUrl = `${environment.apiUrl}/api/patient`;
+  private apiUrl = `${environment.apiUrl}/patient`;
 
   constructor(private http: HttpClient) {}
 
@@ -16,6 +16,10 @@ export class PatientService {
     return this.http.get(`${this.apiUrl}/profile`);
   }
 
+  createPatientProfile(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/profile`, data);
+  }
+  
   updatePatientProfile(data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/profile`, data);
   }
