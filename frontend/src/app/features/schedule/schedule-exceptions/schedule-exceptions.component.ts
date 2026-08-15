@@ -1,14 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { ScheduleService } from '../services/schedule.service';
 
+interface ScheduleException {
+  _id: string;
+  doctorId: string;
+  startDate: string;
+  endDate: string;
+  type: string;
+  reason: string;
+}
+
 @Component({
   selector: 'app-schedule-exceptions',
   templateUrl: './schedule-exceptions.component.html',
   styleUrls: ['./schedule-exceptions.component.css']
 })
 export class ScheduleExceptionsComponent implements OnInit {
-  exceptions: any[] = [];
+  exceptions: ScheduleException[] = [];
   doctorId: string = '6a7a68e2039344ea7b05c884'; // TODO: replace with real logged-in doctor's ID via AuthService later
+
+  types = ['Vacation', 'Blocked', 'Emergency'];
+  typeLabels: Record<string, string> = {
+    Vacation: 'إجازة',
+    Blocked: 'محظور',
+    Emergency: 'طارئ'
+  };
 
   newException = {
     doctorId: '',
@@ -18,7 +34,12 @@ export class ScheduleExceptionsComponent implements OnInit {
     reason: ''
   };
 
-  types = ['Vacation', 'Blocked', 'Emergency'];
+  editingId: string | null = null;
+
+  isLoading = false;
+  isSaving = false;
+  errorMessage = '';
+  successMessage = '';
 
   constructor(private scheduleService: ScheduleService) {}
 
@@ -28,22 +49,109 @@ export class ScheduleExceptionsComponent implements OnInit {
     }
   }
 
+  typeLabel(type: string): string {
+    return this.typeLabels[type] || type;
+  }
+
+  private clearMessages() {
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
   loadExceptions() {
-    this.scheduleService.getExceptionsByDoctor(this.doctorId).subscribe((data: any) => {
-      this.exceptions = data.data || data;
+    this.isLoading = true;
+    this.clearMessages();
+    this.scheduleService.getExceptionsByDoctor(this.doctorId).subscribe({
+      next: (data: any) => {
+        this.exceptions = data.data || data || [];
+        this.isLoading = false;
+      },
+      error: (err: Error) => {
+        this.errorMessage = err.message || 'تعذر تحميل الاستثناءات.';
+        this.isLoading = false;
+      }
     });
   }
 
-  addException() {
+  private resetForm() {
+    this.newException = {
+      doctorId: '',
+      startDate: '',
+      endDate: '',
+      type: 'Vacation',
+      reason: ''
+    };
+    this.editingId = null;
+  }
+
+  startEdit(exception: ScheduleException) {
+    this.clearMessages();
+    this.editingId = exception._id;
+    this.newException = {
+      doctorId: exception.doctorId,
+      startDate: exception.startDate?.slice(0, 10),
+      endDate: exception.endDate?.slice(0, 10),
+      type: exception.type,
+      reason: exception.reason || ''
+    };
+  }
+
+  cancelEdit() {
+    this.resetForm();
+    this.clearMessages();
+  }
+
+  saveException() {
+    this.clearMessages();
+
+    if (!this.newException.startDate || !this.newException.endDate || !this.newException.type) {
+      this.errorMessage = 'يرجى تعبئة جميع الحقول المطلوبة.';
+      return;
+    }
+
+    if (this.newException.endDate < this.newException.startDate) {
+      this.errorMessage = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية أو يساويه.';
+      return;
+    }
+
+    this.isSaving = true;
     this.newException.doctorId = this.doctorId;
-    this.scheduleService.addException(this.newException).subscribe(() => {
-      this.loadExceptions();
+
+    const request$ = this.editingId
+      ? this.scheduleService.updateException(this.editingId, this.newException)
+      : this.scheduleService.addException(this.newException);
+
+    request$.subscribe({
+      next: () => {
+        this.successMessage = this.editingId ? 'تم تحديث الاستثناء بنجاح.' : 'تمت إضافة الاستثناء بنجاح.';
+        this.isSaving = false;
+        this.resetForm();
+        this.loadExceptions();
+      },
+      error: (err: Error) => {
+        this.errorMessage = err.message || 'حدث خطأ أثناء الحفظ.';
+        this.isSaving = false;
+      }
     });
   }
 
   deleteException(id: string) {
-    this.scheduleService.deleteException(id).subscribe(() => {
-      this.loadExceptions();
+    if (!confirm('هل أنت متأكد من حذف هذا الاستثناء؟')) {
+      return;
+    }
+
+    this.clearMessages();
+    this.scheduleService.deleteException(id).subscribe({
+      next: () => {
+        this.successMessage = 'تم حذف الاستثناء.';
+        if (this.editingId === id) {
+          this.resetForm();
+        }
+        this.loadExceptions();
+      },
+      error: (err: Error) => {
+        this.errorMessage = err.message || 'تعذر حذف الاستثناء.';
+      }
     });
   }
 }

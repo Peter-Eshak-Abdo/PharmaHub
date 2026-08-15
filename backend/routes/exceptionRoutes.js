@@ -4,6 +4,7 @@ const {
   addException,
   getExceptionsByDoctor,
   checkExceptionForDate,
+  updateException,
   deleteException,
 } = require("../controllers/ExceptionController");
 const { protect, checkRole } = require("../middlewares/auth");
@@ -17,6 +18,9 @@ router.get("/:doctorId", getExceptionsByDoctor);
 // Check if a specific date is blocked — public, called by the Appointments
 // module before allowing a booking to go through
 router.get("/:doctorId/check", checkExceptionForDate);
+
+// Update an existing exception — protected
+router.put("/:id", protect, checkRole(['doctor']), updateException);
 
 // Delete an exception — protected
 router.delete("/:id", protect, checkRole(['doctor']), deleteException);

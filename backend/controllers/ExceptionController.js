@@ -87,6 +87,31 @@ exports.checkExceptionForDate = async (req, res) => {
   }
 };
 
+// PUT /api/exceptions/:id
+// Updates an existing exception period (e.g. doctor extends/shortens a vacation).
+exports.updateException = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const existing = await ScheduleException.findById(id);
+
+    if (!existing) {
+      return res.status(404).json({ success: false, message: 'Exception not found' });
+    }
+
+    Object.assign(existing, req.body);
+
+    const updated = await existing.save();
+
+    return res.status(200).json({ success: true, data: updated });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ success: false, message: error.message });
+    }
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // DELETE /api/exceptions/:id
 // Removes a leave/exception entry (e.g. doctor cancels a planned vacation).
 exports.deleteException = async (req, res) => {
