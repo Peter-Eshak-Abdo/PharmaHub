@@ -1,13 +1,20 @@
 const express = require("express");
 const router = express.Router();
+const { protect, authorize } = require("../middlewares/auth");
 const {
   createReview,
   getDoctorReviews,
-} = require("../controllers/ReviewController");
+  getReviewByAppointment,
+// } = require("../controllers/ReviewController");
+} = require("../controllers/Reviewcontroller");
 
-const { protect, checkRole } = require("../middlewares/auth");
+// Patient submits a review
+router.post("/", protect, authorize("patient"), createReview);
 
-router.post("/", protect, checkRole(["patient"]), createReview);// إضافة تقييم جديد
-router.get("/doctor/:doctorId", getDoctorReviews);// جلب تقييمات طبيب محدد
+// Get all reviews for a doctor (public with auth)
+router.get("/doctor/:doctorId", protect, getDoctorReviews);
+
+// Check if appointment already reviewed
+router.get("/appointment/:appointmentId", protect, getReviewByAppointment);
 
 module.exports = router;
