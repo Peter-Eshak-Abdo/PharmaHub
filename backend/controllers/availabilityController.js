@@ -62,14 +62,32 @@ exports.addAvailability = async (req, res) => {
   }
 };
 
+// Week starts on Sunday, matching the slot engine's day mapping.
+const WEEK_ORDER = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
 // GET /api/availability/:doctorId
 exports.getAvailabilityByDoctor = async (req, res) => {
   try {
     const { doctorId } = req.params;
 
-    const slots = await WeeklyAvailability.find({ doctorId }).sort({
-      dayOfWeek: 1,
-      startTime: 1,
+    // dayOfWeek is stored as a string, so a plain Mongo sort would order
+    // it alphabetically (Friday, Monday, Saturday, Sunday...) instead of
+    // calendar order. Fetch then sort in JS against WEEK_ORDER instead.
+    const slots = await WeeklyAvailability.find({ doctorId });
+
+    slots.sort((a, b) => {
+      const dayDiff =
+        WEEK_ORDER.indexOf(a.dayOfWeek) - WEEK_ORDER.indexOf(b.dayOfWeek);
+      if (dayDiff !== 0) return dayDiff;
+      return a.startTime.localeCompare(b.startTime);
     });
 
     return res.status(200).json({
@@ -170,15 +188,21 @@ exports.getAvailableSlots = async (req, res) => {
       });
     }
 
-    const dayOfWeek = new Date(date).getUTCDay();
+    const parsedDate = new Date(date);
 
-    // Convert to ISO day:
-    // 1 = Monday ... 7 = Sunday
-    const isoDay = dayOfWeek === 0 ? 7 : dayOfWeek;
+    if (isNaN(parsedDate.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid date format',
+      });
+    }
+
+    // WEEK_ORDER[0] is Sunday, matching JS Date#getUTCDay() directly.
+    const dayName = WEEK_ORDER[parsedDate.getUTCDay()];
 
     const weeklySlot = await WeeklyAvailability.findOne({
       doctorId,
-      dayOfWeek: isoDay,
+      dayOfWeek: dayName,
     });
 
     if (!weeklySlot) {

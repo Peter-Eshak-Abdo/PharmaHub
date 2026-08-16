@@ -1,84 +1,108 @@
-<div class="max-w-container-max mx-auto px-gutter py-lg">
+<div dir="rtl" class="max-w-container-max mx-auto px-gutter py-lg" lang="ar">
   <div class="flex flex-col gap-xs mb-md">
-    <h1 class="font-headline-lg text-headline-lg text-on-surface">Weekly Availability</h1>
-    <p class="font-body-lg text-body-lg text-on-surface-variant">Manage your recurring weekly working hours for patient bookings.</p>
+    <h1 class="font-headline-lg text-headline-lg text-on-surface">مواعيد التوفر الأسبوعية</h1>
+    <p class="font-body-lg text-body-lg text-on-surface-variant">إدارة ساعات العمل الأسبوعية المتكررة لحجوزات المرضى.</p>
+  </div>
+
+  <!-- Feedback messages -->
+  <div *ngIf="errorMessage" class="mb-md p-sm rounded-lg bg-error-container text-on-error-container font-body-sm text-body-sm flex items-center gap-xs">
+    <span class="material-symbols-outlined text-sm">error</span>
+    {{ errorMessage }}
+  </div>
+  <div *ngIf="successMessage" class="mb-md p-sm rounded-lg bg-primary-container text-on-primary-container font-body-sm text-body-sm flex items-center gap-xs">
+    <span class="material-symbols-outlined text-sm">check_circle</span>
+    {{ successMessage }}
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
 
-    <!-- Left: Slot list -->
-    <div class="lg:col-span-8 flex flex-col gap-md">
+    <!-- Right (visually first in RTL): Slot list -->
+    <div class="lg:col-span-8 flex flex-col gap-md order-2 lg:order-1">
       <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
-        <table class="w-full text-left border-collapse">
+
+        <div *ngIf="isLoading" class="p-md text-center text-on-surface-variant font-body-sm text-body-sm">
+          جارٍ التحميل...
+        </div>
+
+        <table *ngIf="!isLoading" class="w-full text-right border-collapse">
           <thead>
             <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
-              <th class="p-sm font-semibold">Day</th>
-              <th class="p-sm font-semibold">Start</th>
-              <th class="p-sm font-semibold">End</th>
-              <th class="p-sm font-semibold">Slot Length</th>
-              <th class="p-sm font-semibold text-right w-24">Actions</th>
+              <th class="p-sm font-semibold">اليوم</th>
+              <th class="p-sm font-semibold">البداية</th>
+              <th class="p-sm font-semibold">النهاية</th>
+              <th class="p-sm font-semibold">مدة الموعد</th>
+              <th class="p-sm font-semibold text-left w-24">إجراءات</th>
             </tr>
           </thead>
           <tbody class="font-body-sm text-body-sm text-on-surface">
             <tr *ngFor="let slot of slots" class="hover:bg-surface-container-low/50 transition-colors group border-t border-outline-variant">
-              <td class="p-sm font-medium">{{ slot.dayOfWeek }}</td>
+              <td class="p-sm font-medium">{{ dayLabel(slot.dayOfWeek) }}</td>
               <td class="p-sm">{{ slot.startTime }}</td>
               <td class="p-sm">{{ slot.endTime }}</td>
-              <td class="p-sm">{{ slot.slotDurationMinutes }} min</td>
-              <td class="p-sm text-right">
-                <button (click)="deleteSlot(slot._id)" class="text-on-surface-variant hover:text-error opacity-0 group-hover:opacity-100 transition-opacity p-base">
-                  <span class="material-symbols-outlined text-sm">delete</span>
-                </button>
+              <td class="p-sm">{{ slot.slotDurationMinutes }} دقيقة</td>
+              <td class="p-sm text-left">
+                <div class="flex gap-xs justify-start opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button (click)="startEdit(slot)" class="text-on-surface-variant hover:text-primary p-base" title="تعديل">
+                    <span class="material-symbols-outlined text-sm">edit</span>
+                  </button>
+                  <button (click)="deleteSlot(slot._id)" class="text-on-surface-variant hover:text-error p-base" title="حذف">
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                  </button>
+                </div>
               </td>
             </tr>
             <tr *ngIf="slots.length === 0">
-              <td colspan="5" class="p-sm text-center text-on-surface-variant">No availability slots added yet.</td>
+              <td colspan="5" class="p-sm text-center text-on-surface-variant">لا توجد مواعيد توفر مضافة بعد.</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Right: Add form -->
-    <div class="lg:col-span-4">
+    <!-- Left (visually second in RTL): Add/Edit form -->
+    <div class="lg:col-span-4 order-1 lg:order-2">
       <div class="bg-surface-container-lowest rounded-xl shadow-md p-md flex flex-col sticky top-24">
         <div class="flex items-center gap-xs mb-md">
-          <span class="material-symbols-outlined text-primary bg-primary-container p-xs rounded-full">add_circle</span>
-          <h2 class="font-headline-sm text-headline-sm text-on-surface">Add Weekly Slot</h2>
+          <span class="material-symbols-outlined text-primary bg-primary-container p-xs rounded-full">{{ editingId ? 'edit' : 'add_circle' }}</span>
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">{{ editingId ? 'تعديل الموعد' : 'إضافة موعد أسبوعي' }}</h2>
         </div>
 
         <form class="flex flex-col gap-sm">
           <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Day of Week</label>
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">اليوم</label>
             <select [(ngModel)]="newSlot.dayOfWeek" name="dayOfWeek"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
-              <option *ngFor="let day of days" [value]="day">{{ day }}</option>
+              <option *ngFor="let day of dayValues; let i = index" [value]="day">{{ days[i] }}</option>
             </select>
           </div>
 
           <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Start Time</label>
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">وقت البداية</label>
             <input type="time" [(ngModel)]="newSlot.startTime" name="startTime"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
           </div>
 
           <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">End Time</label>
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">وقت النهاية</label>
             <input type="time" [(ngModel)]="newSlot.endTime" name="endTime"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
           </div>
 
           <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Slot Duration (minutes)</label>
+            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">مدة الموعد (بالدقائق)</label>
             <input type="number" [(ngModel)]="newSlot.slotDurationMinutes" name="slotDurationMinutes"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
           </div>
 
-          <div class="mt-xs">
-            <button type="button" (click)="addSlot()"
-              class="w-full bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md py-sm rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-xs">
+          <div class="mt-xs flex gap-xs">
+            <button type="button" (click)="saveSlot()" [disabled]="isSaving"
+              class="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-60 text-on-primary font-label-md text-label-md py-sm rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-xs">
               <span class="material-symbols-outlined text-sm">save</span>
-              Add Slot
+              {{ isSaving ? 'جارٍ الحفظ...' : (editingId ? 'حفظ التعديل' : 'إضافة الموعد') }}
+            </button>
+            <button *ngIf="editingId" type="button" (click)="cancelEdit()"
+              class="px-sm bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md py-sm rounded-lg transition-all">
+              إلغاء
             </button>
           </div>
         </form>
