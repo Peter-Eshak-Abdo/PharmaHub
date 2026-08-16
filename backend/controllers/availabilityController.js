@@ -1,6 +1,6 @@
 const WeeklyAvailability = require('../models/WeeklyAvailability');
 const ScheduleException = require('../models/ScheduleException');
-const Appointment = require('../models/Appointments');
+const Appointment = require('../models/Appointment');
 
 // POST /api/availability
 exports.addAvailability = async (req, res) => {

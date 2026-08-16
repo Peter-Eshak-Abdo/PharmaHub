@@ -1,47 +1,149 @@
-// features/appointments/services/appointment.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Appointment, TimeSlot } from '../models/appointment.model';
-import { environment } from 'src/environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
+import {
+  Appointment,
+  CreateAppointmentDto,
+  AppointmentStatus,
+  PaginatedResponse,
+} from '../models/appointment.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AppointmentService {
-  private apiUrl = `${environment.apiUrl}/appointments`;
-  // private apiUrl = '/api/appointments';
+  private readonly base = `${environment.apiUrl}/appointments`;
 
   constructor(private http: HttpClient) {}
 
-  getPatientAppointments(patientId?: string): Observable<any> {
-    const url = patientId
-      ? `${this.apiUrl}/patient/${patientId}`
-      : `${this.apiUrl}/patient`;
-    return this.http.get<any>(url);
+  // =============================================
+  // Create appointment (patient)
+  // =============================================
+  createAppointment(
+    dto: CreateAppointmentDto,
+  ): Observable<{ success: boolean; data: Appointment; message: string }> {
+    return this.http
+      .post<any>(this.base, dto)
+      .pipe(
+        catchError((err) =>
+          throwError(
+            () => new Error(err.error?.message || 'خطأ في إنشاء الحجز'),
+          ),
+        ),
+      );
   }
 
-  getDoctorAppointments(doctorId?: string): Observable<any> {
-    const url = doctorId
-      ? `${this.apiUrl}/doctor/${doctorId}`
-      : `${this.apiUrl}/doctor`;
-    return this.http.get<any>(url);
+  // =============================================
+  // Get patient appointments
+  // =============================================
+  getPatientAppointments(
+    status?: AppointmentStatus,
+    page = 1,
+    limit = 10,
+  ): Observable<PaginatedResponse<Appointment>> {
+    let params = new HttpParams().set('page', page).set('limit', limit);
+    if (status) params = params.set('status', status);
+
+    return this.http
+      .get<PaginatedResponse<Appointment>>(`${this.base}/patient`, { params })
+      .pipe(
+        catchError((err) =>
+          throwError(
+            () => new Error(err.error?.message || 'خطأ في جلب المواعيد'),
+          ),
+        ),
+      );
   }
 
-  getAvailableSlots(doctorId: string, date: string): Observable<any> {
-    return this.http.get<any>(
-      `/api/availability/${doctorId}/slots?date=${date}`,
+  // =============================================
+  // Get doctor appointments
+  // =============================================
+  getDoctorAppointments(
+    status?: AppointmentStatus,
+    date?: string,
+    page = 1,
+    limit = 10,
+  ): Observable<PaginatedResponse<Appointment>> {
+    let params = new HttpParams().set('page', page).set('limit', limit);
+    if (status) params = params.set('status', status);
+    if (date) params = params.set('date', date);
+
+    return this.http
+      .get<PaginatedResponse<Appointment>>(`${this.base}/doctor`, { params })
+      .pipe(
+        catchError((err) =>
+          throwError(
+            () => new Error(err.error?.message || 'خطأ في جلب المواعيد'),
+          ),
+        ),
+      );
+  }
+
+  // =============================================
+  // Get single appointment
+  // =============================================
+  getAppointmentById(id: string): Observable<Appointment> {
+    return this.http.get<any>(`${this.base}/${id}`).pipe(
+      map((r) => r.data),
+      catchError((err) =>
+        throwError(() => new Error(err.error?.message || 'خطأ في جلب الموعد')),
+      ),
     );
   }
 
-  createAppointment(payload: Partial<Appointment>): Observable<Appointment> {
-    return this.http.post<Appointment>(this.apiUrl, payload);
+  // =============================================
+  // Update appointment status (doctor/admin)
+  // =============================================
+  updateStatus(id: string, status: AppointmentStatus): Observable<Appointment> {
+    return this.http.patch<any>(`${this.base}/${id}/status`, { status }).pipe(
+      map((r) => r.data),
+      catchError((err) =>
+        throwError(
+          () => new Error(err.error?.message || 'خطأ في تحديث الحالة'),
+        ),
+      ),
+    );
   }
 
-  updateAppointmentStatus(id: string, status: string): Observable<Appointment> {
-    return this.http.patch<Appointment>(`${this.apiUrl}/${id}/status`, {
-      status,
-    });
+  // =============================================
+  // Cancel appointment
+  // =============================================
+  cancelAppointment(
+    id: string,
+  ): Observable<{ success: boolean; message: string }> {
+    return this.http
+      .patch<any>(`${this.base}/${id}/cancel`, {})
+      .pipe(
+        catchError((err) =>
+          throwError(
+            () => new Error(err.error?.message || 'خطأ في إلغاء الموعد'),
+          ),
+        ),
+      );
+  }
+
+  // =============================================
+  // Get available slots
+  // =============================================
+  getAvailableSlots(
+    doctorId: string,
+    date: string,
+  ): Observable<{
+    data: string[];
+    slotDuration: number;
+    message?: string;
+    success?: boolean;
+  }> {
+    const params = new HttpParams().set('doctorId', doctorId).set('date', date);
+    return this.http
+      .get<any>(`${this.base}/available-slots`, { params })
+      .pipe(
+        catchError((err) =>
+          throwError(
+            () =>
+              new Error(err.error?.message || 'خطأ في جلب المواعيد المتاحة'),
+          ),
+        ),
+      );
   }
 }
-
