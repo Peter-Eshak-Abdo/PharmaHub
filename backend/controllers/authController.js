@@ -1,6 +1,6 @@
-const User = require("../models/Users");
-const Patient = require("../models/Patients");
-const Doctor = require("../models/Doctors");
+const User = require("../models/User");
+const Patient = require("../models/Patient");
+const Doctor = require("../models/Doctor");
 const jwt = require("jsonwebtoken");
 
 const generateToken = (user) => {

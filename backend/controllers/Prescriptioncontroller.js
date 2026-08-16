@@ -1,7 +1,7 @@
-const Prescription = require("../models/Prescriptions");
-const Appointment = require('../models/Appointments');
+const Prescription = require("../models/Prescription");
+const Appointment = require('../models/Appointment');
 const Diagnosis = require("../models/Diagnosis");
-const Medication = require("../models/Medications");
+const Medication = require("../models/Medication");
 
 // POST /api/prescriptions
 // Create a new prescription for a completed appointment (Doctor only)

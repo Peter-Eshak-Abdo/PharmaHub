@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Appointment = require('../models/Appointments');
+const Appointment = require('../models/Appointment');
 
 /**
  * @desc    Get complete medical history for a patient via Aggregation Pipeline
@@ -27,29 +27,29 @@ const getMedicalHistory = async (req, res) => {
             // 2. Lookup Doctor information
             {
                 $lookup: {
-                    from: 'doctors', 
+                    from: 'doctors',
                     localField: 'doctorId',
                     foreignField: '_id',
                     as: 'doctor'
                 }
             },
             { $unwind: { path: '$doctor', preserveNullAndEmptyArrays: true } },
-            
+
             // 3. Lookup Prescription associated with this Appointment
             {
                 $lookup: {
-                    from: 'prescriptions', 
+                    from: 'prescriptions',
                     localField: '_id',
                     foreignField: 'appointmentId',
                     as: 'prescription'
                 }
             },
             { $unwind: { path: '$prescription', preserveNullAndEmptyArrays: true } },
-            
+
             // 4. Lookup Diagnoses associated with the Prescription
             {
                 $lookup: {
-                    from: 'diagnoses', 
+                    from: 'diagnoses',
                     localField: 'prescription.diagnosisIds',
                     foreignField: '_id',
                     as: 'diagnoses'
@@ -59,7 +59,7 @@ const getMedicalHistory = async (req, res) => {
             // 4.5 Lookup Medications associated with the Prescription
             {
                 $lookup: {
-                    from: 'medications', 
+                    from: 'medications',
                     localField: 'prescription.medications.medicationId',
                     foreignField: '_id',
                     as: 'medicationDetails'
@@ -89,7 +89,7 @@ const getMedicalHistory = async (req, res) => {
                     'prescription.issuedDate': 1
                 }
             },
-            
+
             // 6. Sort chronologically (newest first)
             { $sort: { appointmentDate: -1, appointmentTime: -1 } }
         ];
