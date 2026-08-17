@@ -16,10 +16,14 @@
         <div class="card-body">
           <h5 class="card-title">{{ doctor.fullName }}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{ doctor.specialization }}</h6>
-          <p class="card-text">⭐ {{ doctor.rating }} / 5</p>
-          <a [routerLink]="['/doctor-detail', doctor._id]" class="btn btn-outline-primary btn-sm">التفاصيل والحجز</a>
+          <div class="d-flex gap-2 mt-3">
+            <a [routerLink]="['/profiles/doctor-detail', doctor._id]" class="btn btn-outline-primary btn-sm flex-1">التفاصيل</a>
+            <a [routerLink]="['/appointments/book']"
+               [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
+               class="btn btn-primary btn-sm flex-1">حجز موعد</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div><p>doctor-list works!</p>
+</div>

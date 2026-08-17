@@ -1,99 +1,227 @@
-<!-- features/appointments/booking-form/booking-form.component.html -->
-<div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-sans dir-rtl">
-  <div class="max-w-3xl mx-auto">
-    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden" [formGroup]="bookingForm">
+<div class="min-h-screen bg-background" dir="rtl">
+  <!-- Header -->
+  <div class="bg-surface-container-lowest border-b border-outline-variant px-sm md:px-xl py-md">
+    <button (click)="goBack()" class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors mb-sm">
+      <span class="material-symbols-outlined">arrow_forward</span>
+      <span class="font-label-md text-label-md">رجوع</span>
+    </button>
+    <h1 class="font-headline-lg text-headline-lg text-on-surface">حجز موعد جديد</h1>
+    <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ doctorName }} — {{ doctorSpecialization }}</p>
+  </div>
 
-      <div *ngIf="step === 1" class="p-8">
-        <div class="mb-8 border-b border-slate-100 pb-6">
-          <h2 class="text-2xl font-bold text-slate-800">حجز موعد جديد</h2>
-          <p class="text-slate-600 mt-1">اختر التاريخ والوقت المناسبين لكشفك</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label class="block text-sm font-semibold text-slate-800 mb-2">التاريخ</label>
-            <input title="Date" type="date" formControlName="date" (change)="onDateChange($event)"
-              class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 outline-none transition-all text-slate-800" />
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-slate-800 mb-2">المواعيد المتاحة</label>
-            <select title="TimeSlot" formControlName="timeSlot"
-              class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 outline-none transition-all bg-white text-slate-800">
-              <option value="" disabled selected>اختر الموعد</option>
-              <option *ngFor="let slot of availableSlots" [value]="slot.time">{{ slot.time }}</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="mt-8 flex justify-end">
-          <button type="button" [disabled]="bookingForm.get('date')?.invalid || bookingForm.get('timeSlot')?.invalid"
-            (click)="nextStep()"
-            class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm">
-            التالي
-          </button>
-        </div>
+  <!-- Progress Steps -->
+  <div class="px-sm md:px-xl py-md bg-surface-container-low border-b border-outline-variant">
+    <div class="flex items-center gap-sm max-w-md">
+      <div class="flex items-center gap-xs">
+        <div [class]="step >= 1 ? 'w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md' : 'w-8 h-8 rounded-full bg-surface-container border-2 border-outline flex items-center justify-center text-on-surface-variant font-label-md text-label-md'">1</div>
+        <span class="font-label-md text-label-md" [class]="step >= 1 ? 'text-primary' : 'text-on-surface-variant'">اختيار الموعد</span>
       </div>
-
-      <div *ngIf="step === 2" class="p-8">
-        <div class="mb-8 border-b border-slate-100 pb-6">
-          <h2 class="text-2xl font-bold text-slate-800">مراجعة بيانات الحجز</h2>
-          <p class="text-slate-600 mt-1">تأكد من تفاصيل موعدك قبل التأكيد</p>
-        </div>
-
-        <div class="bg-slate-50 rounded-lg border border-slate-200 p-6 mb-8">
-          <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-200">
-            <span class="text-slate-600 font-medium">التاريخ والوقت:</span>
-            <span class="font-bold text-slate-800">{{ bookingForm.get('date')?.value }} -
-              {{ bookingForm.get('timeSlot')?.value }}</span>
-          </div>
-
-          <div class="space-y-5">
-            <div>
-              <label class="block text-sm font-semibold text-slate-800 mb-2">نوع الكشف</label>
-              <select title="consultationType" formControlName="consultationType"
-                class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 outline-none transition-all bg-white text-slate-800">
-                <option value="In-Clinic">في العيادة (In-Clinic)</option>
-                <option value="Online">أونلاين (Online)</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-sm font-semibold text-slate-800 mb-2">سبب الزيارة (اختياري)</label>
-              <textarea title="reasonForVisit" formControlName="reasonForVisit" rows="3"
-                class="w-full border border-slate-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 outline-none transition-all text-slate-800"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-between items-center">
-          <button type="button" (click)="step = 1"
-            class="text-teal-600 font-semibold hover:bg-teal-50 py-2 px-6 rounded-lg transition-colors border border-transparent hover:border-teal-100">
-            العودة للتعديل
-          </button>
-          <button type="button" [disabled]="bookingForm.invalid" (click)="submitBooking()"
-            class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 shadow-sm">
-            تأكيد الحجز
-          </button>
-        </div>
+      <div class="flex-1 h-0.5 bg-outline-variant">
+        <div class="h-full bg-primary transition-all duration-300" [style.width]="step >= 2 ? '100%' : '0%'"></div>
       </div>
-
-      <div *ngIf="step === 3" class="p-12 text-center">
-        <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
-          </svg>
-        </div>
-        <h2 class="text-2xl font-bold text-slate-800 mb-2">تم تأكيد حجزك بنجاح!</h2>
-        <p class="text-slate-600 mb-8 max-w-md mx-auto">لقد تم إرسال رسالة تأكيد تحتوي على كافة تفاصيل الموعد إلى بريدك
-          الإلكتروني.</p>
-
-        <button type="button" (click)="goToAppointments()"
-          class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-6 rounded-lg transition-colors shadow-sm">
-          عرض حجوزاتي
-        </button>
+      <div class="flex items-center gap-xs">
+        <div [class]="step >= 2 ? 'w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md' : 'w-8 h-8 rounded-full bg-surface-container border-2 border-outline flex items-center justify-center text-on-surface-variant font-label-md text-label-md'">2</div>
+        <span class="font-label-md text-label-md" [class]="step >= 2 ? 'text-primary' : 'text-on-surface-variant'">تأكيد الحجز</span>
       </div>
-
     </div>
+  </div>
+
+  <div class="max-w-2xl mx-auto px-sm md:px-xl py-lg">
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="bg-error-container text-on-error-container rounded-lg px-md py-sm mb-md flex flex-col gap-xs">
+      <div class="flex items-start gap-sm">
+        <span class="material-symbols-outlined text-[20px] mt-0.5 shrink-0">error</span>
+        <span class="font-body-sm text-body-sm">{{ errorMessage }}</span>
+      </div>
+      <div *ngIf="!doctorId" class="mt-xs">
+        <a routerLink="/profiles/doctor-list" class="inline-flex items-center gap-xs px-md py-xs bg-primary text-on-primary rounded-lg font-label-sm text-label-sm hover:opacity-90 transition-opacity">
+          <span class="material-symbols-outlined text-[16px]">person_search</span>
+          <span>الانتقال لقائمة الأطباء</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div *ngIf="successMessage" class="bg-tertiary-container text-on-tertiary-container rounded-lg px-md py-sm mb-md flex items-center gap-sm">
+      <span class="material-symbols-outlined text-[20px] shrink-0">check_circle</span>
+      <span class="font-body-sm text-body-sm">{{ successMessage }}</span>
+    </div>
+
+    <!-- ======== STEP 1: Date & Time ======== -->
+    <div *ngIf="step === 1">
+      <!-- Date Picker -->
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">اختر التاريخ</h2>
+        <div class="relative">
+          <input
+            type="date"
+            [min]="minDate"
+            [value]="selectedDate"
+            (change)="onDateChange($any($event.target).value)"
+            title="Date"
+            class="w-full border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface bg-surface focus:border-primary focus:ring-4 focus:ring-primary/20 outline-none transition-all appearance-none cursor-pointer"
+          />
+        </div>
+      </div>
+
+      <!-- Time Slots -->
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md" *ngIf="selectedDate">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-sm">اختر الوقت</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">كل جلسة {{ slotDuration }} دقيقة</p>
+
+        <!-- Loading -->
+        <div *ngIf="isLoadingSlots" class="flex items-center justify-center py-lg gap-sm text-on-surface-variant">
+          <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <span class="font-body-sm text-body-sm">جاري تحميل المواعيد...</span>
+        </div>
+
+        <!-- Slots Grid -->
+        <div *ngIf="!isLoadingSlots && availableSlots.length > 0" class="grid grid-cols-3 sm:grid-cols-4 gap-sm">
+          <button
+            *ngFor="let slot of availableSlots"
+            (click)="selectTime(slot)"
+            [class]="selectedTime === slot
+              ? 'px-sm py-sm rounded-lg font-label-md text-label-md text-center border-2 transition-all bg-primary text-on-primary border-primary shadow-sm'
+              : 'px-sm py-sm rounded-lg font-label-md text-label-md text-center border-2 transition-all border-outline-variant text-on-surface hover:border-primary hover:text-primary hover:bg-primary/5'"
+          >
+            {{ formatTime(slot) }}
+          </button>
+        </div>
+
+        <!-- Empty -->
+        <div *ngIf="!isLoadingSlots && availableSlots.length === 0 && !errorMessage"
+          class="text-center py-lg text-on-surface-variant">
+          <span class="material-symbols-outlined text-4xl mb-sm block">event_busy</span>
+          <p class="font-body-sm text-body-sm">لا توجد مواعيد متاحة في هذا اليوم</p>
+        </div>
+      </div>
+
+      <!-- Fee Preview -->
+      <div *ngIf="doctorFee > 0" class="bg-surface-container rounded-lg px-md py-sm mb-md flex items-center justify-between">
+        <span class="font-label-md text-label-md text-on-surface-variant">رسوم الكشف</span>
+        <span class="font-headline-sm text-headline-sm text-primary">{{ doctorFee | currency:'EGP':'symbol':'1.0-0' }}</span>
+      </div>
+
+      <!-- Next Button -->
+      <button
+        (click)="goToStep2()"
+        [disabled]="!selectedDate || !selectedTime"
+        class="w-full py-sm rounded-lg font-label-md text-label-md transition-all
+               bg-primary text-on-primary hover:bg-primary-container shadow-sm
+               disabled:opacity-40 disabled:cursor-not-allowed focus:ring-4 focus:ring-primary/20"
+      >
+        التالي: تفاصيل الحجز
+      </button>
+    </div>
+
+    <!-- ======== STEP 2: Details & Confirm ======== -->
+    <div *ngIf="step === 2">
+      <!-- Booking Summary -->
+      <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md">
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">ملخص الحجز</h2>
+        <div class="space-y-sm">
+          <div class="flex items-center gap-md">
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary">person</span>
+            </div>
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">الطبيب</p>
+              <p class="font-label-md text-label-md text-on-surface">{{ doctorName }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-md">
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary">calendar_today</span>
+            </div>
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">التاريخ</p>
+              <p class="font-label-md text-label-md text-on-surface">{{ formatDate(selectedDate) }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-md">
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary">schedule</span>
+            </div>
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">الوقت</p>
+              <p class="font-label-md text-label-md text-on-surface">{{ formatTime(selectedTime) }}</p>
+            </div>
+          </div>
+          <div *ngIf="doctorFee > 0" class="flex items-center gap-md">
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary">payments</span>
+            </div>
+            <div>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">رسوم الكشف</p>
+              <p class="font-label-md text-label-md text-primary">{{ doctorFee | currency:'EGP':'symbol':'1.0-0' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Details -->
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-md">
+        <!-- Consultation Type -->
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md">
+          <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">نوع الاستشارة</h3>
+          <div class="grid grid-cols-2 gap-sm">
+            <button
+              type="button"
+              *ngFor="let type of consultationTypes"
+              (click)="form.get('consultationType')?.setValue(type.value)"
+              [class]="form.get('consultationType')?.value === type.value
+                ? 'p-sm rounded-lg border-2 border-primary bg-primary/5 flex flex-col items-center gap-xs transition-all'
+                : 'p-sm rounded-lg border-2 border-outline-variant flex flex-col items-center gap-xs transition-all hover:border-primary/50'"
+            >
+              <span class="material-symbols-outlined text-2xl" [class]="form.get('consultationType')?.value === type.value ? 'text-primary' : 'text-on-surface-variant'">
+                {{ type.icon }}
+              </span>
+              <span class="font-label-md text-label-md" [class]="form.get('consultationType')?.value === type.value ? 'text-primary' : 'text-on-surface-variant'">
+                {{ type.label }}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Reason for Visit -->
+        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md">
+          <label class="font-label-md text-label-md text-on-surface-variant block mb-sm">
+            سبب الزيارة <span class="font-body-sm text-body-sm">(اختياري)</span>
+          </label>
+          <textarea
+            formControlName="reasonForVisit"
+            rows="3"
+            placeholder="اذكر باختصار سبب زيارتك للطبيب..."
+            class="w-full border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface bg-surface placeholder:text-on-surface-variant/50
+                   focus:border-primary focus:ring-4 focus:ring-primary/20 outline-none transition-all resize-none"
+          ></textarea>
+          <p *ngIf="form.get('reasonForVisit')?.hasError('maxlength')" class="text-error font-body-sm text-body-sm mt-xs">
+            الحد الأقصى 500 حرف
+          </p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex gap-sm">
+          <button
+            type="button"
+            (click)="goBack()"
+            class="flex-1 py-sm rounded-lg font-label-md text-label-md border-2 border-primary text-primary hover:bg-primary/5 transition-all"
+          >
+            رجوع
+          </button>
+          <button
+            type="submit"
+            [disabled]="isSubmitting"
+            class="flex-1 py-sm rounded-lg font-label-md text-label-md bg-primary text-on-primary hover:bg-primary-container shadow-sm transition-all
+                   disabled:opacity-40 disabled:cursor-not-allowed focus:ring-4 focus:ring-primary/20 flex items-center justify-center gap-xs"
+          >
+            <div *ngIf="isSubmitting" class="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></div>
+            <span>{{ isSubmitting ? 'جاري الحجز...' : 'تأكيد الحجز' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
   </div>
 </div>

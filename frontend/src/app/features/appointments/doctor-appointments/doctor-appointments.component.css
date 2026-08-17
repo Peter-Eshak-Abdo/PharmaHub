@@ -1,0 +1,18 @@
+/* Hide scrollbar for tabs */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smooth card hover */
+.appt-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.appt-card:hover {
+  transform: translateY(-2px);
+}

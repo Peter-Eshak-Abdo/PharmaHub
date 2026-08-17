@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Appointment = require("../models/Appointment");
 const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
@@ -132,11 +133,13 @@ exports.createAppointment = async (req, res) => {
 // =============================================
 exports.getPatientAppointments = async (req, res) => {
   try {
-    const patient = await Patient.findOne({ userId: req.user.id });
+    const patient = await Patient.findOne({ userId: req.user.id || req.user._id });
     if (!patient) {
-      return res
-        .status(404)
-        .json({ success: false, message: "ملف المريض غير موجود" });
+      return res.json({
+        success: true,
+        data: [],
+        pagination: { total: 0, page: 1, pages: 1 },
+      });
     }
 
     const { status, page = 1, limit = 10 } = req.query;
@@ -159,7 +162,7 @@ exports.getPatientAppointments = async (req, res) => {
       pagination: {
         total,
         page: Number(page),
-        pages: Math.ceil(total / Number(limit)),
+        pages: Math.ceil(total / Number(limit)) || 1,
       },
     });
   } catch (err) {
@@ -178,11 +181,13 @@ exports.getPatientAppointments = async (req, res) => {
 // =============================================
 exports.getDoctorAppointments = async (req, res) => {
   try {
-    const doctor = await Doctor.findOne({ userId: req.user.id });
+    const doctor = await Doctor.findOne({ userId: req.user.id || req.user._id });
     if (!doctor) {
-      return res
-        .status(404)
-        .json({ success: false, message: "ملف الطبيب غير موجود" });
+      return res.json({
+        success: true,
+        data: [],
+        pagination: { total: 0, page: 1, pages: 1 },
+      });
     }
 
     const { status, date, page = 1, limit = 10 } = req.query;
@@ -375,12 +380,32 @@ exports.getAvailableSlots = async (req, res) => {
   try {
     const { doctorId, date } = req.query;
     if (!doctorId || !date) {
-      return res
-        .status(400)
-        .json({ success: false, message: "doctorId و date مطلوبان" });
+      return res.json({
+        success: true,
+        data: [],
+        slotDuration: 30,
+        message: "doctorId و date مطلوبان",
+      });
     }
 
-    const targetDate = new Date(date);
+    if (!mongoose.Types.ObjectId.isValid(doctorId)) {
+      return res.json({
+        success: true,
+        data: [],
+        slotDuration: 30,
+        message: "معرف الطبيب غير صالح",
+      });
+    }
+
+    // Parse date safely
+    let targetDate;
+    if (typeof date === "string" && date.includes("-")) {
+      const [y, m, d] = date.split("-").map(Number);
+      targetDate = new Date(y, m - 1, d);
+    } else {
+      targetDate = new Date(date);
+    }
+
     const dayNames = [
       "Sunday",
       "Monday",
@@ -397,20 +422,27 @@ exports.getAvailableSlots = async (req, res) => {
       return res.json({
         success: true,
         data: [],
+        slotDuration: 30,
         message: "الطبيب غير متاح في هذا اليوم",
       });
     }
 
     // Check exceptions
+    const startOfDay = new Date(targetDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(targetDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
     const exception = await ScheduleException.findOne({
       doctorId,
-      startDate: { $lte: targetDate },
-      endDate: { $gte: targetDate },
+      startDate: { $lte: endOfDay },
+      endDate: { $gte: startOfDay },
     });
     if (exception) {
       return res.json({
         success: true,
         data: [],
+        slotDuration: avail.slotDurationMinutes || 30,
         message: `يوم إجازة: ${exception.reason || exception.type}`,
       });
     }
@@ -419,22 +451,23 @@ exports.getAvailableSlots = async (req, res) => {
     const [startH, startM] = avail.startTime.split(":").map(Number);
     const [endH, endM] = avail.endTime.split(":").map(Number);
     const slots = [];
+    const slotDuration = avail.slotDurationMinutes || 30;
     let cur = startH * 60 + startM;
     const end = endH * 60 + endM;
 
-    while (cur + avail.slotDurationMinutes <= end) {
+    while (cur + slotDuration <= end) {
       const h = String(Math.floor(cur / 60)).padStart(2, "0");
       const m = String(cur % 60).padStart(2, "0");
       slots.push(`${h}:${m}`);
-      cur += avail.slotDurationMinutes;
+      cur += slotDuration;
     }
 
     // Remove booked slots
     const booked = await Appointment.find({
       doctorId,
       appointmentDate: {
-        $gte: new Date(targetDate.setHours(0, 0, 0, 0)),
-        $lt: new Date(targetDate.setHours(23, 59, 59, 999)),
+        $gte: startOfDay,
+        $lte: endOfDay,
       },
       status: { $nin: ["Cancelled"] },
     }).select("appointmentTime");
@@ -445,9 +478,14 @@ exports.getAvailableSlots = async (req, res) => {
     res.json({
       success: true,
       data: available,
-      slotDuration: avail.slotDurationMinutes,
+      slotDuration,
     });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    res.json({
+      success: true,
+      data: [],
+      slotDuration: 30,
+      message: err.message,
+    });
   }
 };

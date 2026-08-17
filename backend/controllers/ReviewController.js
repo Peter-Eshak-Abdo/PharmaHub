@@ -1,79 +1,159 @@
-const Review = require("../models/Reviews");
-const Appointment = require("../models/Appointments");
-const Doctor = require("../models/Doctors");
+const Review = require("../models/Review");
+const Appointment = require("../models/Appointment");
+const Patient = require("../models/Patient");
+const Doctor = require("../models/Doctor");
 
+// =============================================
+// POST /api/reviews — Add review (BR-REV-001, BR-REV-002)
+// =============================================
 exports.createReview = async (req, res) => {
   try {
     const { appointmentId, rating, comment } = req.body;
 
-    // 1. التحقق من وجود الحجز
+    // Get patient
+    const patient = await Patient.findOne({ userId: req.user.id });
+    if (!patient) {
+      return res
+        .status(404)
+        .json({ success: false, message: "ملف المريض غير موجود" });
+    }
+
+    // Verify appointment
     const appointment = await Appointment.findById(appointmentId);
     if (!appointment) {
       return res
         .status(404)
-        .json({ success: false, message: "Appointment not found" });
+        .json({ success: false, message: "الموعد غير موجود" });
     }
 
-    // 2. التقييم مسموح فقط للحجوزات المنتهية (Completed)
+    // BR-REV-001: Only completed appointments
     if (appointment.status !== "Completed") {
       return res.status(400).json({
         success: false,
-        message: "Reviews can only be submitted for completed appointments",
+        message: "يمكن تقييم الزيارات المكتملة فقط",
       });
     }
 
-    // 3. التحقق من عدم وجود تقييم سابق لنفس الحجز
-    const existingReview = await Review.findOne({ appointmentId });
-    if (existingReview) {
-      return res.status(400).json({
-        success: false,
-        message: "A review has already been submitted for this appointment",
-      });
+    // Ensure patient owns this appointment
+    if (appointment.patientId.toString() !== patient._id.toString()) {
+      return res
+        .status(403)
+        .json({ success: false, message: "لا يمكنك تقييم هذا الموعد" });
     }
 
-    // 4. إنشاء التقييم
+    // BR-REV-002: One review per appointment (unique index handles DB side)
+    const existing = await Review.findOne({ appointmentId });
+    if (existing) {
+      return res
+        .status(409)
+        .json({ success: false, message: "لقد قمت بتقييم هذا الموعد بالفعل" });
+    }
+
+    // BR-REV-003: Rating bounds 1-5 (schema validates)
     const review = await Review.create({
-      patientId: appointment.patientId,
+      patientId: patient._id,
       doctorId: appointment.doctorId,
       appointmentId,
       rating,
       comment,
     });
 
-    // 5. تحديث متوسط تقييم الطبيب تلقائياً
-    const doctorReviews = await Review.find({ doctorId: appointment.doctorId });
-    const avgRating =
-      doctorReviews.reduce((acc, item) => item.rating + acc, 0) /
-      doctorReviews.length;
-
-    await Doctor.findByIdAndUpdate(appointment.doctorId, {
-      rating: parseFloat(avgRating.toFixed(2)),
-    });
+    // Update doctor's average rating
+    await updateDoctorRating(appointment.doctorId);
 
     res.status(201).json({
       success: true,
+      message: "تم إرسال تقييمك بنجاح",
       data: review,
     });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res
+        .status(409)
+        .json({ success: false, message: "لقد قمت بتقييم هذا الموعد بالفعل" });
+    }
+    res.status(400).json({ success: false, message: err.message });
   }
 };
 
+// =============================================
+// GET /api/reviews/doctor/:doctorId — Get doctor reviews
+// =============================================
 exports.getDoctorReviews = async (req, res) => {
   try {
     const { doctorId } = req.params;
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
 
-    // جلب جميع التقييمات مع بيانات المريض صاحب التقييم
-    const reviews = await Review.find({ doctorId })
-      .populate("patientId", "fullName")
-      .sort({ submittedDate: -1 });
+    const [reviews, total] = await Promise.all([
+      Review.find({ doctorId })
+        .populate("patientId", "fullName")
+        .sort({ submittedDate: -1 })
+        .skip(skip)
+        .limit(Number(limit)),
+      Review.countDocuments({ doctorId }),
+    ]);
 
-    res.status(200).json({
+    // Average rating
+    const ratingAgg = await Review.aggregate([
+      { $match: { doctorId: require("mongoose").Types.ObjectId(doctorId) } },
+      { $group: { _id: null, avg: { $avg: "$rating" }, count: { $sum: 1 } } },
+    ]);
+    const avgRating = ratingAgg[0]?.avg || 0;
+
+    res.json({
       success: true,
-      count: reviews.length,
       data: reviews,
+      avgRating: Math.round(avgRating * 10) / 10,
+      pagination: {
+        total,
+        page: Number(page),
+        pages: Math.ceil(total / Number(limit)),
+      },
     });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (err) {
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "خطأ في جلب التقييمات",
+        error: err.message,
+      });
   }
 };
+
+// =============================================
+// GET /api/reviews/appointment/:appointmentId — Check if reviewed
+// =============================================
+exports.getReviewByAppointment = async (req, res) => {
+  try {
+    const review = await Review.findOne({
+      appointmentId: req.params.appointmentId,
+    });
+    res.json({ success: true, data: review || null });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// =============================================
+// Helper: Recalculate doctor average rating
+// =============================================
+async function updateDoctorRating(doctorId) {
+  try {
+    const agg = await Review.aggregate([
+      {
+        $match: {
+          doctorId: require("mongoose").Types.ObjectId(doctorId.toString()),
+        },
+      },
+      { $group: { _id: null, avg: { $avg: "$rating" } } },
+    ]);
+    const newRating = agg[0]?.avg || 0;
+    await Doctor.findByIdAndUpdate(doctorId, {
+      rating: Math.round(newRating * 10) / 10,
+    });
+  } catch (err) {
+    console.error("خطأ في تحديث تقييم الطبيب:", err);
+  }
+}
