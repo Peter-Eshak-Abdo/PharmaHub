@@ -4,7 +4,7 @@ const {
     addDiagnosis,
     getDiagnoses,
     getDiagnosisById,
-} = require('../controllers/Diagnosiscontroller');
+} = require('../controllers/DiagnosisController');
 
 const { protect, checkRole } = require("../middlewares/auth");
 
