@@ -49,15 +49,15 @@ export class PrescriptionFormComponent implements OnInit {
   submitError = '';
   alreadyExists = false;
 
-  // Frequency & Duration options
+  // Frequency & Duration options (Translated to Arabic)
   frequencyOptions = [
-    'Once daily',
-    'Twice daily (BID)',
-    'Three times daily (TID)',
-    'Every 4 hours',
-    'As needed (PRN)'
+    'مرة واحدة يومياً',
+    'مرتين يومياً',
+    'ثلاث مرات يومياً',
+    'كل 4 ساعات',
+    'عند اللزوم'
   ];
-  durationOptions = ['3 Days', '5 Days', '7 Days', '10 Days', '14 Days', '30 Days'];
+  durationOptions = ['3 أيام', '5 أيام', '7 أيام', '10 أيام', '14 يوم', '30 يوم', 'مستمر'];
 
   constructor(
     private fb: FormBuilder,
@@ -102,8 +102,8 @@ export class PrescriptionFormComponent implements OnInit {
       medicationId: ['', Validators.required],
       medicationName: [''],
       dosage:       ['', Validators.required],
-      frequency:    ['Once daily', Validators.required],
-      duration:     ['7 Days', Validators.required],
+      frequency:    ['مرة واحدة يومياً', Validators.required],
+      duration:     ['7 أيام', Validators.required],
       instructions: [''],
       notes:        ['']
     });
@@ -189,6 +189,7 @@ export class PrescriptionFormComponent implements OnInit {
   onSubmit(): void {
     if (this.prescriptionForm.invalid || this.selectedDiagnoses.length === 0) {
       this.prescriptionForm.markAllAsTouched();
+      this.submitError = 'يرجى إكمال جميع الحقول المطلوبة وإضافة تشخيص واحد على الأقل.';
       return;
     }
 
@@ -220,11 +221,11 @@ export class PrescriptionFormComponent implements OnInit {
         this.isSubmitting = false;
         if (err.status === 409) {
           this.alreadyExists = true;
-          this.submitError = 'A prescription already exists for this appointment.';
+          this.submitError = 'توجد روشتة مسجلة مسبقاً لهذا الحجز.';
         } else if (err.status === 400) {
-          this.submitError = err.error?.message || 'Appointment must be Completed before creating a prescription.';
+          this.submitError = err.error?.message || 'يجب أن يكون الحجز مكتملاً قبل إنشاء الروشتة.';
         } else {
-          this.submitError = err.error?.message || 'An error occurred. Please try again.';
+          this.submitError = err.error?.message || 'حدث خطأ. يرجى المحاولة مرة أخرى.';
         }
       }
     });

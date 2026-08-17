@@ -27,7 +27,7 @@ export class PrescriptionViewComponent implements OnInit {
     if (!this.appointmentId) {
       this.isLoading = false;
       this.notFound = true;
-      this.errorMessage = 'No appointment ID provided.';
+      this.errorMessage = 'لم يتم توفير معرف الحجز.';
       return;
     }
 
@@ -45,10 +45,10 @@ export class PrescriptionViewComponent implements OnInit {
           this.isLoading = false;
           if (err.status === 404) {
             this.notFound = true;
-            this.errorMessage = 'No prescription found for this appointment.';
+            this.errorMessage = 'لا توجد روشتة مسجلة لهذا الحجز.';
           } else {
             this.errorMessage =
-              err.error?.message || 'An error occurred while loading the prescription.';
+              err.error?.message || 'حدث خطأ أثناء تحميل الروشتة.';
           }
         }
       });
@@ -69,7 +69,7 @@ export class PrescriptionViewComponent implements OnInit {
 
   get issuedDate(): string {
     if (!this.prescription?.issuedDate) return '—';
-    return new Date(this.prescription.issuedDate).toLocaleDateString('en-GB', {
+    return new Date(this.prescription.issuedDate).toLocaleDateString('ar-EG', {
       day: '2-digit', month: 'short', year: 'numeric'
     });
   }
