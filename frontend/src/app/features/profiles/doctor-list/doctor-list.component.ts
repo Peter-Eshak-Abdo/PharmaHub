@@ -18,8 +18,13 @@ export class DoctorListComponent implements OnInit {
   }
 
   loadDoctors(): void {
-    this.doctorService.getDoctors(this.specializationFilter).subscribe(data => {
-      this.doctors = data;
+    this.doctorService.getDoctors(this.specializationFilter).subscribe({
+      next: (res: any) => {
+        this.doctors = Array.isArray(res) ? res : (res?.data || []);
+      },
+      error: () => {
+        this.doctors = [];
+      },
     });
   }
 

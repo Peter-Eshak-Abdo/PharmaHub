@@ -1,32 +1,18 @@
-/* features/appointments/common-styles.css (يمكن إضافته في ملفات الـ css الخاصة بالمكونات) */
-.badge {
-  padding: 4px 8px;
-  border-radius: 4px;
-  color: white;
-  font-weight: bold;
+/* Hide scrollbar for tabs */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-.badge-warning {
-  background-color: #ffc107;
-  color: black;
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.badge-primary {
-  background-color: #007bff;
+/* Smooth card hover */
+.appt-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.badge-success {
-  background-color: #28a745;
-}
-
-.badge-danger {
-  background-color: #dc3545;
-}
-
-.badge-dark {
-  background-color: #343a40;
-}
-
-.badge-secondary {
-  background-color: #6c757d;
+.appt-card:hover {
+  transform: translateY(-2px);
 }

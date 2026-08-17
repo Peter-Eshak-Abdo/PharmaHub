@@ -1,39 +1,68 @@
-// features/appointments/appointments-routing.module.ts
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../../core/guards/auth.guard';
+
 import { BookingFormComponent } from './booking-form/booking-form.component';
 import { PatientAppointmentsComponent } from './patient-appointments/patient-appointments.component';
 import { DoctorAppointmentsComponent } from './doctor-appointments/doctor-appointments.component';
 import { ReviewFormComponent } from './review-form/review-form.component';
-import { AuthGuard } from '../../core/guards/auth.guard'; // Mayada
-import { RoleGuard } from '../../core/guards/role.guard';// Mayada
 
 const routes: Routes = [
   {
-    path: 'book/:doctorId',
+    path: 'book',
     component: BookingFormComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'patient' },
+    canActivate: [AuthGuard],
+    data: { roles: ['patient'] },
   },
-  { path: 'booking-form', component: BookingFormComponent },
+  {
+    path: 'booking-form',
+    redirectTo: 'book',
+    pathMatch: 'full',
+  },
   {
     path: 'patient',
     component: PatientAppointmentsComponent,
-    canActivate: [AuthGuard, RoleGuard],
-    data: { role: 'patient' },
+    canActivate: [AuthGuard],
+    data: { roles: ['patient'] },
   },
-  { path: 'patient-appointments', component: PatientAppointmentsComponent },
+  {
+    path: 'patient-appointments',
+    redirectTo: 'patient',
+    pathMatch: 'full',
+  },
   {
     path: 'doctor',
     component: DoctorAppointmentsComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['doctor'] },
   },
-  { path: 'review-form', component: ReviewFormComponent },
-  // {
-  //   path: '',
-  //   redirectTo: 'patient',
-  //   pathMatch: 'full',
-  // },
-  { path: '', redirectTo: 'patient-appointments', pathMatch: 'full' },
+  {
+    path: 'doctor-appointments',
+    redirectTo: 'doctor',
+    pathMatch: 'full',
+  },
+  {
+    path: 'review/:appointmentId',
+    component: ReviewFormComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['patient'] },
+  },
+  {
+    path: 'review',
+    component: ReviewFormComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['patient'] },
+  },
+  {
+    path: 'review-form',
+    redirectTo: 'review',
+    pathMatch: 'full',
+  },
+  {
+    path: '',
+    redirectTo: 'patient',
+    pathMatch: 'full',
+  },
 ];
 
 @NgModule({
