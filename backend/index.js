@@ -22,6 +22,7 @@ const chatRoutes = require('./routes/chatRoutes');
 
 // Load environment variables
 dotenv.config();
+const app = express();
 
 // Connect to MongoDB
 // connectDB();
@@ -36,7 +37,6 @@ app.use(async (req, res, next) => {
   }
 });
 
-const app = express();
 
 // Middlewares
 app.use(
