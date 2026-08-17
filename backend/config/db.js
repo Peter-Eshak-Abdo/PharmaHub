@@ -1,14 +1,10 @@
 const mongoose = require("mongoose");
 const dns = require("dns");
 
-// حل مشكلة فشل استعلام DNS نوع SRV (querySrv ECONNREFUSED)
-// خادم DNS المحلي يرفض استعلامات SRV التي يحتاجها MongoDB Atlas
-// بحيث يتم استخدام DNS عام (8.8.8.8 / 1.1.1.1) كبديل موثوق
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 let isConnected = false;
 
-// دالة غير متزامنة للاتصال بقاعدة البيانات
 const connectDB = async () => {
   try {
     if (isConnected) {
