@@ -24,7 +24,17 @@ const chatRoutes = require('./routes/chatRoutes');
 dotenv.config();
 
 // Connect to MongoDB
-connectDB();
+// connectDB();
+// Middleware للاتصال بالداتا بيز قبل تنفيذ أي طلب
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('Database connection error:', err);
+    res.status(500).json({ success: false, message: 'Database Connection Error' });
+  }
+});
 
 const app = express();
 
@@ -36,6 +46,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
