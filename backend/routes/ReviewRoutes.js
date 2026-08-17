@@ -5,8 +5,7 @@ const {
   createReview,
   getDoctorReviews,
   getReviewByAppointment,
-// } = require("../controllers/ReviewController");
-} = require("../controllers/Reviewcontroller");
+} = require("../controllers/ReviewController");
 
 // Patient submits a review
 router.post("/", protect, authorize("patient"), createReview);
