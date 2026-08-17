@@ -48,8 +48,9 @@
         <span class="text-slate-400 font-semibold px-1">Schedule:</span>
         <a routerLink="/schedule" routerLinkActive="bg-teal-600 text-white"
           class="px-2 py-1 rounded hover:bg-slate-700 transition">Weekly Availability</a>
+        <a routerLink="/schedule/schedule-exceptions" routerLinkActive="bg-teal-600 text-white"
+          class="px-2 py-1 rounded hover:bg-slate-700 transition">Exceptions</a>
       </div>
-
       <!-- Appointments -->
       <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
         <span class="text-slate-400 font-semibold px-1">Appointments:</span>
@@ -71,4 +72,13 @@
       </div>
     </div>
   </div>
+
+ <!-- Language -->
+      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
+        <app-language-toggle></app-language-toggle>
+      </div>
+
+
+
+
 </nav>
