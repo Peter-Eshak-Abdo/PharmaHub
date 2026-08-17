@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const Patient = require('../models/Patients');
-const Appointment = require('../models/Appointments');
-const Prescription = require('../models/Prescriptions');
-const Medication = require('../models/Medications');
+const Patient = require('../models/Patient');
+const Appointment = require('../models/Appointment');
+const Prescription = require('../models/Prescription');
+const Medication = require('../models/Medication');
 const Diagnosis = require('../models/Diagnosis');
 
 /**
@@ -178,7 +178,7 @@ function generateAssistantReply(userMessage, context) {
       `1. **الالتزام بمواعيد العلاج**: تناول الأدوية بانتظام يسرع عملية الشفاء.\n` +
       `2. **الترطيب والتغذية**: شرب ما لا يقل عن 2 إلى 3 لترات من الماء يومياً وتناول غذاء متوازن.\n` +
       `3. **النشاط البدني والنوم**: الحرص على النوم 7-8 ساعات يومياً وممارسة الرياضة الخفيفة كالمشي.\n`;
-    
+
     if (context.diagnoses && context.diagnoses.length > 0) {
       reply += `\n💡 **ملاحظة خاصة بحالتك (${context.diagnoses.join('، ')})**:\nاحرص على المتابعة الدورية مع طبيبك وإجراء الفحوصات الروتينية في مواعيدها.`;
     }
