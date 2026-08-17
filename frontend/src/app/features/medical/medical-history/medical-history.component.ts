@@ -48,7 +48,7 @@ export class MedicalHistoryComponent implements OnInit {
 
     if (!this.patientId) {
       this.isLoading = false;
-      this.errorMessage = 'No patient ID provided in the URL.';
+      this.errorMessage = 'لم يتم توفير معرف المريض في الرابط.';
       return;
     }
 
@@ -62,7 +62,7 @@ export class MedicalHistoryComponent implements OnInit {
         error: (err) => {
           this.isLoading = false;
           this.errorMessage =
-            err.error?.message || 'Failed to load medical history.';
+            err.error?.message || 'فشل في تحميل التاريخ الطبي.';
         }
       });
   }
@@ -73,9 +73,9 @@ export class MedicalHistoryComponent implements OnInit {
     if (!dateStr) return { day: '—', month: '—', year: '—' };
     const d = new Date(dateStr);
     return {
-      day: d.toLocaleDateString('en-GB', { day: '2-digit' }),
-      month: d.toLocaleDateString('en-GB', { month: 'short' }),
-      year: d.toLocaleDateString('en-GB', { year: 'numeric' })
+      day: d.toLocaleDateString('ar-EG', { day: '2-digit' }),
+      month: d.toLocaleDateString('ar-EG', { month: 'short' }),
+      year: d.toLocaleDateString('ar-EG', { year: 'numeric' })
     };
   }
 

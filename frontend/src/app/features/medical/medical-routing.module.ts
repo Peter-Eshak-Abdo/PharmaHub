@@ -5,27 +5,55 @@ import { CatalogManagementComponent } from './catalog-management/catalog-managem
 import { PrescriptionFormComponent } from './prescription-form/prescription-form.component';
 import { PrescriptionViewComponent } from './prescription-view/prescription-view.component';
 import { MedicalHistoryComponent } from './medical-history/medical-history.component';
+import { RoleGuard } from '../../core/guards/role.guard';
+import { AuthGuard } from '../../core/guards/auth.guard';
 
 const routes: Routes = [
-  { path: 'catalog', component: CatalogManagementComponent },
-  { path: 'catalog-management', component: CatalogManagementComponent },
+  { 
+    path: 'catalog', 
+    component: CatalogManagementComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['doctor', 'admin'] }
+  },
+  { 
+    path: 'catalog-management', 
+    redirectTo: 'catalog',
+    pathMatch: 'full'
+  },
   {
     path: 'prescription/create/:appointmentId',
     component: PrescriptionFormComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['doctor'] }
   },
-  { path: 'medical-history', component: MedicalHistoryComponent },
-  { path: 'prescription-form', component: PrescriptionFormComponent },
-  { path: 'prescription-view', component: PrescriptionViewComponent },
+  { 
+    path: 'prescription-form', 
+    redirectTo: 'catalog',
+    pathMatch: 'full'
+  },
   {
     path: 'prescription/view/:appointmentId',
     component: PrescriptionViewComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['doctor', 'patient'] }
+  },
+  { 
+    path: 'prescription-view', 
+    redirectTo: 'catalog',
+    pathMatch: 'full'
   },
   {
     path: 'history/:patientId',
     component: MedicalHistoryComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['doctor', 'patient'] }
+  },
+  { 
+    path: 'medical-history', 
+    redirectTo: 'catalog',
+    pathMatch: 'full' 
   },
   { path: '', redirectTo: 'catalog', pathMatch: 'full' },
-  { path: '', redirectTo: 'medical-history', pathMatch: 'full' },
 ];
 
 @NgModule({
@@ -33,4 +61,3 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class MedicalRoutingModule {}
-
