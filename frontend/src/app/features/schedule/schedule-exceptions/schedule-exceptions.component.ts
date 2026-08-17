@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ScheduleService } from '../services/schedule.service';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 interface ScheduleException {
   _id: string;
@@ -20,10 +22,10 @@ export class ScheduleExceptionsComponent implements OnInit {
   doctorId: string = '6a7a68e2039344ea7b05c884'; // TODO: replace with real logged-in doctor's ID via AuthService later
 
   types = ['Vacation', 'Blocked', 'Emergency'];
-  typeLabels: Record<string, string> = {
-    Vacation: 'إجازة',
-    Blocked: 'محظور',
-    Emergency: 'طارئ'
+  typeKeys: Record<string, string> = {
+    Vacation: 'SCHEDULE.TYPES.VACATION',
+    Blocked: 'SCHEDULE.TYPES.BLOCKED',
+    Emergency: 'SCHEDULE.TYPES.EMERGENCY'
   };
 
   newException = {
@@ -41,7 +43,15 @@ export class ScheduleExceptionsComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  constructor(private scheduleService: ScheduleService) {}
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
+
+  constructor(
+    private scheduleService: ScheduleService,
+    private translate: TranslateService,
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit() {
     if (this.doctorId) {
@@ -50,12 +60,16 @@ export class ScheduleExceptionsComponent implements OnInit {
   }
 
   typeLabel(type: string): string {
-    return this.typeLabels[type] || type;
+    return this.typeKeys[type] || type;
   }
 
   private clearMessages() {
     this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  private t(key: string): string {
+    return this.translate.instant(key);
   }
 
   loadExceptions() {
@@ -67,7 +81,7 @@ export class ScheduleExceptionsComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err: Error) => {
-        this.errorMessage = err.message || 'تعذر تحميل الاستثناءات.';
+        this.errorMessage = err.message || this.t('SCHEDULE.EXCEPTIONS.ERR_LOAD');
         this.isLoading = false;
       }
     });
@@ -105,12 +119,12 @@ export class ScheduleExceptionsComponent implements OnInit {
     this.clearMessages();
 
     if (!this.newException.startDate || !this.newException.endDate || !this.newException.type) {
-      this.errorMessage = 'يرجى تعبئة جميع الحقول المطلوبة.';
+      this.errorMessage = this.t('SCHEDULE.EXCEPTIONS.ERR_REQUIRED');
       return;
     }
 
     if (this.newException.endDate < this.newException.startDate) {
-      this.errorMessage = 'تاريخ النهاية يجب أن يكون بعد تاريخ البداية أو يساويه.';
+      this.errorMessage = this.t('SCHEDULE.EXCEPTIONS.ERR_DATE_ORDER');
       return;
     }
 
@@ -123,34 +137,36 @@ export class ScheduleExceptionsComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
-        this.successMessage = this.editingId ? 'تم تحديث الاستثناء بنجاح.' : 'تمت إضافة الاستثناء بنجاح.';
+        this.successMessage = this.editingId
+          ? this.t('SCHEDULE.EXCEPTIONS.SUCCESS_EDIT')
+          : this.t('SCHEDULE.EXCEPTIONS.SUCCESS_ADD');
         this.isSaving = false;
         this.resetForm();
         this.loadExceptions();
       },
       error: (err: Error) => {
-        this.errorMessage = err.message || 'حدث خطأ أثناء الحفظ.';
+        this.errorMessage = err.message || this.t('SCHEDULE.EXCEPTIONS.ERR_SAVE');
         this.isSaving = false;
       }
     });
   }
 
   deleteException(id: string) {
-    if (!confirm('هل أنت متأكد من حذف هذا الاستثناء؟')) {
+    if (!confirm(this.t('SCHEDULE.EXCEPTIONS.CONFIRM_DELETE'))) {
       return;
     }
 
     this.clearMessages();
     this.scheduleService.deleteException(id).subscribe({
       next: () => {
-        this.successMessage = 'تم حذف الاستثناء.';
+        this.successMessage = this.t('SCHEDULE.EXCEPTIONS.SUCCESS_DELETE');
         if (this.editingId === id) {
           this.resetForm();
         }
         this.loadExceptions();
       },
       error: (err: Error) => {
-        this.errorMessage = err.message || 'تعذر حذف الاستثناء.';
+        this.errorMessage = err.message || this.t('SCHEDULE.EXCEPTIONS.ERR_DELETE');
       }
     });
   }

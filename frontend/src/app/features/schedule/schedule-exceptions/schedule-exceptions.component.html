@@ -1,7 +1,10 @@
-<div dir="rtl" class="max-w-container-max mx-auto px-gutter py-lg" lang="ar">
-  <div class="flex flex-col gap-xs mb-md">
-    <h1 class="font-headline-lg text-headline-lg text-on-surface">استثناءات الجدول</h1>
-    <p class="font-body-lg text-body-lg text-on-surface-variant">إدارة فترات الإجازات أو الأيام المحظورة أو الطوارئ التي تُلغي جدولك الأسبوعي المعتاد.</p>
+<div [dir]="isRtl ? 'rtl' : 'ltr'" class="max-w-container-max mx-auto px-gutter py-lg">
+  <div class="flex items-center justify-between mb-md gap-sm flex-wrap">
+    <div class="flex flex-col gap-xs">
+      <h1 class="font-headline-lg text-headline-lg text-on-surface">{{ 'SCHEDULE.EXCEPTIONS.TITLE' | translate }}</h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant">{{ 'SCHEDULE.EXCEPTIONS.SUBTITLE' | translate }}</p>
+    </div>
+    <app-language-toggle></app-language-toggle>
   </div>
 
   <!-- Feedback messages -->
@@ -16,98 +19,32 @@
 
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
 
-    <!-- Right (visually first in RTL): Exceptions list -->
     <div class="lg:col-span-8 flex flex-col gap-md order-2 lg:order-1">
       <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
 
         <div *ngIf="isLoading" class="p-md text-center text-on-surface-variant font-body-sm text-body-sm">
-          جارٍ التحميل...
+          {{ 'SCHEDULE.EXCEPTIONS.LOADING' | translate }}
         </div>
 
-        <table *ngIf="!isLoading" class="w-full text-right border-collapse">
+        <table *ngIf="!isLoading" class="w-full text-start border-collapse">
           <thead>
             <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
-              <th class="p-sm font-semibold">من تاريخ</th>
-              <th class="p-sm font-semibold">إلى تاريخ</th>
-              <th class="p-sm font-semibold">النوع</th>
-              <th class="p-sm font-semibold">السبب</th>
-              <th class="p-sm font-semibold text-left w-24">إجراءات</th>
+              <th class="p-sm font-semibold text-start">{{ 'SCHEDULE.EXCEPTIONS.COL_FROM' | translate }}</th>
+              <th class="p-sm font-semibold text-start">{{ 'SCHEDULE.EXCEPTIONS.COL_TO' | translate }}</th>
+              <th class="p-sm font-semibold text-start">{{ 'SCHEDULE.EXCEPTIONS.COL_TYPE' | translate }}</th>
+              <th class="p-sm font-semibold text-start">{{ 'SCHEDULE.EXCEPTIONS.COL_REASON' | translate }}</th>
+              <th class="p-sm font-semibold text-end w-24">{{ 'SCHEDULE.EXCEPTIONS.COL_ACTIONS' | translate }}</th>
             </tr>
           </thead>
           <tbody class="font-body-sm text-body-sm text-on-surface">
             <tr *ngFor="let exception of exceptions" class="hover:bg-surface-container-low/50 transition-colors group border-t border-outline-variant">
               <td class="p-sm font-medium">{{ exception.startDate | date:'yyyy-MM-dd' }}</td>
               <td class="p-sm">{{ exception.endDate | date:'yyyy-MM-dd' }}</td>
-              <td class="p-sm">{{ typeLabel(exception.type) }}</td>
+              <td class="p-sm">{{ typeLabel(exception.type) | translate }}</td>
               <td class="p-sm text-on-surface-variant">{{ exception.reason || '—' }}</td>
-              <td class="p-sm text-left">
-                <div class="flex gap-xs justify-start opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button (click)="startEdit(exception)" class="text-on-surface-variant hover:text-primary p-base" title="تعديل">
+              <td class="p-sm text-end">
+                <div class="flex gap-xs justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button (click)="startEdit(exception)" class="text-on-surface-variant hover:text-primary p-base" title="{{ 'SCHEDULE.EXCEPTIONS.EDIT_TITLE' | translate }}">
                     <span class="material-symbols-outlined text-sm">edit</span>
                   </button>
-                  <button (click)="deleteException(exception._id)" class="text-on-surface-variant hover:text-error p-base" title="حذف">
-                    <span class="material-symbols-outlined text-sm">delete</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr *ngIf="exceptions.length === 0">
-              <td colspan="5" class="p-sm text-center text-on-surface-variant">لا توجد استثناءات مضافة بعد.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Left (visually second in RTL): Add/Edit form -->
-    <div class="lg:col-span-4 order-1 lg:order-2">
-      <div class="bg-surface-container-lowest rounded-xl shadow-md p-md flex flex-col sticky top-24">
-        <div class="flex items-center gap-xs mb-md">
-          <span class="material-symbols-outlined text-primary bg-primary-container p-xs rounded-full">{{ editingId ? 'edit' : 'event_busy' }}</span>
-          <h2 class="font-headline-sm text-headline-sm text-on-surface">{{ editingId ? 'تعديل الاستثناء' : 'إضافة استثناء' }}</h2>
-        </div>
-
-        <form class="flex flex-col gap-sm">
-          <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">من تاريخ</label>
-            <input type="date" [(ngModel)]="newException.startDate" name="startDate"
-              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
-          </div>
-
-          <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">إلى تاريخ</label>
-            <input type="date" [(ngModel)]="newException.endDate" name="endDate"
-              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
-          </div>
-
-          <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">النوع</label>
-            <select [(ngModel)]="newException.type" name="type"
-              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow">
-              <option *ngFor="let type of types" [value]="type">{{ typeLabel(type) }}</option>
-            </select>
-          </div>
-
-          <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">السبب (اختياري)</label>
-            <textarea [(ngModel)]="newException.reason" name="reason" rows="3"
-              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow resize-none"></textarea>
-          </div>
-
-          <div class="mt-xs flex gap-xs">
-            <button type="button" (click)="saveException()" [disabled]="isSaving"
-              class="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-60 text-on-primary font-label-md text-label-md py-sm rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-xs">
-              <span class="material-symbols-outlined text-sm">save</span>
-              {{ isSaving ? 'جارٍ الحفظ...' : (editingId ? 'حفظ التعديل' : 'إضافة الاستثناء') }}
-            </button>
-            <button *ngIf="editingId" type="button" (click)="cancelEdit()"
-              class="px-sm bg-surface-container-low hover:bg-surface-container text-on-surface font-label-md text-label-md py-sm rounded-lg transition-all">
-              إلغاء
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-  </div>
-</div>
+                  <button (click)="deleteException(exception._id)" class="text-on-surface-variant hover:text-error p-base" title="{{ 'SCHEDULE.EXCEPTIONS.CONFIRM_DELETE' | translate }}">
