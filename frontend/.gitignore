@@ -40,7 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
->>>>>>> origin/peter-eshak:frontend/pharmahub/.gitignore
 
 # Environment
 .env*

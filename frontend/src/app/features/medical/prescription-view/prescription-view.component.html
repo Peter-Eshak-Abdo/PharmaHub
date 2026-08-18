@@ -1,14 +1,14 @@
 <!-- ═══════════════════════════════════════════════════════════════════
      Prescription View — READ ONLY
-     Design System: Clinical Precision (write_prescriptions tokens)
+     Design System: Clinical Precision, RTL Arabic
 ═══════════════════════════════════════════════════════════════════ -->
-<div class="px-gutter py-xl bg-background min-h-screen font-body-md text-on-surface">
+<div dir="rtl" class="px-gutter py-xl bg-background min-h-screen font-body-md text-on-surface">
   <div class="max-w-container-max mx-auto flex flex-col gap-lg">
 
     <!-- ── LOADING STATE ─────────────────────────────────────────── -->
     <div *ngIf="isLoading" class="flex flex-col items-center justify-center py-[120px] gap-md">
       <div class="loading-spinner"></div>
-      <p class="text-body-md text-on-surface-variant">Loading prescription…</p>
+      <p class="text-body-md text-on-surface-variant">جاري تحميل الروشتة…</p>
     </div>
 
     <!-- ── NOT FOUND / ERROR STATE ───────────────────────────────── -->
@@ -17,14 +17,14 @@
       <div class="w-16 h-16 rounded-full bg-error-container flex items-center justify-center">
         <span class="material-symbols-outlined text-error text-3xl">description_off</span>
       </div>
-      <h2 class="text-headline-md font-headline-md text-on-surface">Prescription Not Found</h2>
+      <h2 class="text-headline-md font-headline-md text-on-surface">الروشتة غير موجودة</h2>
       <p class="text-body-md text-on-surface-variant max-w-sm">
-        {{ errorMessage || 'No prescription exists for this appointment yet.' }}
+        {{ errorMessage || 'لم يتم تسجيل روشتة لهذا الحجز بعد.' }}
       </p>
-      <a routerLink="/prescriptions/new"
+      <a [routerLink]="['/prescription/create', appointmentId]"
          class="inline-flex items-center gap-xs bg-primary text-on-primary px-lg py-sm rounded-full text-label-md shadow-md hover:bg-primary/90 hover:shadow-lg transition-all">
         <span class="material-symbols-outlined text-[18px]">add</span>
-        Create Prescription
+        إنشاء روشتة
       </a>
     </div>
 
@@ -36,10 +36,10 @@
         <div class="flex flex-col gap-xs">
           <div class="flex items-center gap-xs">
             <span class="w-2 h-2 rounded-full bg-primary"></span>
-            <span class="text-label-md text-primary uppercase tracking-widest">Prescription Record</span>
+            <span class="text-label-md text-primary uppercase tracking-widest">سجل طبي</span>
           </div>
           <h1 class="text-display font-display text-on-surface leading-tight">
-            Clinical<br/>Prescription
+            روشتة<br/>طبية
           </h1>
         </div>
 
@@ -50,13 +50,8 @@
                   class="inline-flex items-center gap-xs border border-outline text-on-surface-variant hover:bg-surface-container-high px-lg py-sm rounded-full text-label-md transition-all"
                   (click)="print()">
             <span class="material-symbols-outlined text-[18px]">print</span>
-            Print
+            طباعة
           </button>
-          <a [routerLink]="['/prescriptions/new', appointmentId]"
-             class="inline-flex items-center gap-xs bg-secondary-container text-on-secondary-container hover:bg-secondary-container/80 px-lg py-sm rounded-full text-label-md shadow-sm transition-all">
-            <span class="material-symbols-outlined text-[18px]">edit</span>
-            Edit
-          </a>
         </div>
       </div>
 
@@ -67,7 +62,7 @@
         <div class="bg-surface-container-lowest rounded-2xl p-md shadow-sm flex flex-col gap-xs meta-card">
           <div class="flex items-center gap-xs mb-xs">
             <span class="material-symbols-outlined text-primary text-[20px]">stethoscope</span>
-            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Prescribing Doctor</span>
+            <span class="text-label-sm text-on-surface-variant tracking-wider">الطبيب المعالج</span>
           </div>
           <span class="text-headline-sm font-headline-sm text-on-surface">{{ doctorName }}</span>
           <span class="text-body-sm text-on-surface-variant">{{ doctorSpecialization }}</span>
@@ -77,36 +72,36 @@
         <div class="bg-surface-container-lowest rounded-2xl p-md shadow-sm flex flex-col gap-xs meta-card">
           <div class="flex items-center gap-xs mb-xs">
             <span class="material-symbols-outlined text-primary text-[20px]">person</span>
-            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Patient</span>
+            <span class="text-label-sm text-on-surface-variant tracking-wider">المريض</span>
           </div>
           <span class="text-headline-sm font-headline-sm text-on-surface">{{ patientName }}</span>
-          <span class="text-body-sm text-on-surface-variant">ID: {{ prescription?.patientId?._id ?? prescription?.patientId ?? '—' }}</span>
+          <span class="text-body-sm text-on-surface-variant">رقم الملف: {{ prescription?.patientId?._id ?? prescription?.patientId ?? '—' }}</span>
         </div>
 
         <!-- Issue date -->
         <div class="bg-surface-container-lowest rounded-2xl p-md shadow-sm flex flex-col gap-xs meta-card">
           <div class="flex items-center gap-xs mb-xs">
             <span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
-            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Issued Date</span>
+            <span class="text-label-sm text-on-surface-variant tracking-wider">تاريخ الإصدار</span>
           </div>
-          <span class="text-headline-sm font-headline-sm text-on-surface">{{ issuedDate }}</span>
-          <span class="text-body-sm text-on-surface-variant">Appointment ID: {{ appointmentId }}</span>
+          <span class="text-headline-sm font-headline-sm text-on-surface" dir="ltr">{{ issuedDate }}</span>
+          <span class="text-body-sm text-on-surface-variant">رقم الحجز: {{ appointmentId }}</span>
         </div>
       </div>
 
       <!-- ── DIAGNOSES SECTION ────────────────────────────────────── -->
       <div class="bg-surface-container-lowest rounded-3xl p-lg shadow-md flex flex-col gap-md relative overflow-hidden">
         <!-- Watermark -->
-        <div class="absolute top-0 right-0 p-lg opacity-5 pointer-events-none">
+        <div class="absolute top-0 left-0 p-lg opacity-5 pointer-events-none">
           <span class="material-symbols-outlined text-[120px] leading-none">stethoscope</span>
         </div>
 
         <div class="flex flex-col gap-xs relative z-10">
           <h2 class="text-headline-md font-headline-md text-on-surface flex items-center gap-xs">
             <span class="material-symbols-outlined text-primary">diagnosis</span>
-            Diagnoses
+            التشخيص
           </h2>
-          <p class="text-body-sm text-on-surface-variant">ICD-10 coded conditions recorded for this encounter.</p>
+          <p class="text-body-sm text-on-surface-variant">الحالات الطبية (ICD-10) المسجلة لهذه الزيارة.</p>
         </div>
 
         <!-- Badge list -->
@@ -117,7 +112,7 @@
             <span>{{ d.icdCode }} – {{ d.name }}</span>
           </div>
           <p *ngIf="diagnoses.length === 0" class="text-body-sm text-on-surface-variant italic">
-            No diagnoses recorded.
+            لا توجد تشخيصات مسجلة.
           </p>
         </div>
       </div>
@@ -127,9 +122,9 @@
         <div class="flex flex-col gap-xs">
           <h2 class="text-headline-md font-headline-md text-on-surface flex items-center gap-xs">
             <span class="material-symbols-outlined text-primary">pill</span>
-            Prescribed Medications
+            الأدوية الموصوفة
           </h2>
-          <p class="text-body-sm text-on-surface-variant">Medications dispensed for this prescription.</p>
+          <p class="text-body-sm text-on-surface-variant">الأدوية المصروفة بناءً على هذه الروشتة.</p>
         </div>
 
         <!-- Medication rows -->
@@ -146,7 +141,7 @@
                 <div class="flex flex-col">
                   <span class="text-headline-sm font-headline-sm text-on-surface">{{ getMedName(med) }}</span>
                   <span *ngIf="getMedGeneric(med)" class="text-body-sm text-on-surface-variant">
-                    Generic: {{ getMedGeneric(med) }}
+                    المادة الفعالة: {{ getMedGeneric(med) }}
                   </span>
                 </div>
               </div>
@@ -159,19 +154,19 @@
             <!-- Detail grid -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-md">
               <div class="flex flex-col gap-[2px]">
-                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Dosage</span>
+                <span class="text-label-sm text-on-surface-variant tracking-wider">الجرعة</span>
                 <span class="text-body-md font-medium text-on-surface">{{ med.dosage || '—' }}</span>
               </div>
               <div class="flex flex-col gap-[2px]">
-                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Frequency</span>
+                <span class="text-label-sm text-on-surface-variant tracking-wider">التكرار</span>
                 <span class="text-body-md font-medium text-on-surface">{{ med.frequency || '—' }}</span>
               </div>
               <div class="flex flex-col gap-[2px]">
-                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Duration</span>
+                <span class="text-label-sm text-on-surface-variant tracking-wider">المدة</span>
                 <span class="text-body-md font-medium text-on-surface">{{ med.duration || '—' }}</span>
               </div>
               <div class="flex flex-col gap-[2px]" *ngIf="med.instructions">
-                <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Instructions</span>
+                <span class="text-label-sm text-on-surface-variant tracking-wider">التعليمات</span>
                 <span class="text-body-md font-medium text-on-surface">{{ med.instructions }}</span>
               </div>
             </div>
@@ -185,7 +180,7 @@
           </div>
 
           <p *ngIf="medications.length === 0" class="text-body-sm text-on-surface-variant italic">
-            No medications prescribed.
+            لم يتم وصف أي أدوية.
           </p>
         </div>
       </div>
@@ -195,7 +190,7 @@
            class="bg-surface-container-lowest rounded-3xl p-lg shadow-md flex flex-col gap-md">
         <h2 class="text-headline-md font-headline-md text-on-surface flex items-center gap-xs">
           <span class="material-symbols-outlined text-primary">notes</span>
-          Clinical Notes
+          ملاحظات سريرية
         </h2>
         <div class="bg-surface-container-low rounded-xl p-md">
           <p class="text-body-md text-on-surface leading-relaxed whitespace-pre-line">
@@ -208,14 +203,14 @@
       <div class="flex items-center justify-between bg-surface-container rounded-3xl p-md shadow-sm print:hidden">
         <div class="flex items-center gap-sm text-on-surface-variant">
           <span class="material-symbols-outlined">verified</span>
-          <span class="text-label-md">This prescription is digitally recorded and linked to Appointment #{{ appointmentId }}.</span>
+          <span class="text-label-md">هذه الروشتة مسجلة رقمياً ومربوطة بالحجز رقم #{{ appointmentId }}.</span>
         </div>
         <button id="print-btn-footer"
                 type="button"
                 class="px-xl py-sm rounded-full bg-primary text-on-primary text-label-md shadow-md hover:shadow-lg hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all flex items-center gap-xs"
                 (click)="print()">
           <span class="material-symbols-outlined text-[20px]">print</span>
-          Print Prescription
+          طباعة الروشتة
         </button>
       </div>
 
