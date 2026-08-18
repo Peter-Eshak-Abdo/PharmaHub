@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ScheduleService } from '../services/schedule.service';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 interface WeeklySlot {
   _id: string;
@@ -20,8 +22,17 @@ export class WeeklyAvailabilityComponent implements OnInit {
   doctorId: string = '6a7a68e2039344ea7b05c884'; // TODO: replace with real logged-in doctor's ID via AuthService later
 
   // Week starts on Sunday, matching the backend's slot-engine day mapping.
-  days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+  // Values stay in English (DB/API contract); labels are translated for display.
   dayValues = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  dayKeys: Record<string, string> = {
+    Sunday: 'SCHEDULE.DAYS.SUNDAY',
+    Monday: 'SCHEDULE.DAYS.MONDAY',
+    Tuesday: 'SCHEDULE.DAYS.TUESDAY',
+    Wednesday: 'SCHEDULE.DAYS.WEDNESDAY',
+    Thursday: 'SCHEDULE.DAYS.THURSDAY',
+    Friday: 'SCHEDULE.DAYS.FRIDAY',
+    Saturday: 'SCHEDULE.DAYS.SATURDAY',
+  };
 
   newSlot = {
     doctorId: '',
@@ -38,7 +49,15 @@ export class WeeklyAvailabilityComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  constructor(private scheduleService: ScheduleService) {}
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
+
+  constructor(
+    private scheduleService: ScheduleService,
+    private translate: TranslateService,
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit() {
     if (this.doctorId) {
@@ -47,13 +66,16 @@ export class WeeklyAvailabilityComponent implements OnInit {
   }
 
   dayLabel(value: string): string {
-    const idx = this.dayValues.indexOf(value);
-    return idx > -1 ? this.days[idx] : value;
+    return this.dayKeys[value] || value;
   }
 
   private clearMessages() {
     this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  private t(key: string): string {
+    return this.translate.instant(key);
   }
 
   loadSlots() {
@@ -62,9 +84,6 @@ export class WeeklyAvailabilityComponent implements OnInit {
     this.scheduleService.getAvailabilityByDoctor(this.doctorId).subscribe({
       next: (data: any) => {
         const raw: WeeklySlot[] = data.data || data || [];
-        // Backend sorts dayOfWeek alphabetically (it's a string field), which
-        // doesn't match calendar order. Re-sort here so the list always reads
-        // Sunday -> Monday -> ... -> Saturday, then by start time within a day.
         this.slots = [...raw].sort((a, b) => {
           const dayDiff = this.dayValues.indexOf(a.dayOfWeek) - this.dayValues.indexOf(b.dayOfWeek);
           if (dayDiff !== 0) {
@@ -75,7 +94,7 @@ export class WeeklyAvailabilityComponent implements OnInit {
         this.isLoading = false;
       },
       error: (err: Error) => {
-        this.errorMessage = err.message || 'تعذر تحميل مواعيد التوفر.';
+        this.errorMessage = err.message || this.t('SCHEDULE.WEEKLY.ERR_LOAD');
         this.isLoading = false;
       }
     });
@@ -113,12 +132,12 @@ export class WeeklyAvailabilityComponent implements OnInit {
     this.clearMessages();
 
     if (!this.newSlot.startTime || !this.newSlot.endTime || !this.newSlot.slotDurationMinutes) {
-      this.errorMessage = 'يرجى تعبئة جميع الحقول المطلوبة.';
+      this.errorMessage = this.t('SCHEDULE.WEEKLY.ERR_REQUIRED');
       return;
     }
 
     if (this.newSlot.endTime <= this.newSlot.startTime) {
-      this.errorMessage = 'وقت النهاية يجب أن يكون بعد وقت البداية.';
+      this.errorMessage = this.t('SCHEDULE.WEEKLY.ERR_TIME_ORDER');
       return;
     }
 
@@ -131,34 +150,36 @@ export class WeeklyAvailabilityComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
-        this.successMessage = this.editingId ? 'تم تحديث الموعد بنجاح.' : 'تمت إضافة الموعد بنجاح.';
+        this.successMessage = this.editingId
+          ? this.t('SCHEDULE.WEEKLY.SUCCESS_EDIT')
+          : this.t('SCHEDULE.WEEKLY.SUCCESS_ADD');
         this.isSaving = false;
         this.resetForm();
         this.loadSlots();
       },
       error: (err: Error) => {
-        this.errorMessage = err.message || 'حدث خطأ أثناء الحفظ.';
+        this.errorMessage = err.message || this.t('SCHEDULE.WEEKLY.ERR_SAVE');
         this.isSaving = false;
       }
     });
   }
 
   deleteSlot(id: string) {
-    if (!confirm('هل أنت متأكد من حذف هذا الموعد؟')) {
+    if (!confirm(this.t('SCHEDULE.WEEKLY.CONFIRM_DELETE'))) {
       return;
     }
 
     this.clearMessages();
     this.scheduleService.deleteAvailability(id).subscribe({
       next: () => {
-        this.successMessage = 'تم حذف الموعد.';
+        this.successMessage = this.t('SCHEDULE.WEEKLY.SUCCESS_DELETE');
         if (this.editingId === id) {
           this.resetForm();
         }
         this.loadSlots();
       },
       error: (err: Error) => {
-        this.errorMessage = err.message || 'تعذر حذف الموعد.';
+        this.errorMessage = err.message || this.t('SCHEDULE.WEEKLY.ERR_DELETE');
       }
     });
   }
