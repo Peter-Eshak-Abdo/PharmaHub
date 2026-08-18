@@ -1,0 +1,95 @@
+{
+  "LANG": {
+    "EN": "English",
+    "AR": "العربية"
+  },
+    "AUTH": {
+    "LOGIN": {
+      "TITLE": "Welcome Back",
+      "SUBTITLE": "Log in to access your healthcare account.",
+      "EMAIL": "EMAIL ADDRESS",
+      "PASSWORD": "PASSWORD",
+      "SUBMIT": "Log In",
+      "EMAIL_REQUIRED": "Email is required",
+      "EMAIL_INVALID": "Email must be valid",
+      "PASSWORD_REQUIRED": "Password is required"
+    }
+  },
+  "SCHEDULE": {
+  "WEEKLY": {
+    "TITLE": "Weekly Availability",
+    "SUBTITLE": "Manage your recurring weekly working hours for patient bookings.",
+    "ADD_TITLE": "Add Weekly Slot",
+    "EDIT_TITLE": "Edit Slot",
+    "DAY": "Day",
+    "START_TIME": "Start Time",
+    "END_TIME": "End Time",
+    "DURATION": "Slot Duration (minutes)",
+    "SAVE": "Save Slot",
+    "SAVE_EDIT": "Save Changes",
+    "SAVING": "Saving...",
+    "CANCEL": "Cancel",
+    "COL_DAY": "Day",
+    "COL_START": "Start",
+    "COL_END": "End",
+    "COL_DURATION": "Slot Duration",
+    "COL_ACTIONS": "Actions",
+    "MINUTES": "min",
+    "EMPTY": "No availability slots added yet.",
+    "LOADING": "Loading...",
+    "CONFIRM_DELETE": "Are you sure you want to delete this slot?",
+    "ERR_REQUIRED": "Please fill in all required fields.",
+    "ERR_TIME_ORDER": "End time must be after start time.",
+    "ERR_LOAD": "Could not load availability slots.",
+    "ERR_SAVE": "Something went wrong while saving.",
+    "ERR_DELETE": "Could not delete the slot.",
+    "SUCCESS_ADD": "Slot added successfully.",
+    "SUCCESS_EDIT": "Slot updated successfully.",
+    "SUCCESS_DELETE": "Slot deleted."
+  },
+  "EXCEPTIONS": {
+    "TITLE": "Schedule Exceptions",
+    "SUBTITLE": "Manage vacation, blocked, or emergency periods that override your usual weekly schedule.",
+    "ADD_TITLE": "Add Exception",
+    "EDIT_TITLE": "Edit Exception",
+    "FROM_DATE": "From Date",
+    "TO_DATE": "To Date",
+    "TYPE": "Type",
+    "REASON": "Reason (optional)",
+    "SAVE": "Add Exception",
+    "SAVE_EDIT": "Save Changes",
+    "SAVING": "Saving...",
+    "CANCEL": "Cancel",
+    "COL_FROM": "From",
+    "COL_TO": "To",
+    "COL_TYPE": "Type",
+    "COL_REASON": "Reason",
+    "COL_ACTIONS": "Actions",
+    "EMPTY": "No exceptions added yet.",
+    "LOADING": "Loading...",
+    "CONFIRM_DELETE": "Are you sure you want to delete this exception?",
+    "ERR_REQUIRED": "Please fill in all required fields.",
+    "ERR_DATE_ORDER": "End date must be on or after the start date.",
+    "ERR_LOAD": "Could not load exceptions.",
+    "ERR_SAVE": "Something went wrong while saving.",
+    "ERR_DELETE": "Could not delete the exception.",
+    "SUCCESS_ADD": "Exception added successfully.",
+    "SUCCESS_EDIT": "Exception updated successfully.",
+    "SUCCESS_DELETE": "Exception deleted."
+  },
+  "DAYS": {
+    "SUNDAY": "Sunday",
+    "MONDAY": "Monday",
+    "TUESDAY": "Tuesday",
+    "WEDNESDAY": "Wednesday",
+    "THURSDAY": "Thursday",
+    "FRIDAY": "Friday",
+    "SATURDAY": "Saturday"
+  },
+  "TYPES": {
+    "VACATION": "Vacation",
+    "BLOCKED": "Blocked",
+    "EMERGENCY": "Emergency"
+  }
+}
+}
