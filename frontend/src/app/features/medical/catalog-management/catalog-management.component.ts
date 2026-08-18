@@ -44,9 +44,9 @@ export class CatalogManagementComponent implements OnInit {
   medicationSubmitting = false;
 
   medicationTypes = [
-    'Antibiotic', 'Antidiabetic', 'Antihypertensive', 'NSAID',
-    'Statin', 'Antidepressant', 'Bronchodilator', 'Analgesic',
-    'Antihistamine', 'Antifungal', 'Antiviral', 'Diuretic', 'Other'
+    'مضاد حيوي', 'مضاد سكر', 'خافض للضغط', 'مضاد التهاب لا ستيرويدي',
+    'ستاتين', 'مضاد اكتئاب', 'موسع قصبات', 'مسكن',
+    'مضاد هيستامين', 'مضاد فطريات', 'مضاد فيروسات', 'مدر للبول', 'أخرى'
   ];
 
   constructor(
@@ -107,7 +107,7 @@ export class CatalogManagementComponent implements OnInit {
         this.diagnosisLoading = false;
       },
       error: (err) => {
-        this.diagnosisError = err.error?.message || 'Failed to load diagnoses.';
+        this.diagnosisError = err.error?.message || 'فشل في تحميل التشخيصات.';
         this.diagnosisLoading = false;
       }
     });
@@ -124,7 +124,7 @@ export class CatalogManagementComponent implements OnInit {
         this.medicationLoading = false;
       },
       error: (err) => {
-        this.medicationError = err.error?.message || 'Failed to load medications.';
+        this.medicationError = err.error?.message || 'فشل في تحميل الأدوية.';
         this.medicationLoading = false;
       }
     });
@@ -143,16 +143,16 @@ export class CatalogManagementComponent implements OnInit {
     this.catalogService.addDiagnosis(this.diagnosisForm.value).subscribe({
       next: (res) => {
         this.diagnosisSubmitting = false;
-        this.diagnosisSuccess = `"${res?.data?.name}" added successfully!`;
+        this.diagnosisSuccess = `تم إضافة "${res?.data?.name}" بنجاح!`;
         this.diagnosisForm.reset();
         this.loadDiagnoses(this.diagnosisSearchTerm);
       },
       error: (err) => {
         this.diagnosisSubmitting = false;
         if (err.status === 409) {
-          this.diagnosisError = err.error?.message || 'A diagnosis with this name or ICD code already exists.';
+          this.diagnosisError = err.error?.message || 'يوجد تشخيص بهذا الاسم أو الكود مسبقاً.';
         } else {
-          this.diagnosisError = err.error?.message || 'Failed to add diagnosis.';
+          this.diagnosisError = err.error?.message || 'فشل في إضافة التشخيص.';
         }
       }
     });
@@ -182,7 +182,7 @@ export class CatalogManagementComponent implements OnInit {
     this.catalogService.addMedication(this.medicationForm.value).subscribe({
       next: (res) => {
         this.medicationSubmitting = false;
-        this.medicationSuccess = `"${res?.data?.name}" added successfully!`;
+        this.medicationSuccess = `تم إضافة "${res?.data?.name}" بنجاح!`;
         this.medicationForm.reset();
         this.showMedicationModal = false;
         this.loadMedications(this.medicationSearchTerm);
@@ -190,9 +190,9 @@ export class CatalogManagementComponent implements OnInit {
       error: (err) => {
         this.medicationSubmitting = false;
         if (err.status === 409) {
-          this.medicationError = 'A medication with this name already exists.';
+          this.medicationError = 'يوجد دواء بهذا الاسم مسبقاً.';
         } else {
-          this.medicationError = err.error?.message || 'Failed to add medication.';
+          this.medicationError = err.error?.message || 'فشل في إضافة الدواء.';
         }
       }
     });
@@ -208,12 +208,12 @@ export class CatalogManagementComponent implements OnInit {
   /** Cycle through badge colours for medication type badges */
   medTypeBadgeClass(type: string): string {
     const map: Record<string, string> = {
-      'Antibiotic':       'bg-secondary-container text-on-secondary-container',
-      'Antidiabetic':     'bg-tertiary-container text-on-tertiary-container',
-      'Antihypertensive': 'bg-surface-variant text-on-surface-variant',
-      'NSAID':            'bg-error-container text-on-error-container',
-      'Statin':           'bg-primary-container text-on-primary-container',
-      'Antidepressant':   'bg-secondary-fixed text-on-secondary-fixed',
+      'مضاد حيوي':       'bg-secondary-container text-on-secondary-container',
+      'مضاد سكر':     'bg-tertiary-container text-on-tertiary-container',
+      'خافض للضغط': 'bg-surface-variant text-on-surface-variant',
+      'مضاد التهاب لا ستيرويدي':            'bg-error-container text-on-error-container',
+      'ستاتين':           'bg-primary-container text-on-primary-container',
+      'مضاد اكتئاب':   'bg-secondary-fixed text-on-secondary-fixed',
     };
     return map[type] ?? 'bg-surface-container text-on-surface-variant';
   }

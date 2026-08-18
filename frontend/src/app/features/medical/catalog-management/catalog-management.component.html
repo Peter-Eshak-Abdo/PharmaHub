@@ -1,15 +1,14 @@
 <!-- ═══════════════════════════════════════════════════════════════════
      Catalog Management — Diagnosis + Medication catalogs
-     Design: diagnosis_catalog + medication_catalog mockups merged
-     Access: doctor or admin role only
+     Design: RTL Arabic, doctor or admin role only
 ═══════════════════════════════════════════════════════════════════ -->
-<div class="flex flex-col w-full max-w-container-max mx-auto px-gutter gap-lg pt-lg pb-xl bg-background min-h-screen font-body-md text-on-surface">
+<div dir="rtl" class="flex flex-col w-full max-w-container-max mx-auto px-gutter gap-lg pt-lg pb-xl bg-background min-h-screen font-body-md text-on-surface">
 
   <!-- ── PAGE HEADER ─────────────────────────────────────────────── -->
   <div class="flex flex-col gap-xs">
-    <h1 class="font-display text-display text-on-surface">Catalog Management</h1>
+    <h1 class="font-display text-display text-on-surface">إدارة المكتبيات (الكتالوج)</h1>
     <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
-      Manage the central repositories of recognized medical conditions (ICD-10) and approved medications.
+      إدارة السجلات المركزية للحالات الطبية المعترف بها (ICD-10) والأدوية المعتمدة في النظام.
     </p>
   </div>
 
@@ -24,7 +23,7 @@
       [class.text-on-surface-variant]="activeTab !== 'diagnoses'"
       (click)="setTab('diagnoses')">
       <span class="material-symbols-outlined text-[18px]">stethoscope</span>
-      Diagnosis Catalog
+      كتالوج التشخيصات
     </button>
     <button
       id="tab-medications"
@@ -35,33 +34,33 @@
       [class.text-on-surface-variant]="activeTab !== 'medications'"
       (click)="setTab('medications')">
       <span class="material-symbols-outlined text-[18px]">pill</span>
-      Medication Catalog
+      كتالوج الأدوية
     </button>
   </div>
 
   <!-- ════════════════════════════════════════════════════════════════
-       DIAGNOSES TAB
+       تبويب التشخيصات
   ════════════════════════════════════════════════════════════════ -->
   <div *ngIf="activeTab === 'diagnoses'" class="grid grid-cols-1 lg:grid-cols-12 gap-gutter w-full">
 
-    <!-- Left: search + table -->
+    <!-- اليمين: البحث + الجدول -->
     <div class="lg:col-span-8 flex flex-col gap-md">
 
-      <!-- Search bar -->
+      <!-- شريط البحث -->
       <div class="bg-surface-container-lowest rounded-xl shadow-sm p-sm flex items-center gap-sm">
         <div class="flex-1 relative">
-          <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+          <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
           <input
             id="diagnosis-search"
             type="text"
-            class="w-full bg-surface-container-low rounded-lg pl-xl pr-sm py-xs font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-            placeholder="Search by name or ICD-10 code..."
+            class="w-full bg-surface-container-low rounded-lg pr-xl pl-sm py-xs font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+            placeholder="ابحث بالاسم أو بكود ICD-10..."
             (input)="diagnosisSearch$.next($any($event.target).value)"
           />
         </div>
       </div>
 
-      <!-- Success / Error banners -->
+      <!-- إشعارات النجاح / الخطأ -->
       <div *ngIf="diagnosisSuccess"
            class="flex items-center gap-xs bg-primary-container text-on-primary-container rounded-xl px-md py-sm shadow-sm">
         <span class="material-symbols-outlined text-[18px]">check_circle</span>
@@ -73,45 +72,45 @@
         <span class="text-label-md">{{ diagnosisError }}</span>
       </div>
 
-      <!-- Table -->
+      <!-- الجدول -->
       <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+          <table class="w-full text-right border-collapse">
             <thead>
-              <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
-                <th class="p-sm font-semibold">Diagnosis Name</th>
+              <tr class="bg-surface-container-low text-on-surface-variant font-label-md text-label-md tracking-wider">
+                <th class="p-sm font-semibold">اسم التشخيص</th>
                 <th class="p-sm font-semibold w-32">ICD-10</th>
-                <th class="p-sm font-semibold hidden md:table-cell">Description</th>
+                <th class="p-sm font-semibold hidden md:table-cell">الوصف</th>
               </tr>
             </thead>
             <tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/30">
 
-              <!-- Loading skeleton -->
+              <!-- حالة التحميل -->
               <tr *ngIf="diagnosisLoading">
                 <td colspan="3" class="p-md text-center text-on-surface-variant">
                   <div class="flex items-center justify-center gap-sm">
                     <div class="loading-spinner-sm"></div>
-                    <span>Loading diagnoses…</span>
+                    <span>جاري تحميل التشخيصات…</span>
                   </div>
                 </td>
               </tr>
 
-              <!-- Empty state -->
+              <!-- فارغ -->
               <tr *ngIf="!diagnosisLoading && diagnoses.length === 0">
                 <td colspan="3" class="p-lg text-center">
                   <div class="flex flex-col items-center gap-sm">
                     <span class="material-symbols-outlined text-3xl text-on-surface-variant">search_off</span>
-                    <span class="text-body-sm text-on-surface-variant">No diagnoses found.</span>
+                    <span class="text-body-sm text-on-surface-variant">لم يتم العثور على تشخيصات.</span>
                   </div>
                 </td>
               </tr>
 
-              <!-- Data rows -->
+              <!-- صفوف البيانات -->
               <tr *ngFor="let d of diagnoses"
                   class="table-row hover:bg-surface-container-low/50 transition-colors group">
                 <td class="p-sm font-medium">{{ d.name }}</td>
                 <td class="p-sm">
-                  <span class="bg-primary-container text-on-primary-container px-xs py-base rounded-md font-mono text-xs">
+                  <span class="bg-primary-container text-on-primary-container px-xs py-base rounded-md font-mono text-xs" dir="ltr">
                     {{ d.icdCode }}
                   </span>
                 </td>
@@ -124,26 +123,26 @@
           </table>
         </div>
 
-        <!-- Footer -->
+        <!-- تذييل الجدول -->
         <div class="bg-surface-container-low p-sm flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm border-t border-outline-variant/30">
-          <span>{{ diagnoses.length }} {{ diagnoses.length === 1 ? 'entry' : 'entries' }}</span>
+          <span>{{ diagnoses.length }} عنصر</span>
         </div>
       </div>
     </div>
 
-    <!-- Right: Add Diagnosis form -->
+    <!-- اليسار: فورم إضافة تشخيص -->
     <div class="lg:col-span-4">
       <div class="bg-surface-container-lowest rounded-xl shadow-md p-md flex flex-col sticky top-24 gap-sm">
         <div class="flex items-center gap-xs mb-xs">
           <span class="material-symbols-outlined text-primary bg-primary-container p-xs rounded-full">add_circle</span>
-          <h2 class="font-headline-sm text-headline-sm text-on-surface">Add New Diagnosis</h2>
+          <h2 class="font-headline-sm text-headline-sm text-on-surface">إضافة تشخيص جديد</h2>
         </div>
 
         <form [formGroup]="diagnosisForm" (ngSubmit)="submitDiagnosis()" novalidate class="flex flex-col gap-sm">
 
           <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="diag-name">
-              Diagnosis Name <span class="text-error">*</span>
+            <label class="font-label-sm text-label-sm text-on-surface-variant" for="diag-name">
+              اسم التشخيص <span class="text-error">*</span>
             </label>
             <input
               id="diag-name"
@@ -151,36 +150,37 @@
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
               [class.ring-2]="isInvalid(diagnosisForm, 'name')"
               [class.ring-error]="isInvalid(diagnosisForm, 'name')"
-              placeholder="e.g. Acute Bronchitis"
+              placeholder="مثال: التهاب شعبي حاد"
               formControlName="name"
             />
-            <span *ngIf="isInvalid(diagnosisForm, 'name')" class="text-label-sm text-error">Required</span>
+            <span *ngIf="isInvalid(diagnosisForm, 'name')" class="text-label-sm text-error">مطلوب</span>
           </div>
 
           <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="icd-code">
-              ICD-10 Code <span class="text-error">*</span>
+            <label class="font-label-sm text-label-sm text-on-surface-variant" for="icd-code">
+              كود ICD-10 <span class="text-error">*</span>
             </label>
             <input
               id="icd-code"
               type="text"
-              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface font-mono placeholder:font-sans placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
+              dir="ltr"
+              class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface font-mono text-left placeholder:font-sans placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow"
               [class.ring-2]="isInvalid(diagnosisForm, 'icdCode')"
               [class.ring-error]="isInvalid(diagnosisForm, 'icdCode')"
               placeholder="e.g. J20.9"
               formControlName="icdCode"
             />
-            <span *ngIf="isInvalid(diagnosisForm, 'icdCode')" class="text-label-sm text-error">Required</span>
+            <span *ngIf="isInvalid(diagnosisForm, 'icdCode')" class="text-label-sm text-error">مطلوب</span>
           </div>
 
           <div class="flex flex-col gap-base">
-            <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" for="diag-desc">
-              Description (Optional)
+            <label class="font-label-sm text-label-sm text-on-surface-variant" for="diag-desc">
+              الوصف (اختياري)
             </label>
             <textarea
               id="diag-desc"
               class="bg-surface rounded-lg p-sm font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-shadow resize-none"
-              placeholder="Brief clinical description..."
+              placeholder="وصف سريري مختصر..."
               rows="4"
               formControlName="description">
             </textarea>
@@ -194,30 +194,30 @@
               [disabled]="diagnosisSubmitting">
               <span *ngIf="diagnosisSubmitting" class="loading-spinner-sm-white"></span>
               <span *ngIf="!diagnosisSubmitting" class="material-symbols-outlined text-sm">save</span>
-              {{ diagnosisSubmitting ? 'Saving…' : 'Add to Catalog' }}
+              {{ diagnosisSubmitting ? 'جاري الحفظ…' : 'إضافة للكتالوج' }}
             </button>
           </div>
         </form>
       </div>
     </div>
 
-  </div><!-- /diagnoses tab -->
+  </div><!-- /تبويب التشخيصات -->
 
 
   <!-- ════════════════════════════════════════════════════════════════
-       MEDICATIONS TAB
+       تبويب الأدوية
   ════════════════════════════════════════════════════════════════ -->
   <ng-container *ngIf="activeTab === 'medications'">
 
-    <!-- Search + Add button row -->
+    <!-- البحث + زر الإضافة -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-md">
       <div class="relative w-full md:w-96">
-        <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+        <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
         <input
           id="medication-search"
           type="text"
-          class="w-full pl-xl pr-sm py-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all"
-          placeholder="Search medications..."
+          class="w-full pr-xl pl-sm py-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all"
+          placeholder="ابحث في الأدوية..."
           (input)="medicationSearch$.next($any($event.target).value)"
         />
       </div>
@@ -227,11 +227,11 @@
         class="flex items-center gap-xs px-md py-sm bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors font-label-md text-label-md shrink-0 shadow-sm hover:shadow-md"
         (click)="openMedicationModal()">
         <span class="material-symbols-outlined text-[18px]">add</span>
-        Add New Medication
+        إضافة دواء جديد
       </button>
     </div>
 
-    <!-- Success / Error banners -->
+    <!-- إشعارات النجاح / الخطأ -->
     <div *ngIf="medicationSuccess"
          class="flex items-center gap-xs bg-primary-container text-on-primary-container rounded-xl px-md py-sm shadow-sm">
       <span class="material-symbols-outlined text-[18px]">check_circle</span>
@@ -243,40 +243,40 @@
       <span class="text-label-md">{{ medicationError }}</span>
     </div>
 
-    <!-- Medications table -->
+    <!-- جدول الأدوية -->
     <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
       <div class="overflow-x-auto flex-1">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full text-right border-collapse">
           <thead class="bg-surface-container sticky top-0 z-10">
             <tr>
-              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Name</th>
-              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Generic Name</th>
-              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Type</th>
+              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant tracking-wider">الاسم</th>
+              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant tracking-wider">الاسم العلمي (المادة الفعالة)</th>
+              <th class="py-sm px-md font-label-md text-label-md text-on-surface-variant tracking-wider">النوع</th>
             </tr>
           </thead>
           <tbody class="font-body-md text-body-md text-on-surface">
 
-            <!-- Loading -->
+            <!-- حالة التحميل -->
             <tr *ngIf="medicationLoading">
               <td colspan="3" class="p-md text-center text-on-surface-variant">
                 <div class="flex items-center justify-center gap-sm">
                   <div class="loading-spinner-sm"></div>
-                  <span>Loading medications…</span>
+                  <span>جاري تحميل الأدوية…</span>
                 </div>
               </td>
             </tr>
 
-            <!-- Empty state -->
+            <!-- فارغ -->
             <tr *ngIf="!medicationLoading && medications.length === 0">
               <td colspan="3" class="p-lg text-center">
                 <div class="flex flex-col items-center gap-sm">
                   <span class="material-symbols-outlined text-3xl text-on-surface-variant">medication_liquid</span>
-                  <span class="text-body-sm text-on-surface-variant">No medications found.</span>
+                  <span class="text-body-sm text-on-surface-variant">لم يتم العثور على أدوية.</span>
                 </div>
               </td>
             </tr>
 
-            <!-- Data rows -->
+            <!-- صفوف البيانات -->
             <tr *ngFor="let m of medications"
                 class="table-row hover:bg-surface-container-low transition-colors group cursor-pointer border-b border-surface-container">
               <td class="py-md px-md font-label-md text-label-md">{{ m.name }}</td>
@@ -293,31 +293,32 @@
         </table>
       </div>
 
-      <!-- Footer -->
+      <!-- تذييل الجدول -->
       <div class="bg-surface-container px-md py-sm flex items-center justify-between border-t border-surface-container">
         <span class="font-body-sm text-body-sm text-on-surface-variant">
-          {{ medications.length }} {{ medications.length === 1 ? 'entry' : 'entries' }}
+          {{ medications.length }} عنصر
         </span>
       </div>
     </div>
 
-  </ng-container><!-- /medications tab -->
+  </ng-container><!-- /تبويب الأدوية -->
 
 </div>
 
 
 <!-- ════════════════════════════════════════════════════════════════
-     ADD MEDICATION MODAL
+     نافذة إضافة دواء (Modal)
 ════════════════════════════════════════════════════════════════ -->
 <div *ngIf="showMedicationModal"
+     dir="rtl"
      class="modal-overlay fixed inset-0 z-50 flex items-center justify-center bg-on-surface/20 backdrop-blur-sm"
      (click)="closeMedicationModal()">
   <div class="bg-surface-container-lowest rounded-xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col modal-panel"
        (click)="$event.stopPropagation()">
 
-    <!-- Modal header -->
+    <!-- رأس النافذة -->
     <div class="px-md py-sm flex items-center justify-between bg-surface-container border-b border-outline-variant">
-      <h2 class="font-headline-sm text-headline-sm text-on-surface">Add New Medication</h2>
+      <h2 class="font-headline-sm text-headline-sm text-on-surface">إضافة دواء جديد</h2>
       <button
         id="close-medication-modal-btn"
         type="button"
@@ -327,7 +328,7 @@
       </button>
     </div>
 
-    <!-- Modal body -->
+    <!-- جسم النافذة -->
     <form [formGroup]="medicationForm" (ngSubmit)="submitMedication()" novalidate>
       <div class="p-md flex flex-col gap-md bg-surface-container-lowest">
 
@@ -339,61 +340,61 @@
 
         <div class="flex flex-col gap-xs">
           <label class="font-label-sm text-label-sm text-on-surface" for="med-name">
-            Medication Name <span class="text-error">*</span>
+            الاسم التجاري <span class="text-error">*</span>
           </label>
           <input
             id="med-name"
             type="text"
             class="w-full px-sm py-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all"
             [class.ring-error]="isInvalid(medicationForm, 'name')"
-            placeholder="e.g., Zoloft"
+            placeholder="مثال: Zoloft"
             formControlName="name"
           />
-          <span *ngIf="isInvalid(medicationForm, 'name')" class="text-label-sm text-error">Required</span>
+          <span *ngIf="isInvalid(medicationForm, 'name')" class="text-label-sm text-error">مطلوب</span>
         </div>
 
         <div class="flex flex-col gap-xs">
           <label class="font-label-sm text-label-sm text-on-surface" for="med-generic">
-            Generic Name <span class="text-error">*</span>
+            المادة الفعالة <span class="text-error">*</span>
           </label>
           <input
             id="med-generic"
             type="text"
             class="w-full px-sm py-sm rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all"
             [class.ring-error]="isInvalid(medicationForm, 'genericName')"
-            placeholder="e.g., Sertraline"
+            placeholder="مثال: Sertraline"
             formControlName="genericName"
           />
-          <span *ngIf="isInvalid(medicationForm, 'genericName')" class="text-label-sm text-error">Required</span>
+          <span *ngIf="isInvalid(medicationForm, 'genericName')" class="text-label-sm text-error">مطلوب</span>
         </div>
 
         <div class="flex flex-col gap-xs">
           <label class="font-label-sm text-label-sm text-on-surface" for="med-type">
-            Type <span class="text-error">*</span>
+            النوع/التصنيف <span class="text-error">*</span>
           </label>
           <div class="relative w-full">
             <select
               id="med-type"
-              class="w-full px-sm py-sm pr-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all appearance-none cursor-pointer"
+              class="w-full px-sm py-sm pl-10 rounded-lg bg-surface-container-low text-on-surface font-body-md text-body-md focus:outline-none focus:bg-surface focus:shadow-[0_0_0_3px_rgba(0,104,95,0.2)] transition-all appearance-none cursor-pointer"
               [class.ring-error]="isInvalid(medicationForm, 'type')"
               formControlName="type">
-              <option value="" disabled>Select a type…</option>
+              <option value="" disabled>اختر التصنيف…</option>
               <option *ngFor="let t of medicationTypes" [value]="t">{{ t }}</option>
             </select>
-            <span class="material-symbols-outlined absolute right-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
+            <span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">expand_more</span>
           </div>
-          <span *ngIf="isInvalid(medicationForm, 'type')" class="text-label-sm text-error">Required</span>
+          <span *ngIf="isInvalid(medicationForm, 'type')" class="text-label-sm text-error">مطلوب</span>
         </div>
       </div>
 
-      <!-- Modal footer -->
+      <!-- تذييل النافذة -->
       <div class="px-md py-sm bg-surface-container flex justify-end gap-sm border-t border-outline-variant">
         <button
           id="cancel-medication-btn"
           type="button"
           class="px-md py-sm bg-transparent text-primary hover:bg-primary/5 rounded-lg transition-colors font-label-md text-label-md"
           (click)="closeMedicationModal()">
-          Cancel
+          إلغاء
         </button>
         <button
           id="save-medication-btn"
@@ -402,7 +403,7 @@
           [disabled]="medicationSubmitting">
           <span *ngIf="medicationSubmitting" class="loading-spinner-sm-white"></span>
           <span *ngIf="!medicationSubmitting" class="material-symbols-outlined text-[16px]">save</span>
-          {{ medicationSubmitting ? 'Saving…' : 'Save Medication' }}
+          {{ medicationSubmitting ? 'جاري الحفظ…' : 'حفظ الدواء' }}
         </button>
       </div>
     </form>
