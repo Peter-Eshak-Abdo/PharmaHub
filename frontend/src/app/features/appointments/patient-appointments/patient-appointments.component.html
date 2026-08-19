@@ -1,144 +1,238 @@
-<div class="min-h-screen bg-background" dir="rtl">
-
-  <!-- Page Header -->
-  <div class="px-sm md:px-xl py-lg">
-    <h1 class="font-display text-display text-on-surface mb-sm">مواعيدي</h1>
-    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px]">
-      تابع مواعيدك وحجوزاتك الطبية في مكان واحد
-    </p>
+<div class="appointments-page-wrapper" dir="rtl">
+  
+  <!-- Header Area -->
+  <div class="page-top-header">
+    <h1 class="page-main-title">مواعيدي الطبية</h1>
+    <p class="page-sub-title">إدارة مواعيدك القادمة، مراجعة استشاراتك السابقة، ومتابعة خطتك العلاجية بسهولة.</p>
   </div>
 
-  <!-- Tabs -->
-  <div class="px-sm md:px-xl border-b border-surface-container-highest flex gap-lg overflow-x-auto hide-scrollbar">
-    <button *ngFor="let tab of tabs" (click)="setTab(tab.value)"
-      [class]="activeTab === tab.value
-        ? 'pb-sm font-label-md text-label-md text-primary border-b-[3px] border-primary whitespace-nowrap px-base'
-        : 'pb-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap px-base'">
+  <!-- Navigation Tabs -->
+  <div class="tabs-bar">
+    <button 
+      *ngFor="let tab of tabs" 
+      (click)="setTab(tab.value)"
+      class="tab-btn"
+      [class.active]="activeTab === tab.value">
       {{ tab.label }}
     </button>
   </div>
 
-  <!-- Content -->
-  <div class="px-sm md:px-xl py-xl bg-surface-bright min-h-[500px]">
+  <!-- Main Content Area: Bento Grid Layout -->
+  <div class="appointments-content-container">
 
-    <!-- Error -->
-    <div *ngIf="errorMessage"
-      class="bg-error-container text-on-error-container rounded-lg px-md py-sm mb-md flex items-center gap-sm">
-      <span class="material-symbols-outlined text-[20px]">error</span>
-      <span class="font-body-sm text-body-sm">{{ errorMessage }}</span>
+    <!-- Header & Sort -->
+    <div class="content-header-row">
+      <h2 class="section-heading">
+        <span *ngIf="activeTab === 'Upcoming'">المواعيد القادمة</span>
+        <span *ngIf="activeTab === 'Completed'">الاستشارات المكتملة</span>
+        <span *ngIf="activeTab === 'Cancelled'">المواعيد الملغاة</span>
+        <span *ngIf="activeTab === 'all'">سجل جميع المواعيد</span>
+        <span class="count-tag">({{ appointments.length }})</span>
+      </h2>
+
+      <div class="sort-tag">
+        <span class="material-symbols-outlined">sort</span>
+        <span>الترتيب حسب: التاريخ</span>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert-error-box">
+      <span class="material-symbols-outlined">error</span>
+      <span>{{ errorMessage }}</span>
     </div>
 
     <!-- Loading Skeleton -->
-    <div *ngIf="isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
-      <div *ngFor="let i of [1,2,3,4]" class="bg-surface-container-lowest rounded-xl p-md animate-pulse">
-        <div class="flex items-center gap-md mb-md">
-          <div class="w-12 h-12 rounded-full bg-surface-container-high"></div>
-          <div class="flex-1 space-y-xs">
-            <div class="h-4 bg-surface-container-high rounded w-3/4"></div>
-            <div class="h-3 bg-surface-container-high rounded w-1/2"></div>
-          </div>
-        </div>
-        <div class="space-y-xs">
-          <div class="h-3 bg-surface-container-high rounded"></div>
-          <div class="h-3 bg-surface-container-high rounded w-2/3"></div>
+    <div *ngIf="isLoading" class="skeleton-grid">
+      <div *ngFor="let i of [1,2,3]" class="skeleton-card">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-lines">
+          <div class="line short"></div>
+          <div class="line long"></div>
         </div>
       </div>
     </div>
 
-    <!-- Appointments Grid -->
-    <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
-
-      <!-- Empty State -->
-      <div *ngIf="appointments.length === 0"
-        class="col-span-full flex flex-col items-center justify-center py-xl text-on-surface-variant">
-        <span class="material-symbols-outlined text-6xl mb-md opacity-40">calendar_month</span>
-        <h3 class="font-headline-sm text-headline-sm mb-xs">لا توجد مواعيد</h3>
-        <p class="font-body-sm text-body-sm mb-md">ليس لديك مواعيد في هذه الفئة</p>
-        <a routerLink="/profiles/doctors"
-          class="px-md py-sm rounded-lg font-label-md text-label-md bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-sm">
-          احجز موعداً جديداً
-        </a>
+    <!-- Empty State -->
+    <div *ngIf="!isLoading && appointments.length === 0" class="empty-state-card">
+      <div class="empty-icon-circle">
+        <span class="material-symbols-outlined">event_available</span>
       </div>
+      <h3>لا توجد مواعيد في هذا القسم</h3>
+      <p>ليس لديك أي حجوزات مسجلة هنا حالياً</p>
+      <a routerLink="/profiles/doctor-list" class="btn-new-appointment">
+        <span class="material-symbols-outlined">add</span>
+        <span>احجز موعداً جديداً مع طبيب</span>
+      </a>
+    </div>
 
-      <!-- Appointment Card -->
-      <div *ngFor="let appt of appointments"
-        class="bg-surface-container-lowest rounded-xl shadow-sm p-md flex flex-col gap-sm hover:-translate-y-1 transition-transform duration-300">
-        <!-- Top Row: Doctor + Status Badge -->
-        <div class="flex justify-between items-start">
-          <div class="flex items-center gap-md">
-            <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-primary">stethoscope</span>
-            </div>
+    <!-- Bento Grid (When there are appointments) -->
+    <div *ngIf="!isLoading && appointments.length > 0" class="bento-grid">
+
+      <!-- 1. Featured Next Appointment (If in Upcoming and next appointment exists) -->
+      <div *ngIf="activeTab === 'Upcoming' && nextAppointment" class="bento-featured-card">
+        <!-- Ambient decorative blur -->
+        <div class="featured-ambient-glow"></div>
+
+        <div class="featured-avatar-col">
+          <div class="featured-avatar-circle">
+            <span class="material-symbols-outlined">stethoscope</span>
+          </div>
+        </div>
+
+        <div class="featured-info-col">
+          <div class="featured-header-row">
             <div>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface">{{ getDoctorName(appt) }}</h3>
-              <p class="font-body-sm text-body-sm text-on-surface-variant">{{ getDoctorSpecialization(appt) }}</p>
+              <div class="next-badge">
+                <span class="pulse-dot"></span>
+                <span>الموعد القادم الأقرب</span>
+              </div>
+              <h3 class="doctor-title">د. {{ getDoctorName(nextAppointment) }}</h3>
+              <p class="doctor-specialty">{{ getDoctorSpecialization(nextAppointment) }}</p>
+            </div>
+
+            <div class="time-highlight">
+              <span class="date-badge-text">{{ formatDate(nextAppointment.appointmentDate) }}</span>
+              <span class="time-badge-text">{{ formatTime(nextAppointment.appointmentTime) }}</span>
             </div>
           </div>
-          <span class="px-sm py-xs rounded-full font-label-sm text-label-sm" [ngClass]="STATUS_COLORS[appt.status]">
+
+          <div class="featured-meta-row">
+            <div class="meta-pill">
+              <span class="material-symbols-outlined">
+                {{ nextAppointment.consultationType === 'Online' ? 'videocam' : 'location_on' }}
+              </span>
+              <span>{{ nextAppointment.consultationType === 'Online' ? 'استشارة أونلاين' : 'زيارة العيادة' }}</span>
+            </div>
+
+            <div class="meta-pill" *ngIf="nextAppointment.consultationFeeSnapshot">
+              <span class="material-symbols-outlined">payments</span>
+              <span>{{ nextAppointment.consultationFeeSnapshot }}$</span>
+            </div>
+
+            <div class="action-buttons-group">
+              <button 
+                *ngIf="canCancel(nextAppointment)" 
+                (click)="cancelAppointment(nextAppointment._id)"
+                [disabled]="cancellingId === nextAppointment._id"
+                class="btn-cancel-appt">
+                <span>{{ cancellingId === nextAppointment._id ? 'جاري الإلغاء...' : 'إلغاء الموعد' }}</span>
+              </button>
+
+              <button class="btn-view-details">
+                <span>مؤكد</span>
+                <span class="material-symbols-outlined">check_circle</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Preparation / Health Summary Mini Card (Shown with featured) -->
+      <div *ngIf="activeTab === 'Upcoming' && nextAppointment" class="bento-prep-card">
+        <h3 class="prep-card-title">
+          <span class="material-symbols-outlined text-primary">health_and_safety</span>
+          <span>إرشادات وتجهيزات الموعد</span>
+        </h3>
+        
+        <div class="prep-items-list">
+          <div class="prep-item">
+            <div class="prep-icon-box bg-blue">
+              <span class="material-symbols-outlined">assignment</span>
+            </div>
+            <div>
+              <p class="prep-name">السجل الطبي والفحوصات</p>
+              <p class="prep-status text-blue">جاهز ومتاح للطبيب</p>
+            </div>
+          </div>
+
+          <div class="prep-item">
+            <div class="prep-icon-box bg-teal">
+              <span class="material-symbols-outlined">schedule</span>
+            </div>
+            <div>
+              <p class="prep-name">الحضور قبل الموعد</p>
+              <p class="prep-status text-teal">يرجى التواجد قبل 10 دقائق</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Standard Appointment Cards (Regular list or other tabs) -->
+      <div 
+        *ngFor="let appt of regularAppointments" 
+        class="bento-standard-card">
+        
+        <div class="card-header-flex">
+          <div class="doctor-mini-info">
+            <div class="mini-avatar">
+              <span class="material-symbols-outlined">stethoscope</span>
+            </div>
+            <div>
+              <h3 class="mini-doc-name">د. {{ getDoctorName(appt) }}</h3>
+              <p class="mini-doc-spec">{{ getDoctorSpecialization(appt) }}</p>
+            </div>
+          </div>
+
+          <span class="status-pill" [ngClass]="STATUS_COLORS[appt.status]">
             {{ STATUS_LABELS[appt.status] }}
           </span>
         </div>
 
-        <!-- Divider -->
-        <div class="border-t border-surface-container-highest pt-sm space-y-xs">
-          <div class="flex items-center gap-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-            <span class="font-label-md text-label-md text-on-surface">{{ formatDate(appt.appointmentDate) }}</span>
+        <div class="card-details-divider">
+          <div class="detail-line">
+            <span class="material-symbols-outlined">calendar_today</span>
+            <span class="font-bold">{{ formatDate(appt.appointmentDate) }}</span>
           </div>
-          <div class="flex items-center gap-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-[18px]">schedule</span>
-            <span class="font-body-md text-body-md">{{ formatTime(appt.appointmentTime) }}</span>
+          <div class="detail-line">
+            <span class="material-symbols-outlined">schedule</span>
+            <span>{{ formatTime(appt.appointmentTime) }}</span>
           </div>
-          <div class="flex items-center gap-xs text-on-surface-variant">
-            <span
-              class="material-symbols-outlined text-[18px]">{{ appt.consultationType === 'Online' ? 'videocam' : 'local_hospital' }}</span>
-            <span
-              class="font-body-sm text-body-sm">{{ appt.consultationType === 'Online' ? 'أونلاين' : 'زيارة عيادة' }}</span>
-          </div>
-          <div *ngIf="appt.consultationFeeSnapshot" class="flex items-center gap-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-[18px]">payments</span>
-            <span
-              class="font-body-sm text-body-sm">{{ appt.consultationFeeSnapshot | currency:'EGP':'symbol':'1.0-0' }}</span>
-          </div>
-          <div *ngIf="appt.reasonForVisit" class="flex items-start gap-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-[18px] mt-0.5">notes</span>
-            <span class="font-body-sm text-body-sm">سبب الزيارة: {{ appt.reasonForVisit }}</span>
+          <div class="detail-line">
+            <span class="material-symbols-outlined">
+              {{ appt.consultationType === 'Online' ? 'videocam' : 'local_hospital' }}
+            </span>
+            <span>{{ appt.consultationType === 'Online' ? 'استشارة أونلاين' : 'زيارة العيادة' }}</span>
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="flex flex-wrap gap-sm mt-sm justify-end">
-          <button *ngIf="canCancel(appt)" (click)="cancelAppointment(appt._id)" [disabled]="cancellingId === appt._id"
-            class="px-sm py-xs rounded-lg font-label-md text-label-md border-2 border-error text-error hover:bg-error/5 transition-all disabled:opacity-40">
-            <span *ngIf="cancellingId !== appt._id">إلغاء</span>
-            <div *ngIf="cancellingId === appt._id"
-              class="w-4 h-4 border-2 border-error border-t-transparent rounded-full animate-spin"></div>
+        <!-- Footer Actions -->
+        <div class="card-footer-actions">
+          <button 
+            *ngIf="canCancel(appt)" 
+            (click)="cancelAppointment(appt._id)"
+            [disabled]="cancellingId === appt._id"
+            class="btn-cancel-outline">
+            <span>{{ cancellingId === appt._id ? 'جاري الإلغاء...' : 'إلغاء' }}</span>
           </button>
 
-          <a *ngIf="appt.status === 'Completed'" [routerLink]="['/medical/prescription/view', appt._id]"
-            class="px-sm py-xs rounded-lg font-label-md text-label-md bg-secondary/10 text-secondary hover:bg-secondary/20 transition-all flex items-center gap-xs">
-            <span class="material-symbols-outlined text-[16px]">description</span>
-            الروشتة
+          <a *ngIf="appt.status === 'Completed'" [routerLink]="['/medical/prescription-view', appt._id]"
+            class="btn-action-view">
+            <span class="material-symbols-outlined">description</span>
+            <span>الروشتة</span>
           </a>
 
           <button *ngIf="canReview(appt)" (click)="goToReview(appt._id)"
-            class="px-sm py-xs rounded-lg font-label-md text-label-md bg-primary/10 text-primary hover:bg-primary/20 transition-all flex items-center gap-xs">
-            <span class="material-symbols-outlined text-[16px]">star</span>
-            أضف تقييم
+            class="btn-action-view">
+            <span class="material-symbols-outlined">star</span>
+            <span>تقييم الزيارة</span>
           </button>
         </div>
+
       </div>
+
     </div>
 
     <!-- Pagination -->
-    <div *ngIf="!isLoading && pagination.pages > 1" class="flex justify-center gap-sm mt-lg">
-      <button *ngFor="let p of [].constructor(pagination.pages); let i = index" (click)="loadAppointments(i + 1)"
-        [class]="pagination.page === i + 1
-          ? 'w-10 h-10 rounded-lg bg-primary text-on-primary font-label-md text-label-md'
-          : 'w-10 h-10 rounded-lg border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:border-primary hover:text-primary transition-colors'">
+    <div *ngIf="!isLoading && pagination.pages > 1" class="pagination-container">
+      <button *ngFor="let p of [].constructor(pagination.pages); let i = index" 
+        (click)="loadAppointments(i + 1)"
+        class="page-btn"
+        [class.active]="pagination.page === i + 1">
         {{ i + 1 }}
       </button>
     </div>
 
   </div>
 </div>
+

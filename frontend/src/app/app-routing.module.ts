@@ -4,6 +4,14 @@ import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
+    path: 'dashboard',
+    loadChildren: () =>
+      import('./features/dashboard/dashboard.module').then(
+        (m) => m.DashboardModule,
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'schedule',
     loadChildren: () =>
       import('./features/schedule/schedule.module').then(
