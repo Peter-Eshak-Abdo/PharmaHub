@@ -65,37 +65,6 @@ export class DoctorAppointmentsComponent implements OnInit {
       AppointmentStatus,
       { value: AppointmentStatus; label: string; color: string }[]
     >
-  > = {
-    Pending: [
-      {
-        value: 'Confirmed',
-        label: 'تأكيد الحجز',
-        color: 'bg-primary text-on-primary',
-      },
-      {
-        value: 'Cancelled',
-        label: 'إلغاء',
-        color: 'border border-error text-error',
-      },
-    ],
-    Confirmed: [
-      {
-        value: 'Completed',
-        label: 'إتمام الكشف',
-        color: 'bg-tertiary text-on-tertiary',
-      },
-      {
-        value: 'No-Show',
-        label: 'لم يحضر',
-        color: 'border border-outline-variant text-on-surface-variant',
-      },
-      {
-        value: 'Cancelled',
-        label: 'إلغاء',
-        color: 'border border-error text-error',
-      },
-    ],
-  };
   > {
     return {
       Pending: [
@@ -219,7 +188,6 @@ export class DoctorAppointmentsComponent implements OnInit {
           };
         }
         this.calculateStats();
-        this.successMessage = `تم تحديث حالة الموعد إلى "${STATUS_LABELS[newStatus]}" بنجاح`;
         this.successMessage = this.t('APPOINTMENTS.DOCTOR_VIEW.STATUS_UPDATED', {
           status: this.statusLabel(newStatus),
         });
@@ -234,8 +202,7 @@ export class DoctorAppointmentsComponent implements OnInit {
   }
 
   getPatientName(a: Appointment): string {
-    return typeof a.patientId === 'object' && a.patientId ? a.patientId.fullName : 'المريض';
-    return typeof a.patientId === 'object'
+    return typeof a.patientId === 'object' && a.patientId
       ? a.patientId.fullName
       : this.t('APPOINTMENTS.DOCTOR_VIEW.PATIENT_DEFAULT');
   }
@@ -243,10 +210,6 @@ export class DoctorAppointmentsComponent implements OnInit {
   getPatientInfo(a: Appointment): string {
     if (typeof a.patientId !== 'object' || !a.patientId) return '';
     const parts = [];
-    if (a.patientId.age) parts.push(`${a.patientId.age} سنة`);
-    if (a.patientId.gender) {
-      parts.push(a.patientId.gender.toLowerCase() === 'male' ? 'ذكر' : 'أنثى');
-    }
     if (a.patientId.phoneNumber) {
       parts.push(a.patientId.phoneNumber);
     }
@@ -266,7 +229,6 @@ export class DoctorAppointmentsComponent implements OnInit {
 
   formatDate(dateStr: string): string {
     if (!dateStr) return '';
-    return new Date(dateStr).toLocaleDateString('ar-EG', {
     return new Date(dateStr).toLocaleDateString(this.isRtl ? 'ar-EG' : 'en-US', {
       weekday: 'short',
       year: 'numeric',
