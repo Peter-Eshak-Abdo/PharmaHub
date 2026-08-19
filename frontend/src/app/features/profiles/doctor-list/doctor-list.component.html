@@ -1,12 +1,15 @@
-<div class="container mt-4">
+<div [dir]="isRtl ? 'rtl' : 'ltr'" class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>قائمة الأطباء</h2>
-    <div class="w-25">
-      <input type="text" 
-             class="form-control" 
-             placeholder="فلترة بالتخصص..." 
-             [(ngModel)]="specializationFilter" 
-             (ngModelChange)="onFilterChange()" />
+    <h2>{{ 'PROFILES.DOCTOR_LIST.TITLE' | translate }}</h2>
+    <div class="d-flex align-items-center gap-2">
+      <app-language-toggle></app-language-toggle>
+      <div class="w-25">
+        <input type="text"
+               class="form-control"
+               placeholder="{{ 'PROFILES.DOCTOR_LIST.FILTER_PLACEHOLDER' | translate }}"
+               [(ngModel)]="specializationFilter"
+               (ngModelChange)="onFilterChange()" />
+      </div>
     </div>
   </div>
 
@@ -17,10 +20,10 @@
           <h5 class="card-title">{{ doctor.fullName }}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{ doctor.specialization }}</h6>
           <div class="d-flex gap-2 mt-3">
-            <a [routerLink]="['/profiles/doctor-detail', doctor._id]" class="btn btn-outline-primary btn-sm flex-1">التفاصيل</a>
+            <a [routerLink]="['/profiles/doctor-detail', doctor._id]" class="btn btn-outline-primary btn-sm flex-1">{{ 'PROFILES.DOCTOR_LIST.DETAILS' | translate }}</a>
             <a [routerLink]="['/appointments/book']"
                [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
-               class="btn btn-primary btn-sm flex-1">حجز موعد</a>
+               class="btn btn-primary btn-sm flex-1">{{ 'PROFILES.DOCTOR_LIST.BOOK_APPOINTMENT' | translate }}</a>
           </div>
         </div>
       </div>

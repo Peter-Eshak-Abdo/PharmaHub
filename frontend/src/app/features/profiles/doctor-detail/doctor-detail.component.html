@@ -1,22 +1,25 @@
-<div class="container mt-4" *ngIf="doctor">
+<div [dir]="isRtl ? 'rtl' : 'ltr'" class="container mt-4" *ngIf="doctor">
+  <div class="d-flex justify-content-end mb-2">
+    <app-language-toggle></app-language-toggle>
+  </div>
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h3 class="mb-0">{{ doctor.fullName }}</h3>
       <span class="badge bg-warning text-dark fs-6">⭐ {{ doctor.rating }} / 5</span>
     </div>
-    
+
     <div class="card-body">
       <h5 class="text-primary">{{ doctor.specialization }}</h5>
       <hr>
-      
+
       <div class="row">
         <div class="col-md-6">
-          <p><strong>التعليم:</strong> {{ doctor.education }}</p>
-          <p><strong>المؤهلات:</strong> {{ doctor.qualifications }}</p>
-          <p><strong>سنوات الخبرة:</strong> {{ doctor.yearsOfExperience }} سنوات</p>
+          <p><strong>{{ 'PROFILES.DOCTOR_DETAIL.EDUCATION' | translate }}:</strong> {{ doctor.education }}</p>
+          <p><strong>{{ 'PROFILES.DOCTOR_DETAIL.QUALIFICATIONS' | translate }}:</strong> {{ doctor.qualifications }}</p>
+          <p><strong>{{ 'PROFILES.DOCTOR_DETAIL.YEARS_EXPERIENCE' | translate }}:</strong> {{ doctor.yearsOfExperience }} {{ 'PROFILES.DOCTOR_DETAIL.YEARS_SUFFIX' | translate }}</p>
         </div>
         <div class="col-md-6">
-          <p><strong>نبذة:</strong> {{ doctor.bio }}</p>
+          <p><strong>{{ 'PROFILES.DOCTOR_DETAIL.BIO' | translate }}:</strong> {{ doctor.bio }}</p>
         </div>
       </div>
 
@@ -25,27 +28,30 @@
         <a [routerLink]="['/appointments/book']"
            [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
            class="btn btn-primary px-4 py-2">
-          🗓️ حجز موعد مع الطبيب
+          🗓️ {{ 'PROFILES.DOCTOR_DETAIL.BOOK_WITH_DOCTOR' | translate }}
         </a>
         <a routerLink="/profiles/doctor-list" class="btn btn-outline-secondary px-3 py-2">
-          العودة للقائمة
+          {{ 'PROFILES.DOCTOR_DETAIL.BACK_TO_LIST' | translate }}
         </a>
       </div>
 
       <!-- Component مكان حقن تقييمات الطبيب لاحقاً -->
       <!-- <app-reviews [doctorId]="doctor._id"></app-reviews> -->
-      
+
     </div>
   </div>
 </div>
 
-<div class="container mt-4 text-center" *ngIf="!doctor">
+<div [dir]="isRtl ? 'rtl' : 'ltr'" class="container mt-4 text-center" *ngIf="!doctor">
+  <div class="d-flex justify-content-end mb-2">
+    <app-language-toggle></app-language-toggle>
+  </div>
   <div class="card p-4 shadow-sm border-0">
-    <h4 class="text-muted mb-3">لم يتم تحديد طبيب</h4>
-    <p class="text-secondary mb-3">يرجى اختيار طبيب من قائمة الأطباء لعرض التفاصيل الكاملة.</p>
+    <h4 class="text-muted mb-3">{{ 'PROFILES.DOCTOR_DETAIL.NO_DOCTOR_TITLE' | translate }}</h4>
+    <p class="text-secondary mb-3">{{ 'PROFILES.DOCTOR_DETAIL.NO_DOCTOR_SUBTITLE' | translate }}</p>
     <div>
       <a routerLink="/profiles/doctor-list" class="btn btn-primary">
-        الانتقال لقائمة الأطباء
+        {{ 'PROFILES.DOCTOR_DETAIL.GO_TO_LIST' | translate }}
       </a>
     </div>
   </div>

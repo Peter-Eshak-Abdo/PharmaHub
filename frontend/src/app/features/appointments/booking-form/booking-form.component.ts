@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { AppointmentService } from '../services/appointment.service';
 import { ConsultationType } from '../models/appointment.model';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 @Component({
   selector: 'app-booking-form',
@@ -32,14 +34,16 @@ export class BookingFormComponent implements OnInit {
 
   minDate = new Date().toISOString().split('T')[0];
 
-  consultationTypes: {
-    value: ConsultationType;
-    label: string;
-    icon: string;
-  }[] = [
-    { value: 'In-Clinic', label: 'زيارة العيادة', icon: 'local_hospital' },
-    { value: 'Online', label: 'استشارة أونلاين', icon: 'videocam' },
-  ];
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
+
+  get consultationTypes(): { value: ConsultationType; label: string; icon: string }[] {
+    return [
+      { value: 'In-Clinic', label: this.t('APPOINTMENTS.BOOKING.TYPE_IN_CLINIC'), icon: 'local_hospital' },
+      { value: 'Online', label: this.t('APPOINTMENTS.BOOKING.TYPE_ONLINE'), icon: 'videocam' },
+    ];
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -47,7 +51,13 @@ export class BookingFormComponent implements OnInit {
     private location: Location,
     private fb: FormBuilder,
     private appointmentService: AppointmentService,
+    private translate: TranslateService,
+    private languageService: LanguageService,
   ) {}
+
+  private t(key: string): string {
+    return this.translate.instant(key);
+  }
 
   ngOnInit(): void {
     // Read doctorId and doctor info from route params/query (no dependency on profiles module)
@@ -57,13 +67,13 @@ export class BookingFormComponent implements OnInit {
       this.route.snapshot.paramMap.get('id') ||
       '';
     this.doctorName =
-      this.route.snapshot.queryParamMap.get('doctorName') || 'الطبيب';
+      this.route.snapshot.queryParamMap.get('doctorName') || this.t('APPOINTMENTS.BOOKING.DEFAULT_DOCTOR_NAME');
     this.doctorSpecialization =
       this.route.snapshot.queryParamMap.get('specialization') || '';
     this.doctorFee = Number(this.route.snapshot.queryParamMap.get('fee') || 0);
 
     if (!this.doctorId) {
-      this.errorMessage = 'معرف الطبيب مفقود، يرجى العودة واختيار طبيب من قائمة الأطباء';
+      this.errorMessage = this.t('APPOINTMENTS.BOOKING.ERR_NO_DOCTOR');
       return;
     }
 
@@ -88,11 +98,11 @@ export class BookingFormComponent implements OnInit {
         this.slotDuration = res.slotDuration || 30;
         this.isLoadingSlots = false;
         if (!this.availableSlots || this.availableSlots.length === 0) {
-          this.errorMessage = res.message || 'لا توجد مواعيد متاحة في هذا اليوم لهذا الطبيب';
+          this.errorMessage = res.message || this.t('APPOINTMENTS.BOOKING.ERR_NO_SLOTS');
         }
       },
       error: (err) => {
-        this.errorMessage = err.message || 'لا توجد مواعيد متاحة في هذا اليوم';
+        this.errorMessage = err.message || this.t('APPOINTMENTS.BOOKING.ERR_LOAD_SLOTS');
         this.isLoadingSlots = false;
       },
     });
@@ -104,7 +114,7 @@ export class BookingFormComponent implements OnInit {
 
   goToStep2(): void {
     if (!this.selectedDate || !this.selectedTime) {
-      this.errorMessage = 'يرجى اختيار التاريخ والوقت';
+      this.errorMessage = this.t('APPOINTMENTS.BOOKING.ERR_SELECT_DATE_TIME');
       return;
     }
     this.errorMessage = '';
@@ -123,7 +133,7 @@ export class BookingFormComponent implements OnInit {
 
   formatTime(time: string): string {
     const [h, m] = time.split(':').map(Number);
-    const period = h < 12 ? 'ص' : 'م';
+    const period = this.isRtl ? (h < 12 ? 'ص' : 'م') : (h < 12 ? 'AM' : 'PM');
     const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
     return `${h12}:${String(m).padStart(2, '0')} ${period}`;
   }
@@ -131,7 +141,7 @@ export class BookingFormComponent implements OnInit {
   formatDate(dateStr: string): string {
     if (!dateStr) return '';
     const d = new Date(dateStr);
-    return d.toLocaleDateString('ar-EG', {
+    return d.toLocaleDateString(this.isRtl ? 'ar-EG' : 'en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -142,7 +152,7 @@ export class BookingFormComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid || !this.selectedDate || !this.selectedTime) {
       this.form.markAllAsTouched();
-      this.errorMessage = 'يرجى إكمال جميع الحقول المطلوبة';
+      this.errorMessage = this.t('APPOINTMENTS.BOOKING.ERR_FILL_REQUIRED');
       return;
     }
 

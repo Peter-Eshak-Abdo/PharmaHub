@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DoctorService } from '../services/doctor.service';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 @Component({
   selector: 'app-doctor-profile',
@@ -13,9 +14,14 @@ export class DoctorProfileComponent implements OnInit {
   isEditMode: boolean = true;
   hasProfile: boolean = false;
 
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
+
   constructor(
     private doctorService: DoctorService,
     private fb: FormBuilder,
+    private languageService: LanguageService,
   ) {
     this.initForm();
   }

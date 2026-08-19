@@ -1,11 +1,14 @@
-<div class="min-h-screen bg-background" dir="rtl">
+<div class="min-h-screen bg-background" [dir]="isRtl ? 'rtl' : 'ltr'">
 
   <!-- Header -->
-  <div class="px-sm md:px-xl py-lg">
-    <h1 class="font-display text-display text-on-surface mb-sm">جدول الحجوزات</h1>
-    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px]">
-      إدارة مواعيد مرضاك وتحديث حالات الحجوزات
-    </p>
+  <div class="px-sm md:px-xl py-lg flex items-start justify-between gap-md flex-wrap">
+    <div>
+      <h1 class="font-display text-display text-on-surface mb-sm">{{ 'APPOINTMENTS.DOCTOR_VIEW.TITLE' | translate }}</h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px]">
+        {{ 'APPOINTMENTS.DOCTOR_VIEW.SUBTITLE' | translate }}
+      </p>
+    </div>
+    <app-language-toggle></app-language-toggle>
   </div>
 
   <!-- Filters Row -->
@@ -18,7 +21,7 @@
     </div>
     <button *ngIf="selectedDate" (click)="selectedDate = ''; loadAppointments()"
       class="font-label-sm text-label-sm text-primary hover:underline">
-      مسح الفلتر
+      {{ 'APPOINTMENTS.DOCTOR_VIEW.CLEAR_FILTER' | translate }}
     </button>
   </div>
 
@@ -67,8 +70,8 @@
       <!-- Empty -->
       <div *ngIf="appointments.length === 0" class="col-span-full text-center py-xl text-on-surface-variant">
         <span class="material-symbols-outlined text-6xl block mb-md opacity-40">event_available</span>
-        <h3 class="font-headline-sm text-headline-sm mb-xs">لا توجد حجوزات</h3>
-        <p class="font-body-sm text-body-sm">لا توجد حجوزات في هذه الفئة</p>
+        <h3 class="font-headline-sm text-headline-sm mb-xs">{{ 'APPOINTMENTS.DOCTOR_VIEW.EMPTY' | translate }}</h3>
+        <p class="font-body-sm text-body-sm">{{ 'APPOINTMENTS.DOCTOR_VIEW.EMPTY_CATEGORY' | translate }}</p>
       </div>
 
       <!-- Card -->
@@ -87,7 +90,7 @@
           </div>
           <span class="px-sm py-xs rounded-full font-label-sm text-label-sm shrink-0"
             [ngClass]="STATUS_COLORS[appt.status]">
-            {{ STATUS_LABELS[appt.status] }}
+            {{ statusLabel(appt.status) }}
           </span>
         </div>
 
@@ -105,7 +108,7 @@
             <span
               class="material-symbols-outlined text-[18px] text-on-surface-variant">{{ appt.consultationType === 'Online' ? 'videocam' : 'local_hospital' }}</span>
             <span
-              class="font-body-sm text-body-sm text-on-surface-variant">{{ appt.consultationType === 'Online' ? 'أونلاين' : 'عيادة' }}</span>
+              class="font-body-sm text-body-sm text-on-surface-variant">{{ consultationTypeLabel(appt.consultationType) }}</span>
           </div>
           <div *ngIf="appt.reasonForVisit" class="flex items-start gap-xs text-on-surface-variant">
             <span class="material-symbols-outlined text-[18px] mt-0.5">notes</span>

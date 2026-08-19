@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { ReviewService } from '../services/review.service';
 import { AppointmentService } from '../services/appointment.service';
 import { Appointment } from '../models/appointment.model';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 @Component({
   selector: 'app-review-form',
@@ -23,13 +25,23 @@ export class ReviewFormComponent implements OnInit {
   successMessage = '';
   alreadyReviewed = false;
 
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
     private reviewService: ReviewService,
     private appointmentService: AppointmentService,
+    private translate: TranslateService,
+    private languageService: LanguageService,
   ) {}
+
+  private t(key: string): string {
+    return this.translate.instant(key);
+  }
 
   ngOnInit(): void {
     this.appointmentId =
@@ -44,7 +56,7 @@ export class ReviewFormComponent implements OnInit {
       this.loadAppointment();
       this.checkExistingReview();
     } else {
-      this.errorMessage = 'معرف الموعد مفقود';
+      this.errorMessage = this.t('APPOINTMENTS.REVIEW.ERR_NO_APPOINTMENT_ID');
       this.isLoadingAppt = false;
     }
   }
@@ -53,7 +65,7 @@ export class ReviewFormComponent implements OnInit {
     this.appointmentService.getAppointmentById(this.appointmentId).subscribe({
       next: (appt) => {
         if (appt.status !== 'Completed') {
-          this.errorMessage = 'يمكن تقييم الزيارات المكتملة فقط';
+          this.errorMessage = this.t('APPOINTMENTS.REVIEW.ERR_NOT_COMPLETED');
         }
         this.appointment = appt;
         this.isLoadingAppt = false;
@@ -70,7 +82,7 @@ export class ReviewFormComponent implements OnInit {
       next: (review) => {
         if (review) {
           this.alreadyReviewed = true;
-          this.errorMessage = 'لقد قمت بتقييم هذا الموعد بالفعل';
+          this.errorMessage = this.t('APPOINTMENTS.REVIEW.ERR_ALREADY_REVIEWED');
         }
       },
     });
@@ -88,13 +100,13 @@ export class ReviewFormComponent implements OnInit {
   }
 
   getRatingLabel(rating: number): string {
-    const labels = ['', 'ضعيف', 'مقبول', 'جيد', 'جيد جداً', 'ممتاز'];
-    return labels[rating] || '';
+    const keys = ['', 'RATING_1', 'RATING_2', 'RATING_3', 'RATING_4', 'RATING_5'];
+    return keys[rating] ? this.t('APPOINTMENTS.REVIEW.' + keys[rating]) : '';
   }
 
   formatDate(dateStr?: string): string {
     if (!dateStr) return '';
-    return new Date(dateStr).toLocaleDateString('ar-EG', {
+    return new Date(dateStr).toLocaleDateString(this.isRtl ? 'ar-EG' : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -105,7 +117,7 @@ export class ReviewFormComponent implements OnInit {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       if (this.form.get('rating')?.value === 0) {
-        this.errorMessage = 'يرجى اختيار تقييم بالنجوم';
+        this.errorMessage = this.t('APPOINTMENTS.REVIEW.RATING_ERROR');
       }
       return;
     }

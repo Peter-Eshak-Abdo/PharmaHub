@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { PatientService } from '../services/patient.service';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 @Component({
   selector: 'app-patient-profile',
@@ -13,9 +15,15 @@ export class PatientProfileComponent implements OnInit {
   isEditMode: boolean = true;
   hasProfile: boolean = false;
 
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
+
   constructor(
     private fb: FormBuilder,
     private patientService: PatientService,
+    private translate: TranslateService,
+    private languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -69,7 +77,7 @@ export class PatientProfileComponent implements OnInit {
           }
           this.isEditMode = false;
           this.hasProfile = true;
-          alert('تم الحفظ بنجاح');
+          alert(this.translate.instant('PROFILES.PATIENT_PROFILE.SAVE_SUCCESS'));
         },
         error: (err:any) => console.error(err),
       });
