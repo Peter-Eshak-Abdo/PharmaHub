@@ -1,11 +1,14 @@
-<div class="min-h-screen bg-background" dir="rtl">
+<div class="min-h-screen bg-background" [dir]="isRtl ? 'rtl' : 'ltr'">
 
   <!-- Page Header -->
-  <div class="px-sm md:px-xl py-lg">
-    <h1 class="font-display text-display text-on-surface mb-sm">مواعيدي</h1>
-    <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px]">
-      تابع مواعيدك وحجوزاتك الطبية في مكان واحد
-    </p>
+  <div class="px-sm md:px-xl py-lg flex items-start justify-between gap-md flex-wrap">
+    <div>
+      <h1 class="font-display text-display text-on-surface mb-sm">{{ 'APPOINTMENTS.PATIENT_VIEW.TITLE' | translate }}</h1>
+      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px]">
+        {{ 'APPOINTMENTS.PATIENT_VIEW.SUBTITLE' | translate }}
+      </p>
+    </div>
+    <app-language-toggle></app-language-toggle>
   </div>
 
   <!-- Tabs -->
@@ -52,11 +55,11 @@
       <div *ngIf="appointments.length === 0"
         class="col-span-full flex flex-col items-center justify-center py-xl text-on-surface-variant">
         <span class="material-symbols-outlined text-6xl mb-md opacity-40">calendar_month</span>
-        <h3 class="font-headline-sm text-headline-sm mb-xs">لا توجد مواعيد</h3>
-        <p class="font-body-sm text-body-sm mb-md">ليس لديك مواعيد في هذه الفئة</p>
+        <h3 class="font-headline-sm text-headline-sm mb-xs">{{ 'APPOINTMENTS.PATIENT_VIEW.EMPTY' | translate }}</h3>
+        <p class="font-body-sm text-body-sm mb-md">{{ 'APPOINTMENTS.PATIENT_VIEW.EMPTY_CATEGORY' | translate }}</p>
         <a routerLink="/profiles/doctors"
           class="px-md py-sm rounded-lg font-label-md text-label-md bg-primary text-on-primary hover:bg-primary-container transition-colors shadow-sm">
-          احجز موعداً جديداً
+          {{ 'APPOINTMENTS.PATIENT_VIEW.BOOK_NEW' | translate }}
         </a>
       </div>
 
@@ -75,7 +78,7 @@
             </div>
           </div>
           <span class="px-sm py-xs rounded-full font-label-sm text-label-sm" [ngClass]="STATUS_COLORS[appt.status]">
-            {{ STATUS_LABELS[appt.status] }}
+            {{ statusLabel(appt.status) }}
           </span>
         </div>
 
@@ -93,7 +96,7 @@
             <span
               class="material-symbols-outlined text-[18px]">{{ appt.consultationType === 'Online' ? 'videocam' : 'local_hospital' }}</span>
             <span
-              class="font-body-sm text-body-sm">{{ appt.consultationType === 'Online' ? 'أونلاين' : 'زيارة عيادة' }}</span>
+              class="font-body-sm text-body-sm">{{ consultationTypeLabel(appt.consultationType) }}</span>
           </div>
           <div *ngIf="appt.consultationFeeSnapshot" class="flex items-center gap-xs text-on-surface-variant">
             <span class="material-symbols-outlined text-[18px]">payments</span>
@@ -102,7 +105,7 @@
           </div>
           <div *ngIf="appt.reasonForVisit" class="flex items-start gap-xs text-on-surface-variant">
             <span class="material-symbols-outlined text-[18px] mt-0.5">notes</span>
-            <span class="font-body-sm text-body-sm">سبب الزيارة: {{ appt.reasonForVisit }}</span>
+            <span class="font-body-sm text-body-sm">{{ 'APPOINTMENTS.PATIENT_VIEW.REASON_PREFIX' | translate }}: {{ appt.reasonForVisit }}</span>
           </div>
         </div>
 
@@ -110,7 +113,7 @@
         <div class="flex flex-wrap gap-sm mt-sm justify-end">
           <button *ngIf="canCancel(appt)" (click)="cancelAppointment(appt._id)" [disabled]="cancellingId === appt._id"
             class="px-sm py-xs rounded-lg font-label-md text-label-md border-2 border-error text-error hover:bg-error/5 transition-all disabled:opacity-40">
-            <span *ngIf="cancellingId !== appt._id">إلغاء</span>
+            <span *ngIf="cancellingId !== appt._id">{{ 'APPOINTMENTS.PATIENT_VIEW.CANCEL_BUTTON' | translate }}</span>
             <div *ngIf="cancellingId === appt._id"
               class="w-4 h-4 border-2 border-error border-t-transparent rounded-full animate-spin"></div>
           </button>
@@ -118,13 +121,13 @@
           <a *ngIf="appt.status === 'Completed'" [routerLink]="['/medical/prescription/view', appt._id]"
             class="px-sm py-xs rounded-lg font-label-md text-label-md bg-secondary/10 text-secondary hover:bg-secondary/20 transition-all flex items-center gap-xs">
             <span class="material-symbols-outlined text-[16px]">description</span>
-            الروشتة
+            {{ 'APPOINTMENTS.PATIENT_VIEW.PRESCRIPTION_LINK' | translate }}
           </a>
 
           <button *ngIf="canReview(appt)" (click)="goToReview(appt._id)"
             class="px-sm py-xs rounded-lg font-label-md text-label-md bg-primary/10 text-primary hover:bg-primary/20 transition-all flex items-center gap-xs">
             <span class="material-symbols-outlined text-[16px]">star</span>
-            أضف تقييم
+            {{ 'APPOINTMENTS.PATIENT_VIEW.REVIEW_BUTTON' | translate }}
           </button>
         </div>
       </div>

@@ -246,3 +246,15 @@
   text-decoration: underline;
   text-underline-offset: 4px;
 }
+
+.auth-lang-switch {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+[dir="rtl"] .auth-lang-switch {
+  right: auto;
+  left: 20px;
+}

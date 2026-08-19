@@ -1,48 +1,52 @@
-<div class="page-background">
+<div class="page-background" [dir]="isRtl ? 'rtl' : 'ltr'">
   <div class="container mt-4 profile-container">
+
+    <div class="d-flex justify-content-end mb-2">
+      <app-language-toggle></app-language-toggle>
+    </div>
 
     <!-- وضع التعديل: إدخال البيانات -->
     <div *ngIf="isEditMode" class="card p-4 shadow-sm border-0">
-      <h3 class="mb-4 text-primary">الملف الشخصي للطبيب</h3>
-      <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()" dir="rtl">
+      <h3 class="mb-4 text-primary">{{ 'PROFILES.DOCTOR_PROFILE.EDIT_TITLE' | translate }}</h3>
+      <form [formGroup]="doctorForm" (ngSubmit)="onSubmit()" [dir]="isRtl ? 'rtl' : 'ltr'">
 
         <div class="mb-3">
-          <label class="form-label fw-bold">الاسم الكامل</label>
+          <label class="form-label fw-bold">{{ 'PROFILES.DOCTOR_PROFILE.FULL_NAME' | translate }}</label>
           <input type="text" title="fullName" formControlName="fullName" class="form-control" />
         </div>
 
         <div class="mb-3">
-          <label class="form-label fw-bold">التخصص</label>
+          <label class="form-label fw-bold">{{ 'PROFILES.DOCTOR_PROFILE.SPECIALIZATION' | translate }}</label>
           <input type="text" title="specialization" formControlName="specialization" class="form-control" />
         </div>
 
         <div class="row mb-3">
           <div class="col-md-6">
-            <label class="form-label fw-bold">سنوات الخبرة</label>
+            <label class="form-label fw-bold">{{ 'PROFILES.DOCTOR_PROFILE.YEARS_EXPERIENCE' | translate }}</label>
             <input type="number" title="yearsOfExperience" formControlName="yearsOfExperience" class="form-control" />
           </div>
           <div class="col-md-6 mt-3 mt-md-0">
-            <label class="form-label fw-bold">رسوم الاستشارة ($)</label>
+            <label class="form-label fw-bold">{{ 'PROFILES.DOCTOR_PROFILE.CONSULTATION_FEE' | translate }}</label>
             <input type="number" title="consultationFeeSnapshot" formControlName="consultationFeeSnapshot" class="form-control" />
           </div>
         </div>
 
         <div class="mb-3">
-          <label class="form-label fw-bold">التعليم</label>
-          <input type="text" formControlName="education" class="form-control" placeholder="مثال: MD from Harvard" />
+          <label class="form-label fw-bold">{{ 'PROFILES.DOCTOR_PROFILE.EDUCATION' | translate }}</label>
+          <input type="text" formControlName="education" class="form-control" placeholder="{{ 'PROFILES.DOCTOR_PROFILE.EDUCATION_PLACEHOLDER' | translate }}" />
         </div>
 
         <div class="mb-3">
-          <label class="form-label fw-bold">المؤهلات الإضافية</label>
+          <label class="form-label fw-bold">{{ 'PROFILES.DOCTOR_PROFILE.QUALIFICATIONS' | translate }}</label>
           <input type="text" title="qualifications" formControlName="qualifications" class="form-control" />
         </div>
 
         <div class="mb-4">
-          <label class="form-label fw-bold">نبذة عنك (Bio)</label>
+          <label class="form-label fw-bold">{{ 'PROFILES.DOCTOR_PROFILE.BIO' | translate }}</label>
           <textarea formControlName="bio" title="bio" class="form-control" rows="4"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary px-4 py-2" [disabled]="doctorForm.invalid">حفظ التعديلات</button>
+        <button type="submit" class="btn btn-primary px-4 py-2" [disabled]="doctorForm.invalid">{{ 'PROFILES.DOCTOR_PROFILE.SAVE' | translate }}</button>
       </form>
     </div>
 
@@ -62,8 +66,8 @@
         <a routerLink="/profiles/doctor-detail">doctor-detail</a>
         <a routerLink="/profiles/doctor-list">doctor-list</a>
       </nav>
-      <div class="d-flex justify-content-between align-items-center mb-4" dir="rtl">
-        <button class="btn btn-outline-secondary" (click)="toggleEditMode()">تعديل البيانات ✏️</button>
+      <div class="d-flex justify-content-between align-items-center mb-4" [dir]="isRtl ? 'rtl' : 'ltr'">
+        <button class="btn btn-outline-secondary" (click)="toggleEditMode()">{{ 'PROFILES.DOCTOR_PROFILE.EDIT_BUTTON' | translate }} ✏️</button>
       </div>
 
       <div class="grid-layout">
@@ -87,7 +91,7 @@
                       d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                     </path>
                   </svg>
-                  {{ doctorData?.yearsOfExperience }} Yrs Exp
+                  {{ doctorData?.yearsOfExperience }} {{ 'PROFILES.DOCTOR_PROFILE.YEARS_EXP_SUFFIX' | translate }}
                 </span>
                 <span class="stat-item">
                   <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,7 +109,7 @@
                     d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
                   </path>
                 </svg>
-                Consultation Fee: ${{ doctorData?.consultationFeeSnapshot }}
+                {{ 'PROFILES.DOCTOR_PROFILE.CONSULTATION_FEE_LABEL' | translate }}: ${{ doctorData?.consultationFeeSnapshot }}
               </div>
             </div>
           </div>
@@ -117,17 +121,17 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
               </svg>
-              About
+              {{ 'PROFILES.DOCTOR_PROFILE.ABOUT' | translate }}
             </h3>
             <p class="paragraph-text">{{ doctorData?.bio }}</p>
 
             <div class="details-section" *ngIf="doctorData?.education || doctorData?.qualifications">
               <div class="detail-item" *ngIf="doctorData?.education">
-                <h4>Education</h4>
+                <h4>{{ 'PROFILES.DOCTOR_PROFILE.EDUCATION' | translate }}</h4>
                 <p>{{ doctorData?.education }}</p>
               </div>
               <div class="detail-item" *ngIf="doctorData?.qualifications">
-                <h4>Qualifications</h4>
+                <h4>{{ 'PROFILES.DOCTOR_PROFILE.QUALIFICATIONS' | translate }}</h4>
                 <p>{{ doctorData?.qualifications }}</p>
               </div>
             </div>
@@ -143,12 +147,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
               </svg>
-              Next Available
+              {{ 'PROFILES.DOCTOR_PROFILE.NEXT_AVAILABLE' | translate }}
             </h3>
 
             <div class="availability-list">
               <div class="availability-item text-muted">
-                <p>قريباً سيتم عرض المواعيد المتاحة هنا.</p>
+                <p>{{ 'PROFILES.DOCTOR_PROFILE.AVAILABILITY_SOON' | translate }}</p>
               </div>
             </div>
           </div>
