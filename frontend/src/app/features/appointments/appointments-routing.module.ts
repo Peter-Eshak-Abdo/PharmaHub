@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../../core/guards/auth.guard';
+import { RoleGuard } from '../../core/guards/role.guard';
 
 import { BookingFormComponent } from './booking-form/booking-form.component';
 import { PatientAppointmentsComponent } from './patient-appointments/patient-appointments.component';
@@ -11,8 +12,8 @@ const routes: Routes = [
   {
     path: 'book',
     component: BookingFormComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['patient'] },
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'patient' },
   },
   {
     path: 'booking-form',
@@ -22,8 +23,8 @@ const routes: Routes = [
   {
     path: 'patient',
     component: PatientAppointmentsComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['patient'] },
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'patient' },
   },
   {
     path: 'patient-appointments',
@@ -33,8 +34,8 @@ const routes: Routes = [
   {
     path: 'doctor',
     component: DoctorAppointmentsComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['doctor'] },
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'doctor' },
   },
   {
     path: 'doctor-appointments',
@@ -44,14 +45,14 @@ const routes: Routes = [
   {
     path: 'review/:appointmentId',
     component: ReviewFormComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['patient'] },
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'patient' },
   },
   {
     path: 'review',
     component: ReviewFormComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['patient'] },
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'patient' },
   },
   {
     path: 'review-form',

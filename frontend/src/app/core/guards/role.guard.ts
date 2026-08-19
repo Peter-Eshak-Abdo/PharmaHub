@@ -1,35 +1,35 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, UrlTree } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoleGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
+  canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree {
     let userRole: string | null = null;
-    this.authService.currentUser$.subscribe(user => {
-       if (user) userRole = user.role;
+    this.authService.currentUser$.subscribe((user) => {
+      if (user) userRole = user.role;
     }).unsubscribe();
 
-    // Route data uses the key 'role' (e.g. data: { role: 'patient' })
-    const expectedRole = route.data['role'];
+    if (!userRole) {
+      const storedRole = localStorage.getItem('role');
+      if (storedRole) {
+        userRole = storedRole;
+      }
+    }
 
-    if (userRole === expectedRole) {
+    if (!this.authService.isLoggedIn() || !userRole) {
+      return this.router.createUrlTree(['/auth/login']);
+    }
+
+    const requiredRole = route.data['role'];
+    const requiredRoles: string[] = route.data['roles'] || (requiredRole ? [requiredRole] : []);
+
+    if (requiredRoles.length === 0 || requiredRoles.includes(userRole)) {
       return true;
     }
 
-    // Redirect based on actual role — never fall through to login for authenticated users
-    if (userRole === 'doctor') {
-      this.router.navigate(['/appointments/doctor']);
-    } else if (userRole === 'patient') {
-      this.router.navigate(['/appointments/patient']);
-    } else if (userRole === 'admin') {
-      this.router.navigate(['/auth/login']);
-    } else {
-      this.router.navigate(['/auth/login']);
-    }
-
-    return false;
+    return this.router.createUrlTree(['/unauthorized']);
   }
-}
+}

@@ -57,8 +57,11 @@ const weeklyAvailabilitySchema = new mongoose.Schema(
   },
 );
 
-// Unique compound index: a doctor can only have one slot per day of week.
-// Enforced by addAvailability / updateAvailability (handles 11000 duplicate key).
-weeklyAvailabilitySchema.index({ doctorId: 1, dayOfWeek: 1 }, { unique: true });
+// Unique compound index: a doctor can have multiple slots per day as long as startTime is distinct.
+weeklyAvailabilitySchema.index(
+  { doctorId: 1, dayOfWeek: 1, startTime: 1 },
+  { unique: true }
+);
 
 module.exports = mongoose.model("WeeklyAvailability", weeklyAvailabilitySchema);
+

@@ -16,9 +16,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 @NgModule({
-  declarations: [
-    AppComponent,
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -27,6 +25,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppRoutingModule,
     SharedModule,
     TranslateModule.forRoot({
+      defaultLanguage: 'ar',
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,

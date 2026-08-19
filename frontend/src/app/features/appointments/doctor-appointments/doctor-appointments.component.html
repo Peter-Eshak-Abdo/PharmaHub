@@ -1,144 +1,256 @@
-<div class="min-h-screen bg-background" [dir]="isRtl ? 'rtl' : 'ltr'">
+<div class="doctor-dashboard-wrapper" dir="rtl">
 
-  <!-- Header -->
-  <div class="px-sm md:px-xl py-lg flex items-start justify-between gap-md flex-wrap">
-    <div>
-      <h1 class="font-display text-display text-on-surface mb-sm">{{ 'APPOINTMENTS.DOCTOR_VIEW.TITLE' | translate }}</h1>
-      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-[600px]">
-        {{ 'APPOINTMENTS.DOCTOR_VIEW.SUBTITLE' | translate }}
-      </p>
-    </div>
-    <app-language-toggle></app-language-toggle>
-  </div>
+  <!-- Top Welcome Banner -->
+  <div class="dashboard-banner">
+    <div class="banner-ambient-1"></div>
+    <div class="banner-ambient-2"></div>
 
-  <!-- Filters Row -->
-  <div class="px-sm md:px-xl pb-md flex flex-wrap items-center gap-md">
-    <div
-      class="flex items-center gap-xs bg-surface-container-lowest rounded-lg border border-outline-variant px-sm py-xs">
-      <span class="material-symbols-outlined text-on-surface-variant text-[18px]">calendar_today</span>
-      <input type="date" [(ngModel)]="selectedDate" (change)="loadAppointments()" title="Date"
-        class="font-body-sm text-body-sm text-on-surface bg-transparent outline-none" />
-    </div>
-    <button *ngIf="selectedDate" (click)="selectedDate = ''; loadAppointments()"
-      class="font-label-sm text-label-sm text-primary hover:underline">
-      {{ 'APPOINTMENTS.DOCTOR_VIEW.CLEAR_FILTER' | translate }}
-    </button>
-  </div>
-
-  <!-- Tabs -->
-  <div class="px-sm md:px-xl border-b border-surface-container-highest flex gap-lg overflow-x-auto">
-    <button *ngFor="let tab of tabs" (click)="setTab(tab.value)"
-      [class]="activeTab === tab.value
-        ? 'pb-sm font-label-md text-label-md text-primary border-b-[3px] border-primary whitespace-nowrap px-base'
-        : 'pb-sm font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors whitespace-nowrap px-base'">
-      {{ tab.label }}
-    </button>
-  </div>
-
-  <!-- Content -->
-  <div class="px-sm md:px-xl py-xl bg-surface-bright min-h-[500px]">
-
-    <!-- Feedback Messages -->
-    <div *ngIf="errorMessage"
-      class="bg-error-container text-on-error-container rounded-lg px-md py-sm mb-md flex items-center gap-sm">
-      <span class="material-symbols-outlined text-[20px]">error</span>
-      <span class="font-body-sm text-body-sm">{{ errorMessage }}</span>
-    </div>
-    <div *ngIf="successMessage"
-      class="bg-tertiary-container text-on-tertiary-container rounded-lg px-md py-sm mb-md flex items-center gap-sm">
-      <span class="material-symbols-outlined text-[20px]">check_circle</span>
-      <span class="font-body-sm text-body-sm">{{ successMessage }}</span>
-    </div>
-
-    <!-- Loading -->
-    <div *ngIf="isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
-      <div *ngFor="let i of [1,2,3,4]" class="bg-surface-container-lowest rounded-xl p-md animate-pulse">
-        <div class="flex items-center gap-md mb-md">
-          <div class="w-12 h-12 rounded-full bg-surface-container-high"></div>
-          <div class="flex-1 space-y-xs">
-            <div class="h-4 bg-surface-container-high rounded w-3/4"></div>
-            <div class="h-3 bg-surface-container-high rounded w-1/2"></div>
+    <div class="banner-content">
+      <div class="doctor-profile-hero">
+        <div class="hero-avatar-wrapper">
+          <div class="hero-avatar">
+            <span class="material-symbols-outlined">stethoscope</span>
+          </div>
+          <div class="hero-status-badge">
+            <span class="material-symbols-outlined">verified</span>
           </div>
         </div>
-        <div class="h-8 bg-surface-container-high rounded mt-md"></div>
+
+        <div class="hero-text">
+          <h1 class="hero-greeting">مرحباً بك، دكتور 👋</h1>
+          <p class="hero-subtitle">إليك نظرة عامة على جدول مواعيدك وحجوزات المرضى اليوم.</p>
+        </div>
+      </div>
+
+      <div class="banner-actions">
+        <a routerLink="/schedule/weekly-availability" class="btn-banner-outline">
+          <span class="material-symbols-outlined">calendar_add_on</span>
+          <span>إدارة أوقات العمل</span>
+        </a>
+        <a routerLink="/schedule/schedule-exceptions" class="btn-banner-solid">
+          <span class="material-symbols-outlined">event_busy</span>
+          <span>إضافة إجازة / استثناء</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Grid (Side Stats + Today's Appointments) -->
+  <div class="dashboard-main-grid">
+
+    <!-- Right Column (Stats & Quick Actions) -->
+    <div class="stats-actions-col">
+      <!-- 3 Summary Metric Cards -->
+      <div class="stats-cards-stack">
+        <!-- Metric 1: Today -->
+        <div class="metric-card">
+          <div class="metric-watermark">
+            <span class="material-symbols-outlined">today</span>
+          </div>
+          <div class="metric-header">
+            <span class="metric-dot dot-teal"></span>
+            <span class="metric-label">مواعيد اليوم</span>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ todayCount }}</span>
+            <span class="metric-badge badge-green" *ngIf="todayCount > 0">
+              <span class="material-symbols-outlined">trending_up</span>
+              <span>نشط</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Metric 2: Upcoming -->
+        <div class="metric-card">
+          <div class="metric-watermark">
+            <span class="material-symbols-outlined">upcoming</span>
+          </div>
+          <div class="metric-header">
+            <span class="metric-dot dot-blue"></span>
+            <span class="metric-label">الحجوزات القادمة</span>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ upcomingCount }}</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: Total Patients -->
+        <div class="metric-card">
+          <div class="metric-watermark">
+            <span class="material-symbols-outlined">group</span>
+          </div>
+          <div class="metric-header">
+            <span class="metric-dot dot-purple"></span>
+            <span class="metric-label">إجمالي المرضى المسجلين</span>
+          </div>
+          <div class="metric-value-row">
+            <span class="metric-number">{{ totalPatientsCount }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Box -->
+      <div class="quick-actions-box">
+        <h3 class="quick-box-title">إجراءات سريعة</h3>
+
+        <div class="quick-actions-list">
+          <a routerLink="/schedule/weekly-availability" class="quick-action-item">
+            <div class="action-icon-circle bg-teal">
+              <span class="material-symbols-outlined">edit_calendar</span>
+            </div>
+            <div class="action-text">
+              <div class="action-title">تعديل التواجد الأسبوعي</div>
+              <div class="action-sub">تحديث ساعات العمل المعتادة</div>
+            </div>
+            <span class="material-symbols-outlined arrow-icon">chevron_left</span>
+          </a>
+
+          <a routerLink="/profiles/doctor-profile" class="quick-action-item">
+            <div class="action-icon-circle bg-blue">
+              <span class="material-symbols-outlined">person</span>
+            </div>
+            <div class="action-text">
+              <div class="action-title">الملف الشخصي للطبيب</div>
+              <div class="action-sub">تعديل التخصص وسعر الكشف</div>
+            </div>
+            <span class="material-symbols-outlined arrow-icon">chevron_left</span>
+          </a>
+
+          <a routerLink="/schedule/schedule-exceptions" class="quick-action-item">
+            <div class="action-icon-circle bg-red">
+              <span class="material-symbols-outlined">event_busy</span>
+            </div>
+            <div class="action-text">
+              <div class="action-title">استثناءات الجدول</div>
+              <div class="action-sub">حجب أوقات معينة أو إجازات</div>
+            </div>
+            <span class="material-symbols-outlined arrow-icon">chevron_left</span>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Appointments -->
-    <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+    <!-- Left Column (Appointments Schedule & Timeline) -->
+    <div class="appointments-schedule-col">
 
-      <!-- Empty -->
-      <div *ngIf="appointments.length === 0" class="col-span-full text-center py-xl text-on-surface-variant">
-        <span class="material-symbols-outlined text-6xl block mb-md opacity-40">event_available</span>
-        <h3 class="font-headline-sm text-headline-sm mb-xs">{{ 'APPOINTMENTS.DOCTOR_VIEW.EMPTY' | translate }}</h3>
-        <p class="font-body-sm text-body-sm">{{ 'APPOINTMENTS.DOCTOR_VIEW.EMPTY_CATEGORY' | translate }}</p>
-      </div>
+      <!-- Card Header & Filter Tabs -->
+      <div class="schedule-header">
+        <div class="schedule-title-row">
+          <div class="d-flex align-items-center gap-2">
+            <h2 class="schedule-title">جدول الحجوزات والمواعيد</h2>
+            <span class="badge-total">{{ appointments.length }} موعد</span>
+          </div>
 
-      <!-- Card -->
-      <div *ngFor="let appt of appointments"
-        class="bg-surface-container-lowest rounded-xl shadow-sm p-md flex flex-col gap-sm">
-        <!-- Patient Info -->
-        <div class="flex justify-between items-start">
-          <div class="flex items-center gap-md">
-            <div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-on-secondary-fixed">person</span>
-            </div>
-            <div>
-              <h3 class="font-headline-sm text-headline-sm text-on-surface">{{ getPatientName(appt) }}</h3>
-              <p class="font-body-sm text-body-sm text-on-surface-variant">{{ getPatientInfo(appt) }}</p>
-            </div>
-          </div>
-          <span class="px-sm py-xs rounded-full font-label-sm text-label-sm shrink-0"
-            [ngClass]="STATUS_COLORS[appt.status]">
-            {{ statusLabel(appt.status) }}
-          </span>
-        </div>
-
-        <!-- Details -->
-        <div class="border-t border-surface-container-highest pt-sm space-y-xs">
-          <div class="flex items-center gap-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-            <span class="font-label-md text-label-md text-on-surface">{{ formatDate(appt.appointmentDate) }}</span>
-          </div>
-          <div class="flex items-center gap-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-[18px]">schedule</span>
-            <span class="font-body-md text-body-md">{{ formatTime(appt.appointmentTime) }}</span>
-          </div>
-          <div class="flex items-center gap-xs">
-            <span
-              class="material-symbols-outlined text-[18px] text-on-surface-variant">{{ appt.consultationType === 'Online' ? 'videocam' : 'local_hospital' }}</span>
-            <span
-              class="font-body-sm text-body-sm text-on-surface-variant">{{ consultationTypeLabel(appt.consultationType) }}</span>
-          </div>
-          <div *ngIf="appt.reasonForVisit" class="flex items-start gap-xs text-on-surface-variant">
-            <span class="material-symbols-outlined text-[18px] mt-0.5">notes</span>
-            <span class="font-body-sm text-body-sm">{{ appt.reasonForVisit }}</span>
+          <!-- Date Filter Picker -->
+          <div class="date-filter-box">
+            <span class="material-symbols-outlined">calendar_today</span>
+            <input type="date" [(ngModel)]="selectedDate" (change)="loadAppointments()" title="تصفية بالتاريخ" />
+            <button *ngIf="selectedDate" (click)="selectedDate = ''; loadAppointments()" class="btn-clear-date" title="مسح التاريخ">✕</button>
           </div>
         </div>
 
-        <!-- Action Buttons (State Machine) -->
-        <div *ngIf="getActions(appt).length > 0" class="flex flex-wrap gap-sm mt-sm">
-          <button *ngFor="let action of getActions(appt)" (click)="updateStatus(appt._id, action.value)"
-            [disabled]="updatingId === appt._id"
-            class="px-sm py-xs rounded-lg font-label-md text-label-md transition-all disabled:opacity-40 flex items-center gap-xs"
-            [ngClass]="action.color">
-            <div *ngIf="updatingId === appt._id"
-              class="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
-            {{ action.label }}
+        <!-- Filter Tabs -->
+        <div class="schedule-tabs-row">
+          <button
+            *ngFor="let tab of tabs"
+            (click)="setTab(tab.value)"
+            class="tab-btn"
+            [class.active]="activeTab === tab.value">
+            {{ tab.label }}
           </button>
         </div>
       </div>
-    </div>
 
-    <!-- Pagination -->
-    <div *ngIf="!isLoading && pagination.pages > 1" class="flex justify-center gap-sm mt-lg">
-      <button *ngFor="let p of [].constructor(pagination.pages); let i = index" (click)="loadAppointments(i + 1)"
-        [class]="pagination.page === i + 1
-          ? 'w-10 h-10 rounded-lg bg-primary text-on-primary font-label-md text-label-md'
-          : 'w-10 h-10 rounded-lg border border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-colors'">
-        {{ i + 1 }}
-      </button>
+      <!-- Feedback Messages -->
+      <div *ngIf="errorMessage" class="alert-error-box m-3">
+        <span class="material-symbols-outlined">error</span>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <div *ngIf="successMessage" class="alert-success-box m-3">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span>{{ successMessage }}</span>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="p-4 text-center">
+        <div class="spinner"></div>
+        <p class="text-muted mt-2">جاري تحديث جدول المواعيد...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!isLoading && appointments.length === 0" class="empty-schedule-state">
+        <div class="empty-icon-circle">
+          <span class="material-symbols-outlined">event_available</span>
+        </div>
+        <h3>لا توجد حجوزات في هذا التاريخ أو الفئة</h3>
+        <p>يمكنك تغيير الفلترة أو مسح التاريخ لعرض باقي المواعيد</p>
+      </div>
+
+      <!-- Appointments List (Timeline Cards) -->
+      <div *ngIf="!isLoading && appointments.length > 0" class="appointments-timeline-list">
+
+        <div *ngFor="let appt of appointments" class="timeline-appt-item">
+          <!-- Time Column -->
+          <div class="appt-time-column">
+            <span class="time-main">{{ formatTime(appt.appointmentTime) }}</span>
+            <span class="date-sub">{{ formatDate(appt.appointmentDate) }}</span>
+          </div>
+
+          <!-- Timeline Node / Dot -->
+          <div class="timeline-dot-wrapper">
+            <div class="timeline-dot" [class.dot-confirmed]="appt.status === 'Confirmed'" [class.dot-completed]="appt.status === 'Completed'"></div>
+          </div>
+
+          <!-- Appointment Details Card -->
+          <div class="timeline-appt-card" [class.border-confirmed]="appt.status === 'Confirmed'">
+            <div class="appt-card-top">
+              <div class="patient-main-info">
+                <div class="patient-avatar">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <div>
+                  <h4 class="patient-name">{{ getPatientName(appt) }}</h4>
+                  <div class="patient-meta-text">{{ getPatientInfo(appt) }}</div>
+
+                  <div class="appt-badges-row">
+                    <span class="meta-tag">
+                      <span class="material-symbols-outlined">{{ appt.consultationType === 'Online' ? 'videocam' : 'local_hospital' }}</span>
+                      <span>{{ appt.consultationType === 'Online' ? 'استشارة أونلاين' : 'عيادة' }}</span>
+                    </span>
+                    <span class="meta-tag" *ngIf="appt.reasonForVisit">
+                      <span class="material-symbols-outlined">notes</span>
+                      <span>{{ appt.reasonForVisit }}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Status Badge -->
+              <span class="status-pill-badge" [ngClass]="STATUS_COLORS[appt.status]">
+                {{ statusLabel(appt.status) }}
+              </span>
+            </div>
+
+            <!-- Actions Row -->
+            <div class="appt-card-bottom" *ngIf="getActions(appt).length > 0">
+              <div class="actions-buttons-container">
+                <button
+                  *ngFor="let action of getActions(appt)"
+                  (click)="updateStatus(appt._id, action.value)"
+                  [disabled]="updatingId === appt._id"
+                  class="btn-state-action"
+                  [ngClass]="action.color">
+                  <span>{{ action.label }}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
   </div>
 </div>
+

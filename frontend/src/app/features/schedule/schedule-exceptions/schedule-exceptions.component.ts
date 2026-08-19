@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ScheduleService } from '../services/schedule.service';
-import { LanguageService } from '../../../core/services/language.service';
+import { DoctorService } from '../../profiles/services/doctor.service';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 interface ScheduleException {
   _id: string;
@@ -19,7 +20,7 @@ interface ScheduleException {
 })
 export class ScheduleExceptionsComponent implements OnInit {
   exceptions: ScheduleException[] = [];
-  doctorId: string = '6a7a68e2039344ea7b05c884'; // TODO: replace with real logged-in doctor's ID via AuthService later
+  doctorId: string = '';
 
   types = ['Vacation', 'Blocked', 'Emergency'];
   typeKeys: Record<string, string> = {
@@ -49,14 +50,33 @@ export class ScheduleExceptionsComponent implements OnInit {
 
   constructor(
     private scheduleService: ScheduleService,
+    private doctorService: DoctorService,
     private translate: TranslateService,
     private languageService: LanguageService
   ) {}
 
   ngOnInit() {
-    if (this.doctorId) {
-      this.loadExceptions();
-    }
+    this.fetchDoctorProfileAndExceptions();
+  }
+
+  fetchDoctorProfileAndExceptions() {
+    this.isLoading = true;
+    this.doctorService.getDoctorProfile().subscribe({
+      next: (res: any) => {
+        const doc = res.data || res;
+        if (doc && (doc._id || doc.id)) {
+          this.doctorId = doc._id || doc.id;
+          this.loadExceptions();
+        } else {
+          this.isLoading = false;
+          this.errorMessage = 'لم يتم العثور على ملف الطبيب الحالي';
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = 'يرجى استكمال ملف الطبيب أولاً للتمكن من إدارة المواعيد الاستثنائية';
+      }
+    });
   }
 
   typeLabel(type: string): string {

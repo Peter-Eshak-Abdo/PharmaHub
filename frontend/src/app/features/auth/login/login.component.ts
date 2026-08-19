@@ -12,6 +12,8 @@ export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   submitted = false;
   hidePassword = true;
+  loading = false;
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -29,41 +31,43 @@ export class LoginComponent implements OnInit {
   get f() { return this.loginForm.controls; }
 
   onSubmit(): void {
-    console.log('SUBMIT CLICKED - form valid:', this.loginForm.valid, 'values:', this.loginForm.value);
     this.submitted = true;
+    this.errorMessage = '';
+    
     if (this.loginForm.invalid) {
-      console.log('FORM INVALID - stopping here');
       return;
     }
-    console.log('CALLING authService.login...');
+
+    this.loading = true;
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
-        console.log('LOGIN SUCCESS', response);
-        // const userRole = response.user.role;
+        this.loading = false;
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', response.role);
         
-        let userRole = null;
-        this.authService.currentUser$
-          .subscribe((u) => (userRole = u?.role))
-          .unsubscribe();
+        let userRole = response.role || null;
+        if (!userRole) {
+          this.authService.currentUser$
+            .subscribe((u) => (userRole = u?.role))
+            .unsubscribe();
+        }
 
         if (userRole === 'doctor') {
-          console.log("Your are a Doctor")
-          this.router.navigate(['/profiles/doctor-profile']);
-        }
-        else if (userRole === 'patient'){
-          console.log("Your are a Patient")
-          this.router.navigate(['/profiles/patient-profile']);
-        }
-        else if (userRole === 'admin'){
-          console.log("Your are a Admin")
-          this.router.navigate(['/admin-dashboard']);
+          this.router.navigate(['/dashboard/doctor']);
+        } else if (userRole === 'patient') {
+          this.router.navigate(['/dashboard/patient']);
+        } else if (userRole === 'admin') {
+          this.router.navigate(['/dashboard/doctor']);
+        } else {
+          this.router.navigate(['/']);
         }
       },
       error: (err) => {
-        console.log('LOGIN ERROR:', err);
+        this.loading = false;
+        console.error('LOGIN ERROR:', err);
+        this.errorMessage = err.error?.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة';
       },
     });
   }
 }
+

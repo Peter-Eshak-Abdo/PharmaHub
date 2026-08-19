@@ -1,4 +1,94 @@
-<div class="min-h-screen bg-background" [dir]="isRtl ? 'rtl' : 'ltr'">
+<!-- ================= SUCCESS CONFIRMATION MODAL / SCREEN ================= -->
+<div *ngIf="isBookedSuccess" class="success-screen-wrapper" dir="rtl">
+
+  <!-- Ambient Geometric & Blur Background -->
+  <div class="success-bg-graphics">
+    <svg class="bg-circles-svg" preserveAspectRatio="none" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="2 4" stroke-width="0.5"></circle>
+      <circle cx="50" cy="50" fill="none" r="30" stroke="currentColor" stroke-width="0.25"></circle>
+    </svg>
+    <div class="glow-orb"></div>
+  </div>
+
+  <div class="success-card-container">
+    <div class="success-card">
+
+      <!-- Watermark Medical Icon -->
+      <div class="card-watermark">
+        <span class="material-symbols-outlined">medical_services</span>
+      </div>
+
+      <!-- Animated Success Check Icon -->
+      <div class="icon-pulse-wrapper">
+        <div class="pulse-ring-1"></div>
+        <div class="pulse-ring-2"></div>
+        <div class="pulse-center">
+          <span class="material-symbols-outlined success-icon">check_circle</span>
+        </div>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="success-title">تم حجز الموعد بنجاح!</h1>
+      <p class="success-subtitle">
+        تم تأكيد استشارتك الطبية. تم إرسال تفاصيل الموعد ورسالة التأكيد إلى بريدك الإلكتروني.
+      </p>
+
+      <!-- Appointment Summary Box -->
+      <div class="summary-box">
+        <!-- Date & Time Row -->
+        <div class="summary-row">
+          <div class="summary-icon-badge badge-date">
+            <span class="material-symbols-outlined">calendar_today</span>
+          </div>
+          <div class="summary-text-col">
+            <span class="summary-label">التاريخ والوقت</span>
+            <span class="summary-value">
+              {{ formatDate(confirmedAppointment?.appointmentDate || selectedDate) }} في تمام {{ formatTime(confirmedAppointment?.appointmentTime || selectedTime) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Doctor Row -->
+        <div class="summary-row">
+          <div class="summary-icon-badge badge-doctor">
+            <span class="material-symbols-outlined">stethoscope</span>
+          </div>
+          <div class="summary-text-col">
+            <span class="summary-label">الطبيب المعالج</span>
+            <span class="summary-value">د. {{ doctorName }} ({{ doctorSpecialization }})</span>
+          </div>
+        </div>
+
+        <!-- Consultation Type & Fee -->
+        <div class="summary-row" *ngIf="doctorFee > 0">
+          <div class="summary-icon-badge badge-fee">
+            <span class="material-symbols-outlined">payments</span>
+          </div>
+          <div class="summary-text-col">
+            <span class="summary-label">رسوم الكشف الاستشاري</span>
+            <span class="summary-value price-tag">${{ doctorFee }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="success-actions">
+        <button class="btn-appointments" (click)="goToAppointments()">
+          <span>عرض مواعيدي</span>
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+
+        <button class="btn-home" (click)="goHome()">
+          <span>الرئيسية</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ================= BOOKING FORM STEPS ================= -->
+<div *ngIf="!isBookedSuccess" class="min-h-screen bg-background" dir="rtl">
   <!-- Header -->
   <div class="bg-surface-container-lowest border-b border-outline-variant px-sm md:px-xl py-md">
     <div class="flex items-center justify-between mb-sm">
@@ -43,12 +133,6 @@
           <span>{{ 'APPOINTMENTS.BOOKING.GO_TO_DOCTOR_LIST' | translate }}</span>
         </a>
       </div>
-    </div>
-
-    <!-- Success Message -->
-    <div *ngIf="successMessage" class="bg-tertiary-container text-on-tertiary-container rounded-lg px-md py-sm mb-md flex items-center gap-sm">
-      <span class="material-symbols-outlined text-[20px] shrink-0">check_circle</span>
-      <span class="font-body-sm text-body-sm">{{ successMessage }}</span>
     </div>
 
     <!-- ======== STEP 1: Date & Time ======== -->
@@ -228,3 +312,4 @@
 
   </div>
 </div>
+

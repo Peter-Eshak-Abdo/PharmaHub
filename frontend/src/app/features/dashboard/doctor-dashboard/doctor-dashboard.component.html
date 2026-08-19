@@ -1,0 +1,274 @@
+<div class="dashboard-wrapper" dir="rtl">
+
+  <!-- Ambient Background -->
+  <div class="ambient-bg">
+    <div class="ambient-circle c1"></div>
+    <div class="ambient-circle c2"></div>
+    <div class="ambient-circle c3"></div>
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <header class="dash-topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <span class="material-symbols-outlined brand-icon">local_pharmacy</span>
+        <span class="brand-text">فارما<span class="brand-accent">هب</span></span>
+      </div>
+      <nav class="topbar-nav">
+        <a class="nav-link active" routerLink="/dashboard/doctor">
+          <span class="material-symbols-outlined">dashboard</span>
+          الرئيسية
+        </a>
+        <a class="nav-link" routerLink="/appointments/doctor">
+          <span class="material-symbols-outlined">calendar_month</span>
+          المواعيد
+        </a>
+        <a class="nav-link" routerLink="/schedule">
+          <span class="material-symbols-outlined">schedule</span>
+          جدول العمل
+        </a>
+        <a class="nav-link" routerLink="/profiles/doctor-profile">
+          <span class="material-symbols-outlined">person</span>
+          حسابي
+        </a>
+      </nav>
+      <button class="logout-btn" (click)="logout()">
+        <span class="material-symbols-outlined">logout</span>
+        خروج
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dash-main">
+
+    <!-- Greeting Section -->
+    <section class="greeting-section">
+      <div class="greeting-content doctor-greeting">
+        <div class="greeting-text-wrap">
+          <div class="greeting-badge">
+            <span class="material-symbols-outlined">{{ greetingIcon }}</span>
+            {{ greetingText }}
+          </div>
+          <h1 class="greeting-name">أهلاً، د. {{ doctorName }} 👋</h1>
+          <p class="greeting-sub">{{ specialization }} — إليك ملخص يومك وحالة مواعيدك الطبية.</p>
+        </div>
+        <div class="greeting-illustration">
+          <div class="illust-circle">
+            <span class="material-symbols-outlined illust-icon">stethoscope</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>جاري تحميل البيانات...</p>
+    </div>
+
+    <div *ngIf="!isLoading">
+      <!-- Stats Cards Row -->
+      <section class="stats-row">
+        <div class="stat-card stat-total">
+          <div class="stat-icon-wrap">
+            <span class="material-symbols-outlined">event_note</span>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ totalAppointments }}</span>
+            <span class="stat-label">إجمالي المواعيد</span>
+          </div>
+        </div>
+        <div class="stat-card stat-today">
+          <div class="stat-icon-wrap">
+            <span class="material-symbols-outlined">today</span>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ todayCount }}</span>
+            <span class="stat-label">مواعيد اليوم</span>
+          </div>
+        </div>
+        <div class="stat-card stat-pending">
+          <div class="stat-icon-wrap">
+            <span class="material-symbols-outlined">pending_actions</span>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ pendingCount }}</span>
+            <span class="stat-label">بانتظار التأكيد</span>
+          </div>
+        </div>
+        <div class="stat-card stat-completed">
+          <div class="stat-icon-wrap">
+            <span class="material-symbols-outlined">check_circle</span>
+          </div>
+          <div class="stat-info">
+            <span class="stat-number">{{ completedCount }}</span>
+            <span class="stat-label">مكتملة</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bento Grid Layout -->
+      <section class="bento-grid">
+
+        <!-- Today's Appointments (Large Card) -->
+        <div class="bento-card bento-today">
+          <div class="bento-card-header">
+            <div class="bento-card-title-wrap">
+              <span class="material-symbols-outlined bento-card-icon">today</span>
+              <h2 class="bento-card-title">مواعيد اليوم</h2>
+            </div>
+            <span class="bento-badge badge-today">
+              <span class="material-symbols-outlined">calendar_today</span>
+              {{ todayCount }} موعد
+            </span>
+          </div>
+          
+          <div class="today-list" *ngIf="todayAppointments.length > 0">
+            <div class="today-item" *ngFor="let appt of todayAppointments; let i = index">
+              <div class="today-time-col">
+                <span class="today-time">{{ formatTime(appt.appointmentTime) }}</span>
+                <div class="time-line" *ngIf="i < todayAppointments.length - 1"></div>
+              </div>
+              <div class="today-card-body">
+                <div class="today-patient-row">
+                  <div class="today-avatar">
+                    <span class="material-symbols-outlined">person</span>
+                  </div>
+                  <div class="today-patient-text">
+                    <span class="today-patient-name">{{ getPatientName(appt) }}</span>
+                    <span class="today-patient-status" [ngClass]="getStatusClass(appt.status)">
+                      {{ getStatusLabel(appt.status) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="today-empty" *ngIf="todayAppointments.length === 0">
+            <span class="material-symbols-outlined empty-icon">event_available</span>
+            <h3>لا توجد مواعيد اليوم</h3>
+            <p>يومك فارغ — يمكنك مراجعة جدول عملك أو الاطلاع على الموعيد القادمة</p>
+          </div>
+        </div>
+
+        <!-- Pending Confirmations -->
+        <div class="bento-card bento-pending">
+          <div class="bento-card-header">
+            <div class="bento-card-title-wrap">
+              <span class="material-symbols-outlined bento-card-icon">pending_actions</span>
+              <h2 class="bento-card-title">بانتظار التأكيد</h2>
+            </div>
+            <button class="see-all-btn" (click)="navigateTo('/appointments/doctor')">
+              عرض الكل
+              <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+          </div>
+
+          <div class="pending-list" *ngIf="pendingAppointments.length > 0">
+            <div class="pending-item" *ngFor="let appt of pendingAppointments.slice(0, 5)">
+              <div class="pending-item-right">
+                <div class="pending-avatar-mini">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <div class="pending-item-text">
+                  <span class="pending-patient-name">{{ getPatientName(appt) }}</span>
+                  <span class="pending-date">{{ formatDate(appt.appointmentDate) }} - {{ formatTime(appt.appointmentTime) }}</span>
+                </div>
+              </div>
+              <button class="confirm-btn" (click)="confirmAppointment(appt._id)">
+                <span class="material-symbols-outlined">check</span>
+                تأكيد
+              </button>
+            </div>
+          </div>
+
+          <div class="pending-empty" *ngIf="pendingAppointments.length === 0">
+            <span class="material-symbols-outlined">task_alt</span>
+            <p>لا توجد مواعيد بانتظار التأكيد</p>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="bento-card bento-actions">
+          <div class="bento-card-header">
+            <div class="bento-card-title-wrap">
+              <span class="material-symbols-outlined bento-card-icon">apps</span>
+              <h2 class="bento-card-title">إجراءات سريعة</h2>
+            </div>
+          </div>
+          <div class="quick-actions-grid">
+            <button
+              *ngFor="let action of quickActions"
+              class="quick-action-btn"
+              (click)="navigateTo(action.route)"
+              [style.--action-color]="action.color"
+            >
+              <div class="action-icon-wrap">
+                <span class="material-symbols-outlined">{{ action.icon }}</span>
+              </div>
+              <span class="action-label">{{ action.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Doctor Tips / Reminders -->
+        <div class="bento-card bento-tips">
+          <div class="bento-card-header">
+            <div class="bento-card-title-wrap">
+              <span class="material-symbols-outlined bento-card-icon">lightbulb</span>
+              <h2 class="bento-card-title">تذكيرات مهمة</h2>
+            </div>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-item">
+              <div class="tip-icon-wrap tip-blue">
+                <span class="material-symbols-outlined">edit_note</span>
+              </div>
+              <div class="tip-text">
+                <h4 class="tip-title">تحديث الملف الشخصي</h4>
+                <p class="tip-desc">تأكد من تحديث تخصصاتك وسنوات الخبرة لجذب المزيد من المرضى</p>
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon-wrap tip-green">
+                <span class="material-symbols-outlined">event_repeat</span>
+              </div>
+              <div class="tip-text">
+                <h4 class="tip-title">جدول العمل</h4>
+                <p class="tip-desc">حدّث مواعيد توفرك الأسبوعية ليتمكن المرضى من الحجز</p>
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon-wrap tip-orange">
+                <span class="material-symbols-outlined">rate_review</span>
+              </div>
+              <div class="tip-text">
+                <h4 class="tip-title">مراجعة التقييمات</h4>
+                <p class="tip-desc">تابع تقييمات المرضى لتحسين جودة الخدمة</p>
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon-wrap tip-purple">
+                <span class="material-symbols-outlined">medication</span>
+              </div>
+              <div class="tip-text">
+                <h4 class="tip-title">الروشتات الطبية</h4>
+                <p class="tip-desc">راجع الروشتات المكتوبة وتابع حالات المرضى</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="dash-footer">
+    <p>© 2024 فارماهب - جميع الحقوق محفوظة</p>
+  </footer>
+
+</div>
