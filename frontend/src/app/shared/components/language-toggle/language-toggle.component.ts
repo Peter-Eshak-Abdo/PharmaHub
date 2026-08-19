@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LanguageService, AppLanguage } from 'src/app/core/services/language.servics';
+import { LanguageService, AppLanguage } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-language-toggle',

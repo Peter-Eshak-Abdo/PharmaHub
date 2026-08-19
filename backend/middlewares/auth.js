@@ -31,6 +31,24 @@ const protect = async (req, res, next) => {
   }
 };
 
+// Optional Auth Middleware (allows both guests and logged-in users)
+const optionalAuth = async (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+      req.user = await User.findById(decoded.id).select("-password");
+    } catch (error) {
+      req.user = null;
+    }
+  }
+  next();
+};
+
 // Reusable Role Checker (BR-AUTH-005 - checkRole / authorize)
 const checkRole = (...roles) => {
   const flatRoles = roles.flat();
@@ -47,4 +65,4 @@ const checkRole = (...roles) => {
 
 const authorize = checkRole;
 
-module.exports = { protect, checkRole, authorize };
+module.exports = { protect, optionalAuth, checkRole, authorize };
