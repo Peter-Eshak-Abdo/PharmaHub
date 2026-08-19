@@ -1,22 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middlewares/auth');
+const { optionalAuth } = require('../middlewares/auth');
 const { sendMessage, getChatContext } = require('../controllers/chatController');
 
-// All chat routes require valid authentication
-router.use(protect);
+// Chat routes use optional authentication (supports both guests and authenticated users)
+router.use(optionalAuth);
 
 /**
  * @route   POST /api/chat/message
  * @desc    Send a message to PharmaHub AI Chatbot
- * @access  Private
+ * @access  Public / Private (with optional auth)
  */
 router.post('/message', sendMessage);
 
 /**
  * @route   GET /api/chat/context
  * @desc    Get patient's aggregated medical history summary for chatbot header/badge
- * @access  Private
+ * @access  Public / Private (with optional auth)
  */
 router.get('/context', getChatContext);
 
