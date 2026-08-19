@@ -6,6 +6,7 @@ import { PatientProfileComponent } from './patient-profile/patient-profile.compo
 import { DoctorListComponent } from './doctor-list/doctor-list.component';
 import { DoctorDetailComponent } from './doctor-detail/doctor-detail.component';
 import { DoctorProfileComponent } from './doctor-profile/doctor-profile.component';
+import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { DoctorProfileComponent } from './doctor-profile/doctor-profile.componen
     ProfilesRoutingModule,
     ReactiveFormsModule,
     FormsModule,
+    SharedModule,
   ],
   exports: [
     PatientProfileComponent,

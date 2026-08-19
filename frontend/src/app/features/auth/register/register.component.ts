@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 @Component({
   selector: 'app-register',
@@ -14,10 +15,15 @@ export class RegisterComponent implements OnInit {
   hidePassword = true;
   errorMessage = '';
 
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {

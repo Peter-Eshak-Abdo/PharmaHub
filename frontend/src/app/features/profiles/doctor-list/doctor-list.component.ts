@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DoctorService } from '../services/doctor.service';
+import { LanguageService } from 'src/app/core/services/language.servics';
 
 @Component({
   selector: 'app-doctor-list',
@@ -9,9 +10,15 @@ import { DoctorService } from '../services/doctor.service';
 export class DoctorListComponent implements OnInit {
   doctors: any[] = [];
   specializationFilter: string = '';
-  
 
-  constructor(private doctorService: DoctorService) {}
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
+
+  constructor(
+    private doctorService: DoctorService,
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit(): void {
     this.loadDoctors();
