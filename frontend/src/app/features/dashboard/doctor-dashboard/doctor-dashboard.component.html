@@ -7,38 +7,6 @@
     <div class="ambient-circle c3"></div>
   </div>
 
-  <!-- Top Navigation Bar -->
-  <header class="dash-topbar">
-    <div class="topbar-inner">
-      <div class="topbar-brand">
-        <span class="material-symbols-outlined brand-icon">local_pharmacy</span>
-        <span class="brand-text">فارما<span class="brand-accent">هب</span></span>
-      </div>
-      <nav class="topbar-nav">
-        <a class="nav-link active" routerLink="/dashboard/doctor">
-          <span class="material-symbols-outlined">dashboard</span>
-          الرئيسية
-        </a>
-        <a class="nav-link" routerLink="/appointments/doctor">
-          <span class="material-symbols-outlined">calendar_month</span>
-          المواعيد
-        </a>
-        <a class="nav-link" routerLink="/schedule">
-          <span class="material-symbols-outlined">schedule</span>
-          جدول العمل
-        </a>
-        <a class="nav-link" routerLink="/profiles/doctor-profile">
-          <span class="material-symbols-outlined">person</span>
-          حسابي
-        </a>
-      </nav>
-      <button class="logout-btn" (click)="logout()">
-        <span class="material-symbols-outlined">logout</span>
-        خروج
-      </button>
-    </div>
-  </header>
-
   <!-- Main Content -->
   <main class="dash-main">
 
@@ -123,7 +91,7 @@
               {{ todayCount }} موعد
             </span>
           </div>
-          
+
           <div class="today-list" *ngIf="todayAppointments.length > 0">
             <div class="today-item" *ngFor="let appt of todayAppointments; let i = index">
               <div class="today-time-col">

@@ -7,38 +7,6 @@
     <div class="ambient-circle c3"></div>
   </div>
 
-  <!-- Top Navigation Bar -->
-  <header class="dash-topbar">
-    <div class="topbar-inner">
-      <div class="topbar-brand">
-        <span class="material-symbols-outlined brand-icon">local_pharmacy</span>
-        <span class="brand-text">فارما<span class="brand-accent">هب</span></span>
-      </div>
-      <nav class="topbar-nav">
-        <a class="nav-link active" routerLink="/dashboard/patient">
-          <span class="material-symbols-outlined">dashboard</span>
-          الرئيسية
-        </a>
-        <a class="nav-link" routerLink="/appointments/patient">
-          <span class="material-symbols-outlined">calendar_month</span>
-          مواعيدي
-        </a>
-        <a class="nav-link" routerLink="/profiles/doctor-list">
-          <span class="material-symbols-outlined">search</span>
-          الأطباء
-        </a>
-        <a class="nav-link" routerLink="/profiles/patient-profile">
-          <span class="material-symbols-outlined">person</span>
-          حسابي
-        </a>
-      </nav>
-      <button class="logout-btn" (click)="logout()">
-        <span class="material-symbols-outlined">logout</span>
-        خروج
-      </button>
-    </div>
-  </header>
-
   <!-- Main Content -->
   <main class="dash-main">
 
@@ -158,7 +126,7 @@
             <span class="material-symbols-outlined empty-icon">event_busy</span>
             <h3>لا توجد مواعيد قادمة</h3>
             <p>يمكنك البحث عن طبيب وحجز موعد جديد الآن</p>
-            <button class="btn-featured-primary" (click)="navigateTo('/profiles/doctors')">
+            <button class="btn-featured-primary" (click)="navigateTo('/profiles/doctor-list')">
               <span class="material-symbols-outlined">search</span>
               البحث عن طبيب
             </button>

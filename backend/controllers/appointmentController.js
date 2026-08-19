@@ -616,22 +616,23 @@ exports.getAvailableSlots = async (req, res) => {
     }
 
     // Generate slots across all availability windows
+    const slotDuration = weeklySlots[0]?.slotDurationMinutes || 30;
     const slots = [];
     for (const avail of weeklySlots) {
       const [startH, startM] = avail.startTime.split(":").map(Number);
       const [endH, endM] = avail.endTime.split(":").map(Number);
-      const slotDuration = avail.slotDurationMinutes || 30;
+      const duration = avail.slotDurationMinutes || slotDuration;
       let cur = startH * 60 + startM;
       const end = endH * 60 + endM;
 
-      while (cur + slotDuration <= end) {
+      while (cur + duration <= end) {
         const h = String(Math.floor(cur / 60)).padStart(2, "0");
         const m = String(cur % 60).padStart(2, "0");
         const slotStr = `${h}:${m}`;
         if (!slots.includes(slotStr)) {
           slots.push(slotStr);
         }
-        cur += slotDuration;
+        cur += duration;
       }
     }
 
