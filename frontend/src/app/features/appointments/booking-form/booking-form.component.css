@@ -287,3 +287,127 @@
   background-color: #e1e3e4;
 }
 
+/* ================= PAYMENT INFO CARD ================= */
+.payment-info-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 50%, #f0fdfa 100%);
+  border: 1px solid #bbf7d0;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.payment-info-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.payment-info-header > .material-symbols-outlined {
+  font-size: 28px;
+  color: #059669;
+  background: #d1fae5;
+  padding: 8px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.payment-info-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #065f46;
+}
+
+.payment-info-header p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #047857;
+  line-height: 1.5;
+}
+
+.payment-methods-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.payment-method-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #d1fae5;
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: box-shadow 0.2s ease;
+}
+
+.payment-method-row:hover {
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.12);
+}
+
+.pm-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pm-icon .material-symbols-outlined {
+  font-size: 22px;
+  color: #ffffff;
+}
+
+.instapay-icon {
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+}
+
+.vfcash-icon {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.pm-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pm-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.pm-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: 0.5px;
+  direction: ltr;
+  text-align: right;
+}
+
+.payment-deadline-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 14px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.payment-deadline-row .material-symbols-outlined {
+  font-size: 18px;
+  color: #d97706;
+}
+

@@ -65,6 +65,15 @@ const doctorSchema = new mongoose.Schema(
       default: 0,
       min: 0,
     },
+    consultationFee: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    paymentMethods: {
+      instapay: { type: String, default: '' },
+      vodafoneCash: { type: String, default: '' },
+    },
   },
   {
     timestamps: true,

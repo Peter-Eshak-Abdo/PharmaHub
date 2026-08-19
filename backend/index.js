@@ -19,6 +19,9 @@ const prescriptionRoutes = require('./routes/Prescriptionroutes');
 const reviewRoutes = require('./routes/ReviewRoutes');
 const medicalHistoryRoutes = require('./routes/medicalHistoryRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+require('./jobs/cancelUnpaidAppointments');
 
 // Load environment variables
 dotenv.config();
@@ -68,6 +71,8 @@ app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/patients', medicalHistoryRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // 404 Handler
 app.use((req, res) => {

@@ -7,11 +7,40 @@
         <span class="brand-title">PharmaHub</span>
         <span class="brand-badge" *ngIf="isDoctor">بوابة الطبيب</span>
         <span class="brand-badge patient-badge" *ngIf="isPatient">بوابة المريض</span>
+        <span class="brand-badge admin-badge" *ngIf="isAdmin">لوحة الإدارة</span>
       </div>
     </a>
 
     <!-- Navigation Links -->
     <div class="nav-links-wrapper">
+      <!-- Admin Navigation -->
+      <ul *ngIf="isAdmin" class="nav-menu">
+        <li>
+          <a routerLink="/admin/dashboard" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>لوحة التحكم</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/doctors" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">medical_services</span>
+            <span>الأطباء</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/admin/patients" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">group</span>
+            <span>المرضى</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/settings" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">settings</span>
+            <span>الإعدادات</span>
+          </a>
+        </li>
+      </ul>
+
       <!-- Doctor Navigation -->
       <ul *ngIf="isDoctor" class="nav-menu">
         <li>

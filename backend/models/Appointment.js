@@ -53,6 +53,29 @@ const appointmentSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    paymentStatus: {
+      type: String,
+      enum: ['Unpaid', 'Pending_Confirmation', 'Paid', 'Refunded'],
+      default: 'Unpaid',
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['Instapay', 'Vodafone_Cash', 'Cash_At_Clinic'],
+      default: null,
+    },
+    paymentDeadline: {
+      type: Date,
+      default: null,
+    },
+    paymentConfirmedAt: {
+      type: Date,
+      default: null,
+    },
+    paymentConfirmedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
   },
   {
     timestamps: true,

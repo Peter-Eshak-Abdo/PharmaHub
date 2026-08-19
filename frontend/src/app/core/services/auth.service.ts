@@ -4,24 +4,37 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { User } from '../models/user.model';
 import { environment } from '../../../environments/environment';
 
+import { OneSignalService } from './onesignal.service';
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
-  // private apiUrl = '/api/auth';
   
   private currentUserSubject = new BehaviorSubject<User | null>(
     this.getUserFromToken(),
   );
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private oneSignalService: OneSignalService
+  ) {
+    const user = this.getUserFromToken();
+    if (user?.id || user?._id) {
+      this.oneSignalService.loginUser(user.id || user._id!);
+    }
+  }
 
   login(credentials: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, credentials).pipe(
       tap((response) => {
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response.user));
-        this.currentUserSubject.next(this.getUserFromToken());
+        const currentUser = this.getUserFromToken();
+        this.currentUserSubject.next(currentUser);
+        if (currentUser?.id || currentUser?._id) {
+          this.oneSignalService.loginUser(currentUser.id || currentUser._id!);
+        }
       }),
     );
   }
@@ -29,7 +42,7 @@ export class AuthService {
   register(data: any): Observable<any> {
     const payload = {
       email: data.email,
-      password: data.password,  // backend expects 'password', not 'password_hash'
+      password: data.password,
       role: data.role,
     };
     return this.http.post<any>(`${this.apiUrl}/register`, payload).pipe(
@@ -45,6 +58,7 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     this.currentUserSubject.next(null);
+    this.oneSignalService.logoutUser();
   }
 
   getToken(): string | null {
@@ -57,6 +71,15 @@ export class AuthService {
 
   getCurrentUser(): User | null {
     return this.currentUserSubject.value || this.getUserFromToken();
+  }
+
+  getRoleBasedRoute(role: string): string {
+    const routes: Record<string, string> = {
+      patient: '/dashboard/patient',
+      doctor: '/dashboard/doctor',
+      admin: '/admin/dashboard',
+    };
+    return routes[role] || '/';
   }
 
   private getUserFromToken(): User | null {

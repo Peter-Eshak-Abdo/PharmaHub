@@ -22,22 +22,22 @@ export class WeeklyAvailabilityComponent implements OnInit {
   slots: WeeklySlot[] = [];
   doctorId: string = '';
 
-  // Week starts on Sunday, matching the backend's slot-engine day mapping.
+  // Week starts on Saturday (Task 12: RTL/Arabic standard schedule order)
   // Values stay in English (DB/API contract); labels are translated for display.
-  dayValues = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  dayValues = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
   dayKeys: Record<string, string> = {
+    Saturday: 'SCHEDULE.DAYS.SATURDAY',
     Sunday: 'SCHEDULE.DAYS.SUNDAY',
     Monday: 'SCHEDULE.DAYS.MONDAY',
     Tuesday: 'SCHEDULE.DAYS.TUESDAY',
     Wednesday: 'SCHEDULE.DAYS.WEDNESDAY',
     Thursday: 'SCHEDULE.DAYS.THURSDAY',
     Friday: 'SCHEDULE.DAYS.FRIDAY',
-    Saturday: 'SCHEDULE.DAYS.SATURDAY',
   };
 
   newSlot = {
     doctorId: '',
-    dayOfWeek: 'Sunday',
+    dayOfWeek: 'Saturday',
     startTime: '',
     endTime: '',
     slotDurationMinutes: 30

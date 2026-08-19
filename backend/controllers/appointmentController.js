@@ -4,6 +4,7 @@ const Doctor = require("../models/Doctor");
 const Patient = require("../models/Patient");
 const WeeklyAvailability = require("../models/WeeklyAvailability");
 const ScheduleException = require("../models/ScheduleException");
+const { sendPushNotification } = require("../utils/notificationService");
 
 // =============================================
 // Helper: Validate slot availability (BR-APP-004)
@@ -106,7 +107,18 @@ exports.createAppointment = async (req, res) => {
     await validateSlot(doctorId, appointmentDate, appointmentTime);
 
     // BR-APP-001: Snapshot fee
-    const consultationFeeSnapshot = doctor.consultationFee || 0;
+    const consultationFeeSnapshot = doctor.consultationFee || doctor.consultationFeeSnapshot || 0;
+
+    // Calculate Payment Deadline = 5 hours before appointment
+    let apptDateTime;
+    if (typeof appointmentDate === 'string' && appointmentDate.includes('T')) {
+      apptDateTime = new Date(appointmentDate);
+    } else {
+      apptDateTime = new Date(`${appointmentDate}T${appointmentTime || '00:00'}:00`);
+    }
+    const paymentDeadline = isNaN(apptDateTime.getTime())
+      ? null
+      : new Date(apptDateTime.getTime() - (5 * 60 * 60 * 1000));
 
     const appointment = await Appointment.create({
       patientId: patient._id,
@@ -115,18 +127,144 @@ exports.createAppointment = async (req, res) => {
       appointmentTime,
       consultationType,
       reasonForVisit,
-      estimatedDurationMinutes: doctor.slotDurationMinutes,
+      estimatedDurationMinutes: doctor.slotDurationMinutes || 30,
       consultationFeeSnapshot,
       status: "Pending",
+      paymentStatus: "Unpaid",
+      paymentDeadline,
     });
 
     res.status(201).json({
       success: true,
       message: "تم حجز الموعد بنجاح",
       data: appointment,
+      appointment,
+      paymentInfo: {
+        amount: consultationFeeSnapshot,
+        deadline: paymentDeadline,
+        instapay: doctor.paymentMethods?.instapay || '',
+        vodafoneCash: doctor.paymentMethods?.vodafoneCash || '',
+      }
     });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+// =============================================
+// GET /api/appointments/doctors/:doctorId/available-days
+// =============================================
+exports.getAvailableDays = async (req, res) => {
+  try {
+    const { doctorId } = req.params;
+    const { month, year } = req.query;
+
+    const m = month ? parseInt(month) : new Date().getMonth() + 1;
+    const y = year ? parseInt(year) : new Date().getFullYear();
+
+    const weeklySchedule = await WeeklyAvailability.find({ doctorId });
+    const availableDayNames = weeklySchedule.map((s) => s.dayOfWeek);
+
+    const startOfMonth = new Date(y, m - 1, 1);
+    const endOfMonth = new Date(y, m, 0, 23, 59, 59);
+
+    const exceptions = await ScheduleException.find({
+      doctorId,
+      startDate: { $lte: endOfMonth },
+      endDate: { $gte: startOfMonth },
+    });
+
+    const daysInMonth = new Date(y, m, 0).getDate();
+    const result = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(y, m - 1, day);
+      const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      const dateStr = `${yyyy}-${mm}-${dd}`;
+
+      const isWorkingDay = availableDayNames.includes(dayName);
+
+      const exception = exceptions.find((ex) => {
+        const start = new Date(ex.startDate);
+        const end = new Date(ex.endDate);
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
+        return date >= start && date <= end;
+      });
+
+      result.push({
+        date: dateStr,
+        dayName,
+        available: isWorkingDay && !exception,
+        exception: exception
+          ? {
+              type: exception.type,
+              reason: exception.reason,
+            }
+          : null,
+        isPast: date < today,
+      });
+    }
+
+    res.json({
+      success: true,
+      days: result,
+      availableDayNames,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// =============================================
+// PATCH /api/appointments/:id/confirm-payment
+// =============================================
+exports.confirmPayment = async (req, res) => {
+  try {
+    const appt = await Appointment.findById(req.params.id);
+    if (!appt) {
+      return res.status(404).json({ success: false, message: "الموعد غير موجود" });
+    }
+
+    const doctor = await Doctor.findOne({ userId: req.user.id });
+    if (
+      (!doctor || appt.doctorId.toString() !== doctor._id.toString()) &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ success: false, message: "غير مصرح لك بتأكيد الدفع لهذا الموعد" });
+    }
+
+    appt.paymentStatus = "Paid";
+    appt.paymentConfirmedAt = new Date();
+    appt.paymentConfirmedBy = req.user.id;
+    appt.status = "Confirmed";
+
+    await appt.save();
+
+    // Trigger OneSignal push to patient
+    const patientDoc = await Patient.findById(appt.patientId);
+    if (patientDoc?.userId) {
+      sendPushNotification(patientDoc.userId, {
+        title: "تم تأكيد الدفع وموعدك الطبي! 🎉",
+        message: `تم تأكيد دفع واستلام موعدك بتاريخ ${appt.appointmentDate.toISOString().split('T')[0]} في تمام ${appt.appointmentTime}.`,
+        url: "/dashboard/patient",
+        data: { appointmentId: appt._id },
+      }).catch(e => console.error(e));
+    }
+
+    res.json({
+      success: true,
+      data: appt,
+      appointment: appt,
+      message: "تم تأكيد الدفع والموعد بنجاح",
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
@@ -336,6 +474,30 @@ exports.updateAppointmentStatus = async (req, res) => {
 
     appointment.status = status;
     await appointment.save();
+
+    // Send push notification to patient on confirmation or cancellation
+    const patientDoc = await Patient.findById(appointment.patientId);
+    if (patientDoc?.userId) {
+      let title = `تحديث بخصوص موعدك الطبي`;
+      let msg = `تم تغيير حالة موعدك إلى: ${status}`;
+      if (status === 'Confirmed') {
+        title = 'وافق الطبيب على موعدك! ✅';
+        msg = `تمت الموافقة وتأكيد موعدك الطبي بنجاح.`;
+      } else if (status === 'Cancelled') {
+        title = 'تم إلغاء الموعد ⚠️';
+        msg = `تم إلغاء موعدك الطبي المحدد.`;
+      } else if (status === 'Completed') {
+        title = 'اكتملت الزيارة الطبية 🩺';
+        msg = `نتمنى لك دوام الصحة والعافية، يمكنك الآن الاطلاع على الروشتة والسجل الطبي.`;
+      }
+
+      sendPushNotification(patientDoc.userId, {
+        title,
+        message: msg,
+        url: '/dashboard/patient',
+        data: { appointmentId: appointment._id, status },
+      }).catch(e => console.error(e));
+    }
 
     res.json({
       success: true,

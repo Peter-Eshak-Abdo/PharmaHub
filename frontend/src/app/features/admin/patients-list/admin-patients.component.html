@@ -1,0 +1,124 @@
+<div class="w-full pt-6 bg-background min-h-screen animate-fade-in" dir="rtl">
+  <div class="max-w-container-max mx-auto px-4 md:px-8 py-6">
+
+    <!-- Header Navigation -->
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4 border-b border-outline-variant pb-6">
+      <div class="flex items-center gap-4">
+        <a routerLink="/admin/dashboard" class="w-10 h-10 rounded-xl bg-surface-container-low hover:bg-surface-container flex items-center justify-center text-on-surface transition-colors" title="الرجوع للوحة التحكم">
+          <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+        </a>
+        <div>
+          <h1 class="font-headline-lg text-2xl md:text-3xl font-bold text-on-surface">إدارة المرضى والحسابات</h1>
+          <p class="text-on-surface-variant text-sm mt-1">عرض وتعديل بيانات المرضى الشخصية وحذف الحسابات المعطلة.</p>
+        </div>
+      </div>
+
+      <button (click)="loadPatients()" class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low hover:bg-surface-container-high rounded-xl text-on-surface text-sm font-medium transition-colors">
+        <span class="material-symbols-outlined text-[18px]">refresh</span>
+        <span>تحديث القائمة</span>
+      </button>
+    </div>
+
+    <!-- Alert Messages -->
+    <div *ngIf="errorMessage" class="mb-6 p-4 rounded-xl bg-error-container text-on-error-container flex items-center gap-3">
+      <span class="material-symbols-outlined">error</span>
+      <span>{{ errorMessage }}</span>
+    </div>
+    <div *ngIf="successMessage" class="mb-6 p-4 rounded-xl bg-primary-container text-on-primary-container flex items-center gap-3">
+      <span class="material-symbols-outlined">check_circle</span>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <!-- Modal / Edit Card -->
+    <div *ngIf="editingPatient" class="mb-8 p-6 bg-surface-container-lowest rounded-2xl border border-primary/30 shadow-md">
+      <div class="flex items-center justify-between mb-4 border-b border-outline-variant pb-3">
+        <h3 class="text-lg font-bold text-primary flex items-center gap-2">
+          <span class="material-symbols-outlined">edit_square</span>
+          <span>تعديل بيانات المريض: {{ editingPatient.fullName }}</span>
+        </h3>
+        <button (click)="cancelEdit()" class="text-on-surface-variant hover:text-on-surface text-sm">إلغاء</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="text-xs font-semibold text-on-surface-variant block mb-1">الاسم الكامل</label>
+          <input [(ngModel)]="editingPatient.fullName" class="w-full px-3 py-2 border border-outline rounded-lg bg-surface text-on-surface text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-on-surface-variant block mb-1">رقم الهاتف</label>
+          <input [(ngModel)]="editingPatient.phoneNumber" class="w-full px-3 py-2 border border-outline rounded-lg bg-surface text-on-surface text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-on-surface-variant block mb-1">العمر</label>
+          <input type="number" [(ngModel)]="editingPatient.age" class="w-full px-3 py-2 border border-outline rounded-lg bg-surface text-on-surface text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-on-surface-variant block mb-1">الجنس</label>
+          <select [(ngModel)]="editingPatient.gender" class="w-full px-3 py-2 border border-outline rounded-lg bg-surface text-on-surface text-sm">
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-on-surface-variant block mb-1">المهنة</label>
+          <input [(ngModel)]="editingPatient.occupation" class="w-full px-3 py-2 border border-outline rounded-lg bg-surface text-on-surface text-sm" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-on-surface-variant block mb-1">جهة العمل</label>
+          <input [(ngModel)]="editingPatient.companyName" class="w-full px-3 py-2 border border-outline rounded-lg bg-surface text-on-surface text-sm" />
+        </div>
+        <div class="md:col-span-3">
+          <label class="text-xs font-semibold text-on-surface-variant block mb-1">العنوان</label>
+          <input [(ngModel)]="editingPatient.address" class="w-full px-3 py-2 border border-outline rounded-lg bg-surface text-on-surface text-sm" />
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <button (click)="cancelEdit()" class="px-4 py-2 bg-surface-container-low hover:bg-surface-container rounded-xl text-on-surface text-sm font-medium">إلغاء</button>
+        <button (click)="saveEdit()" class="px-6 py-2 bg-primary hover:bg-primary-hover text-on-primary rounded-xl text-sm font-semibold shadow-sm">حفظ التغييرات</button>
+      </div>
+    </div>
+
+    <!-- Patients Table -->
+    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+      <div *ngIf="isLoading" class="p-8 text-center text-on-surface-variant">جاري تحميل بيانات المرضى...</div>
+
+      <table *ngIf="!isLoading && patients.length > 0" class="w-full text-start border-collapse">
+        <thead>
+          <tr class="bg-surface-container-low text-on-surface-variant text-xs font-semibold uppercase">
+            <th class="p-4 text-start">المريض</th>
+            <th class="p-4 text-start">الهاتف</th>
+            <th class="p-4 text-start">البريد الإلكتروني</th>
+            <th class="p-4 text-start">العمر / الجنس</th>
+            <th class="p-4 text-start">العنوان</th>
+            <th class="p-4 text-end">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant text-sm text-on-surface">
+          <tr *ngFor="let p of patients" class="hover:bg-surface-container-low/40 transition-colors">
+            <td class="p-4 font-semibold">{{ p.fullName }}</td>
+            <td class="p-4 font-mono text-xs">{{ p.phoneNumber }}</td>
+            <td class="p-4 text-on-surface-variant text-xs font-mono">{{ p.userId?.email || '—' }}</td>
+            <td class="p-4">{{ p.age }} سنة / {{ p.gender === 'male' ? 'ذكر' : 'أنثى' }}</td>
+            <td class="p-4 text-on-surface-variant text-xs">{{ p.address || '—' }}</td>
+            <td class="p-4 text-end">
+              <div class="flex items-center justify-end gap-2">
+                <button (click)="startEdit(p)" class="p-1.5 rounded-lg text-primary hover:bg-primary/10 transition-colors" title="تعديل">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button (click)="deletePatient(p._id, p.fullName)" class="p-1.5 rounded-lg text-error hover:bg-error-container/40 transition-colors" title="حذف">
+                  <span class="material-symbols-outlined text-[18px]">delete</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="!isLoading && patients.length === 0" class="p-8 text-center text-on-surface-variant">
+        لا يوجد مرضى مسجلين حالياً
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -24,12 +24,19 @@ const addMedication = async (req, res) => {
   }
 };
 
-// GET /api/medications
-// Fetch all medications in the catalog
 const getMedications = async (req, res) => {
   try {
-    // Optional filter by type: GET /api/medications?type=Antibiotic
-    const filter = req.query.type ? { type: req.query.type } : {};
+    const { type, search } = req.query;
+    const filter = {};
+    if (type) {
+      filter.type = type;
+    }
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { genericName: { $regex: search, $options: 'i' } }
+      ];
+    }
 
     const medications = await Medication.find(filter).sort({ name: 1 });
 

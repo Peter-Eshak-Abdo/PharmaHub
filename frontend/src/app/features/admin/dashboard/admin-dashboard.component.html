@@ -1,0 +1,110 @@
+<div class="w-full pt-6 bg-background min-h-screen animate-fade-in" dir="rtl">
+  <div class="max-w-container-max mx-auto px-4 md:px-8 py-6">
+
+    <!-- Header Section -->
+    <div class="flex items-center justify-between mb-8 flex-wrap gap-4 border-b border-outline-variant pb-6">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-semibold mb-2">
+          <span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+          <span>لوحة التحكم الإدارية</span>
+        </div>
+        <h1 class="font-headline-lg text-2xl md:text-3xl font-bold text-on-surface">إدارة النظام العام - PharmaHub</h1>
+        <p class="text-on-surface-variant text-sm mt-1">مراقبة الأداء، إدارة الكوادر الطبية والمرضى، وتتبع العمليات.</p>
+      </div>
+
+      <button (click)="loadStats()" class="inline-flex items-center gap-2 px-4 py-2 bg-surface-container-low hover:bg-surface-container-high rounded-xl text-on-surface text-sm font-medium transition-colors">
+        <span class="material-symbols-outlined text-[18px]">refresh</span>
+        <span>تحديث البيانات</span>
+      </button>
+    </div>
+
+    <!-- Error Alert -->
+    <div *ngIf="errorMessage" class="mb-6 p-4 rounded-xl bg-error-container text-on-error-container flex items-center gap-3">
+      <span class="material-symbols-outlined">error</span>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="isLoading" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="h-32 rounded-2xl skeleton"></div>
+      <div class="h-32 rounded-2xl skeleton"></div>
+      <div class="h-32 rounded-2xl skeleton"></div>
+    </div>
+
+    <!-- Stats Cards Stack -->
+    <div *ngIf="!isLoading" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 stagger-children">
+      <!-- Doctors Stat -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm card-hover flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-on-surface-variant mb-1">إجمالي الأطباء المعتمدين</p>
+          <p class="text-3xl font-extrabold text-primary">{{ stats?.doctors || 0 }}</p>
+          <span class="text-xs text-on-surface-variant mt-1 block">كوادر طبية نشطة</span>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
+          <span class="material-symbols-outlined text-3xl">medical_services</span>
+        </div>
+      </div>
+
+      <!-- Patients Stat -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm card-hover flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-on-surface-variant mb-1">إجمالي المرضى المسجلين</p>
+          <p class="text-3xl font-extrabold text-on-surface">{{ stats?.patients || 0 }}</p>
+          <span class="text-xs text-on-surface-variant mt-1 block">ملفات طبية فعالة</span>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+          <span class="material-symbols-outlined text-3xl">group</span>
+        </div>
+      </div>
+
+      <!-- Appointments Stat -->
+      <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm card-hover flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-on-surface-variant mb-1">إجمالي الحجوزات والمواعيد</p>
+          <p class="text-3xl font-extrabold text-on-surface">{{ stats?.appointments || 0 }}</p>
+          <span class="text-xs text-on-surface-variant mt-1 block">استشارات محجوزة</span>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center">
+          <span class="material-symbols-outlined text-3xl">calendar_month</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Management Sections Grid -->
+    <h2 class="text-xl font-bold text-on-surface mb-4">الأقسام الإدارية والعمليات</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Doctors Navigation Card -->
+      <a routerLink="/admin/doctors"
+         class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm card-hover flex items-start gap-4 group">
+        <div class="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
+          <span class="material-symbols-outlined text-2xl">medical_information</span>
+        </div>
+        <div class="flex-grow">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-on-surface group-hover:text-primary transition-colors">إدارة الأطباء</h3>
+            <span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-[-4px] transition-transform">chevron_left</span>
+          </div>
+          <p class="text-sm text-on-surface-variant mt-1">عرض قائمة الأطباء، تعديل التخصصات والبيانات، أو حذف الحسابات غير المصرحة.</p>
+        </div>
+      </a>
+
+      <!-- Patients Navigation Card -->
+      <a routerLink="/admin/patients"
+         class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm card-hover flex items-start gap-4 group">
+        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+          <span class="material-symbols-outlined text-2xl">person_search</span>
+        </div>
+        <div class="flex-grow">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-on-surface group-hover:text-blue-600 transition-colors">إدارة المرضى</h3>
+            <span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-[-4px] transition-transform">chevron_left</span>
+          </div>
+          <p class="text-sm text-on-surface-variant mt-1">استعراض بيانات المرضى المسجلين، إدارة جهات العمل والأعمار وتحديث السجلات.</p>
+        </div>
+      </a>
+
+    </div>
+
+  </div>
+</div>

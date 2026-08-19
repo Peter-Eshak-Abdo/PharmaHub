@@ -25,11 +25,19 @@ const addDiagnosis = async (req, res) => {
     }
 };
 
-// GET /api/diagnoses
-// Fetch all diagnoses in the catalog
 const getDiagnoses = async (req, res) => {
     try {
-        const diagnoses = await Diagnosis.find().sort({ name: 1 });
+        const { search } = req.query;
+        const filter = search
+            ? {
+                $or: [
+                    { name: { $regex: search, $options: 'i' } },
+                    { icdCode: { $regex: search, $options: 'i' } }
+                ]
+            }
+            : {};
+
+        const diagnoses = await Diagnosis.find(filter).sort({ name: 1 });
 
         res.status(200).json({
             success: true,

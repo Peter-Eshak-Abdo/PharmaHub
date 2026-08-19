@@ -146,4 +146,35 @@ export class AppointmentService {
         ),
       );
   }
+
+  // =============================================
+  // Get available days for calendar
+  // =============================================
+  getAvailableDays(
+    doctorId: string,
+    month: number,
+    year: number
+  ): Observable<{
+    success: boolean;
+    days: Array<{
+      date: string;
+      dayName: string;
+      available: boolean;
+      exception: { type: string; reason?: string } | null;
+      isPast: boolean;
+    }>;
+    availableDayNames: string[];
+  }> {
+    const params = new HttpParams()
+      .set('month', month.toString())
+      .set('year', year.toString());
+    return this.http.get<any>(`${this.base}/doctors/${doctorId}/available-days`, { params });
+  }
+
+  // =============================================
+  // Confirm appointment payment (doctor/admin)
+  // =============================================
+  confirmPayment(id: string): Observable<any> {
+    return this.http.patch<any>(`${this.base}/${id}/confirm-payment`, {});
+  }
 }

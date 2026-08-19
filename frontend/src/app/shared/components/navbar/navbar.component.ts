@@ -38,6 +38,11 @@ export class NavbarComponent implements OnInit {
     return role === 'patient';
   }
 
+  get isAdmin(): boolean {
+    const role = this.currentUser?.role || localStorage.getItem('role');
+    return role === 'admin';
+  }
+
   get isAuthPage(): boolean {
     return this.currentUrl.startsWith('/auth');
   }

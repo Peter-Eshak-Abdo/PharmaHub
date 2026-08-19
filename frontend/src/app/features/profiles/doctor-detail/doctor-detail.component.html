@@ -1,58 +1,141 @@
-<div [dir]="isRtl ? 'rtl' : 'ltr'" class="container mt-4" *ngIf="doctor">
-  <div class="d-flex justify-content-end mb-2">
+<div class="w-full pt-6 bg-background min-h-screen animate-fade-in" [dir]="isRtl ? 'rtl' : 'ltr'">
+  <div class="max-w-container-max mx-auto px-4 md:px-8 mb-4 flex justify-end">
     <app-language-toggle></app-language-toggle>
   </div>
-  <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-      <h3 class="mb-0">{{ doctor.fullName }}</h3>
-      <span class="badge bg-warning text-dark fs-6">⭐ {{ doctor.rating }} / 5</span>
-    </div>
 
-    <div class="card-body">
-      <h5 class="text-primary">{{ doctor.specialization }}</h5>
-      <hr>
+  <ng-container *ngIf="doctor">
+    <!-- Hero Section -->
+    <div class="bg-surface-container-lowest border-b border-outline-variant shadow-sm">
+      <div class="max-w-container-max mx-auto px-4 md:px-8 py-6">
+        <div class="flex flex-col md:flex-row gap-6 items-start">
 
-      <div class="row">
-        <div class="col-md-6">
-          <p><strong>{{ 'PROFILES.DOCTOR_DETAIL.EDUCATION' | translate }}:</strong> {{ doctor.education }}</p>
-          <p><strong>{{ 'PROFILES.DOCTOR_DETAIL.QUALIFICATIONS' | translate }}:</strong> {{ doctor.qualifications }}</p>
-          <p><strong>{{ 'PROFILES.DOCTOR_DETAIL.YEARS_EXPERIENCE' | translate }}:</strong> {{ doctor.yearsOfExperience }} {{ 'PROFILES.DOCTOR_DETAIL.YEARS_SUFFIX' | translate }}</p>
-        </div>
-        <div class="col-md-6">
-          <p><strong>{{ 'PROFILES.DOCTOR_DETAIL.BIO' | translate }}:</strong> {{ doctor.bio }}</p>
+          <!-- صورة الدكتور -->
+          <div class="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-md shrink-0 bg-surface-container border border-outline-variant flex items-center justify-center">
+            <img *ngIf="doctor?.profilePicture" [src]="doctor?.profilePicture"
+                 [alt]="doctor?.fullName"
+                 class="w-full h-full object-cover" />
+            <span *ngIf="!doctor?.profilePicture" class="material-symbols-outlined text-[64px] text-on-surface-variant">person</span>
+          </div>
+
+          <!-- معلومات الدكتور -->
+          <div class="flex-grow">
+            <div class="flex flex-wrap items-center gap-3 mb-2">
+              <h1 class="font-headline-lg text-2xl md:text-3xl font-bold text-on-surface">
+                د. {{ doctor?.fullName }}
+              </h1>
+              <!-- Badge التخصص -->
+              <span class="inline-flex items-center gap-1 px-3 py-1 bg-primary-container text-on-primary-container rounded-full">
+                <span class="material-symbols-outlined text-[16px]">medical_services</span>
+                <span class="font-label-sm font-semibold text-sm">{{ doctor?.specialization }}</span>
+              </span>
+            </div>
+
+            <p class="font-body-md text-on-surface-variant mb-4 max-w-2xl leading-relaxed">
+              {{ doctor?.bio || ('PROFILES.DOCTOR_DETAIL.BIO' | translate) }}
+            </p>
+
+            <!-- إحصائيات سريعة -->
+            <div class="flex flex-wrap gap-6 pt-2 border-t border-outline-variant/50">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-amber-500 text-[22px]">star</span>
+                <span class="font-headline-sm font-bold text-on-surface">{{ doctor?.rating || 5 | number:'1.1-1' }}</span>
+                <span class="font-body-sm text-on-surface-variant text-sm">تقييم</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-[22px]">work_history</span>
+                <span class="font-headline-sm font-bold text-on-surface">{{ doctor?.yearsOfExperience || 0 }}</span>
+                <span class="font-body-sm text-on-surface-variant text-sm">{{ 'PROFILES.DOCTOR_DETAIL.YEARS_SUFFIX' | translate }}</span>
+              </div>
+              <div class="flex items-center gap-2" *ngIf="doctor?.education">
+                <span class="material-symbols-outlined text-primary text-[22px]">school</span>
+                <span class="font-body-sm text-on-surface-variant text-sm">{{ doctor?.education }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- زرار الحجز السريع -->
+          <div class="shrink-0 w-full md:w-auto">
+            <a [routerLink]="['/appointments/book']"
+               [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
+               class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary font-semibold rounded-xl hover:bg-primary-hover shadow-md hover:shadow-lg transition-all card-hover">
+              <span class="material-symbols-outlined text-[20px]">calendar_add_on</span>
+              <span>{{ 'PROFILES.DOCTOR_DETAIL.BOOK_WITH_DOCTOR' | translate }}</span>
+            </a>
+          </div>
         </div>
       </div>
-
-      <!-- زر حجز موعد -->
-      <div class="mt-4 pt-3 border-top d-flex gap-2">
-        <a [routerLink]="['/appointments/book']"
-           [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
-           class="btn btn-primary px-4 py-2">
-          🗓️ {{ 'PROFILES.DOCTOR_DETAIL.BOOK_WITH_DOCTOR' | translate }}
-        </a>
-        <a routerLink="/profiles/doctor-list" class="btn btn-outline-secondary px-3 py-2">
-          {{ 'PROFILES.DOCTOR_DETAIL.BACK_TO_LIST' | translate }}
-        </a>
-      </div>
-
-      <!-- Component مكان حقن تقييمات الطبيب لاحقاً -->
-      <!-- <app-reviews [doctorId]="doctor._id"></app-reviews> -->
-
     </div>
+
+    <!-- Body — Grid Layout -->
+    <div class="max-w-container-max mx-auto px-4 md:px-8 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- العمود الرئيسي (2/3) -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+
+          <!-- كارت المؤهلات والتعليم -->
+          <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm card-hover">
+            <h2 class="text-xl font-bold text-on-surface mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">verified</span>
+              <span>{{ 'PROFILES.DOCTOR_DETAIL.QUALIFICATIONS' | translate }}</span>
+            </h2>
+            <p class="font-body-md text-on-surface-variant leading-relaxed">
+              {{ doctor?.qualifications || 'لا توجد مؤهلات مسجلة حالياً' }}
+            </p>
+          </div>
+
+          <!-- كارت السيرة المهنية -->
+          <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant shadow-sm card-hover">
+            <h2 class="text-xl font-bold text-on-surface mb-4 flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary">description</span>
+              <span>{{ 'PROFILES.DOCTOR_DETAIL.BIO' | translate }}</span>
+            </h2>
+            <p class="font-body-md text-on-surface-variant leading-relaxed">
+              {{ doctor?.bio || 'طبيب استشاري متخصص بخبرة واسعة ومتميز في تقديم أفضل رعاية طبية لمرضاه.' }}
+            </p>
+          </div>
+        </div>
+
+        <!-- الشريط الجانبي (1/3) -->
+        <div class="flex flex-col gap-6">
+
+          <!-- بطاقة رسوم الكشف والحجز -->
+          <div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-sm">
+            <span class="text-sm font-medium text-on-surface-variant block mb-1">سعر الكشف التقديري</span>
+            <div class="flex items-baseline gap-2 mb-4">
+              <span class="text-3xl font-extrabold text-primary">{{ doctor?.consultationFeeSnapshot || 0 }}</span>
+              <span class="text-base text-on-surface-variant font-medium">$</span>
+            </div>
+
+            <a [routerLink]="['/appointments/book']"
+               [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
+               class="w-full inline-flex items-center justify-center gap-2 py-3 bg-primary text-on-primary font-semibold rounded-xl hover:bg-primary-hover shadow-sm hover:shadow-md transition-all">
+              <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+              <span>احجز موعدك الآن</span>
+            </a>
+
+            <a routerLink="/profiles/doctor-list" class="w-full mt-3 inline-flex items-center justify-center gap-2 py-2.5 bg-surface-container-low text-on-surface hover:bg-surface-container-high rounded-xl transition-colors font-medium text-sm">
+              <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+              <span>{{ 'PROFILES.DOCTOR_DETAIL.BACK_TO_LIST' | translate }}</span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Empty State if no doctor found -->
+  <div class="max-w-md mx-auto px-4 py-16 text-center" *ngIf="!doctor">
+    <div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mx-auto mb-4 text-on-surface-variant">
+      <span class="material-symbols-outlined text-3xl">person_off</span>
+    </div>
+    <h3 class="text-xl font-bold text-on-surface mb-2">{{ 'PROFILES.DOCTOR_DETAIL.NO_DOCTOR_TITLE' | translate }}</h3>
+    <p class="text-on-surface-variant text-sm mb-6">{{ 'PROFILES.DOCTOR_DETAIL.NO_DOCTOR_SUBTITLE' | translate }}</p>
+    <a routerLink="/profiles/doctor-list" class="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary font-semibold rounded-xl hover:bg-primary-hover shadow-sm transition-all">
+      <span class="material-symbols-outlined text-[18px]">search</span>
+      <span>{{ 'PROFILES.DOCTOR_DETAIL.GO_TO_LIST' | translate }}</span>
+    </a>
   </div>
 </div>
 
-<div [dir]="isRtl ? 'rtl' : 'ltr'" class="container mt-4 text-center" *ngIf="!doctor">
-  <div class="d-flex justify-content-end mb-2">
-    <app-language-toggle></app-language-toggle>
-  </div>
-  <div class="card p-4 shadow-sm border-0">
-    <h4 class="text-muted mb-3">{{ 'PROFILES.DOCTOR_DETAIL.NO_DOCTOR_TITLE' | translate }}</h4>
-    <p class="text-secondary mb-3">{{ 'PROFILES.DOCTOR_DETAIL.NO_DOCTOR_SUBTITLE' | translate }}</p>
-    <div>
-      <a routerLink="/profiles/doctor-list" class="btn btn-primary">
-        {{ 'PROFILES.DOCTOR_DETAIL.GO_TO_LIST' | translate }}
-      </a>
-    </div>
-  </div>
-</div>

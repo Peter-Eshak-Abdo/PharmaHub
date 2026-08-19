@@ -17,6 +17,11 @@ export interface Appointment {
   estimatedDurationMinutes?: number;
   status: AppointmentStatus;
   consultationFeeSnapshot?: number;
+  paymentStatus?: 'Unpaid' | 'Pending_Confirmation' | 'Paid' | 'Refunded';
+  paymentMethod?: 'Instapay' | 'Vodafone_Cash' | 'Cash_At_Clinic' | null;
+  paymentDeadline?: string | null;
+  paymentConfirmedAt?: string | null;
+  paymentConfirmedBy?: any;
   bookingDate: string;
   createdAt: string;
   updatedAt: string;
