@@ -18,6 +18,16 @@ export class RegisterComponent implements OnInit {
   loading = false;
   step = 1;
 
+  specializations: string[] = [
+    'باطنة',
+    'أطفال',
+    'قلب',
+    'جراحة',
+    'عيون',
+    'نساء وتوليد',
+    'عظام',
+  ];
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -29,13 +39,26 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d).+$/),
+        ],
+      ],
       role: ['patient', Validators.required],
-      fullName: ['', Validators.required],
+      fullName: ['', [Validators.required, Validators.minLength(3)]],
       // Patient Fields
-      phoneNumber: [''],
-      age: [''],
-      gender: [''],
+      phoneNumber: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^(010|011|012|015)\d{8}$/),
+        ],
+      ],
+      age: ['', [Validators.required, Validators.min(0), Validators.max(120)]],
+      gender: ['', Validators.required],
       address: [''],
       occupation: [''],
       companyName: [''],
@@ -55,6 +78,40 @@ export class RegisterComponent implements OnInit {
     return this.registerForm.controls;
   }
 
+  getPhoneError(): string {
+    const ctrl = this.registerForm.get('phoneNumber');
+    if (ctrl?.errors?.['required']) return 'رقم الهاتف مطلوب';
+    if (ctrl?.errors?.['pattern'])
+      return 'رقم الهاتف يجب أن يكون 11 رقماً ويبدأ بـ 010/011/012/015';
+    return '';
+  }
+
+  getPasswordError(): string {
+    const ctrl = this.registerForm.get('password');
+    if (ctrl?.errors?.['required']) return 'كلمة المرور مطلوبة';
+    if (ctrl?.errors?.['minlength'])
+      return 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+    if (ctrl?.errors?.['pattern'])
+      return 'كلمة المرور يجب أن تحتوي على أحرف وأرقام معاً';
+    return '';
+  }
+
+  getFullNameError(): string {
+    const ctrl = this.registerForm.get('fullName');
+    if (ctrl?.errors?.['required']) return 'الاسم الكامل مطلوب';
+    if (ctrl?.errors?.['minlength'])
+      return 'الاسم يجب ألا يقل عن 3 أحرف';
+    return '';
+  }
+
+  getAgeError(): string {
+    const ctrl = this.registerForm.get('age');
+    if (ctrl?.errors?.['required']) return 'العمر مطلوب';
+    if (ctrl?.errors?.['min'] || ctrl?.errors?.['max'])
+      return 'العمر يجب أن يكون بين 0 و 120 سنة';
+    return '';
+  }
+
   setRole(role: string): void {
     this.registerForm.patchValue({ role });
     this.updateRoleValidators(role);
@@ -67,15 +124,25 @@ export class RegisterComponent implements OnInit {
     const specControl = this.registerForm.get('specialization');
 
     if (role === 'patient') {
-      phoneControl?.setValidators([Validators.required]);
-      ageControl?.setValidators([Validators.required, Validators.min(0), Validators.max(120)]);
+      phoneControl?.setValidators([
+        Validators.required,
+        Validators.pattern(/^(010|011|012|015)\d{8}$/),
+      ]);
+      ageControl?.setValidators([
+        Validators.required,
+        Validators.min(0),
+        Validators.max(120),
+      ]);
       genderControl?.setValidators([Validators.required]);
       specControl?.clearValidators();
     } else if (role === 'doctor') {
       phoneControl?.clearValidators();
       ageControl?.clearValidators();
       genderControl?.clearValidators();
-      specControl?.setValidators([Validators.required]);
+      specControl?.setValidators([
+        Validators.required,
+        Validators.pattern(/^(باطنة|أطفال|قلب|جراحة|عيون|نساء وتوليد|عظام)$/),
+      ]);
     } else {
       phoneControl?.clearValidators();
       ageControl?.clearValidators();

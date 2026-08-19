@@ -47,9 +47,28 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/auth/auth.module').then((m) => m.AuthModule),
   },
+  {
+    path: 'settings',
+    loadChildren: () =>
+      import('./features/settings/settings.module').then(
+        (m) => m.SettingsModule,
+      ),
+  },
+  {
+    path: 'unauthorized',
+    loadChildren: () =>
+      import('./features/unauthorized/unauthorized.module').then(
+        (m) => m.UnauthorizedModule,
+      ),
+  },
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/auth/login' },
-
+  {
+    path: '**',
+    loadChildren: () =>
+      import('./features/not-found/not-found.module').then(
+        (m) => m.NotFoundModule,
+      ),
+  },
 ];
 
 @NgModule({

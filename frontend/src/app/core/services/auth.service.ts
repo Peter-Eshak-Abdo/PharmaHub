@@ -55,6 +55,10 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
+  getCurrentUser(): User | null {
+    return this.currentUserSubject.value || this.getUserFromToken();
+  }
+
   private getUserFromToken(): User | null {
     const token = this.getToken();
     if (!token) return null;

@@ -54,12 +54,10 @@ export class LoginComponent implements OnInit {
 
         if (userRole === 'doctor') {
           this.router.navigate(['/dashboard/doctor']);
-        }
-        else if (userRole === 'patient'){
+        } else if (userRole === 'patient') {
           this.router.navigate(['/dashboard/patient']);
-        }
-        else if (userRole === 'admin'){
-          this.router.navigate(['/admin-dashboard']);
+        } else if (userRole === 'admin') {
+          this.router.navigate(['/dashboard/doctor']);
         } else {
           this.router.navigate(['/']);
         }
