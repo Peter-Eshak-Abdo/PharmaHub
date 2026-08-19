@@ -59,6 +59,11 @@
   color: #0369a1;
 }
 
+.brand-badge.admin-badge {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
 .nav-links-wrapper {
   display: flex;
   align-items: center;

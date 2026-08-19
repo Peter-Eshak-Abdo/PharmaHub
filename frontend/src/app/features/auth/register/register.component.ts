@@ -213,12 +213,12 @@ export class RegisterComponent implements OnInit {
           this.patientService.createPatientProfile(patientPayload).subscribe({
             next: () => {
               this.loading = false;
-              this.router.navigate(['/doctors']);
+              this.router.navigate(['/dashboard/patient']);
             },
             error: (err) => {
               this.loading = false;
               console.error('Error creating patient profile:', err);
-              this.router.navigate(['/doctors']);
+              this.router.navigate(['/dashboard/patient']);
             }
           });
         } else if (role === 'doctor') {
@@ -235,17 +235,20 @@ export class RegisterComponent implements OnInit {
           this.doctorService.createDoctorProfile(doctorPayload).subscribe({
             next: () => {
               this.loading = false;
-              this.router.navigate(['/schedule']);
+              this.router.navigate(['/dashboard/doctor']);
             },
             error: (err) => {
               this.loading = false;
               console.error('Error creating doctor profile:', err);
-              this.router.navigate(['/schedule']);
+              this.router.navigate(['/dashboard/doctor']);
             }
           });
+        } else if (role === 'admin') {
+          this.loading = false;
+          this.router.navigate(['/admin/dashboard']);
         } else {
           this.loading = false;
-          this.router.navigate(['/auth/login']);
+          this.router.navigate(['/']);
         }
       },
       error: (err) => {

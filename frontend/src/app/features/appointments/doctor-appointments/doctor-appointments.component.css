@@ -706,3 +706,62 @@
   gap: 8px;
 }
 
+/* ========== Payment Status Row ========== */
+.appt-payment-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  gap: 12px;
+}
+
+.payment-status-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.payment-status-info .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.payment-status-text {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn-confirm-payment {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.2);
+}
+
+.btn-confirm-payment:hover {
+  background: linear-gradient(135deg, #047857, #059669);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.btn-confirm-payment:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-confirm-payment .material-symbols-outlined {
+  font-size: 18px;
+}
+

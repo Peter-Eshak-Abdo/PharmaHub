@@ -85,7 +85,7 @@ export class PrescriptionFormComponent implements OnInit {
         ? this.catalogService.getDiagnoses(term).pipe(catchError(() => of({ data: [] })))
         : of({ data: [] })
       )
-    ).subscribe(res => {
+    ).subscribe((res: any) => {
       this.diagnosisSuggestions = res?.data ?? [];
       this.showDiagnosisDropdown = this.diagnosisSuggestions.length > 0;
     });
@@ -166,7 +166,7 @@ export class PrescriptionFormComponent implements OnInit {
     }
     this.catalogService.getMedications(term).pipe(
       catchError(() => of({ data: [] }))
-    ).subscribe(res => {
+    ).subscribe((res: any) => {
       this.medicationSuggestions[index] = res?.data ?? [];
       this.showMedicationDropdown[index] = this.medicationSuggestions[index].length > 0;
     });

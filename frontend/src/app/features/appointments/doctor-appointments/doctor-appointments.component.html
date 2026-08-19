@@ -231,6 +231,27 @@
               </span>
             </div>
 
+            <!-- Payment Status Row -->
+            <div class="appt-payment-row" *ngIf="appt.paymentStatus">
+              <div class="payment-status-info">
+                <span class="material-symbols-outlined" [style.color]="appt.paymentStatus === 'Paid' ? '#059669' : (appt.paymentStatus === 'Unpaid' ? '#dc2626' : '#d97706')">
+                  {{ appt.paymentStatus === 'Paid' ? 'check_circle' : (appt.paymentStatus === 'Unpaid' ? 'cancel' : 'pending') }}
+                </span>
+                <span class="payment-status-text"
+                  [style.color]="appt.paymentStatus === 'Paid' ? '#059669' : (appt.paymentStatus === 'Unpaid' ? '#dc2626' : '#d97706')">
+                  {{ appt.paymentStatus === 'Paid' ? 'تم الدفع ✓' : (appt.paymentStatus === 'Unpaid' ? 'لم يدفع بعد' : 'في انتظار التأكيد') }}
+                </span>
+              </div>
+              <button
+                *ngIf="appt.paymentStatus === 'Unpaid' && appt.status !== 'Cancelled' && appt.status !== 'Completed'"
+                (click)="confirmPayment(appt._id)"
+                [disabled]="updatingId === appt._id"
+                class="btn-confirm-payment">
+                <span class="material-symbols-outlined">payments</span>
+                <span>تأكيد الدفع</span>
+              </button>
+            </div>
+
             <!-- Actions Row -->
             <div class="appt-card-bottom" *ngIf="getActions(appt).length > 0">
               <div class="actions-buttons-container">

@@ -1,6 +1,69 @@
+<!-- ================= OFFLINE STATUS BANNER ================= -->
+<div *ngIf="(isOnline$ | async) === false" class="bg-error text-on-error px-md py-xs text-center font-label-md flex items-center justify-center gap-xs sticky top-0 z-[9999] shadow-md animate-fade-in" dir="rtl">
+  <span class="material-symbols-outlined text-[18px]">wifi_off</span>
+  <span>أنت تعمل الآن في وضع عدم الاتصال بالإنترنت. سيتم حفظ أي حجوزات محلياً ومزامنتها فور عودة الاتصال.</span>
+</div>
+
+<!-- ================= PWA INSTALL PROMPT BAR ================= -->
+<div *ngIf="isInstallable$ | async" class="bg-primary-container text-on-primary-container px-md py-sm flex items-center justify-between shadow-md border-b border-primary/20 sticky top-0 z-[9998] animate-fade-in" dir="rtl">
+  <div class="flex items-center gap-sm">
+    <div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined text-[24px]">install_mobile</span>
+    </div>
+    <div>
+      <h4 class="font-label-md font-bold text-on-primary-container">تثبيت تطبيق PharmaHub</h4>
+      <p class="text-body-sm text-on-primary-container/80">احصل على تجربة أسرع وسهولة الوصول وحجز المواعيد بدون إنترنت.</p>
+    </div>
+  </div>
+  <div class="flex items-center gap-xs shrink-0">
+    <button (click)="installPwa()" class="px-md py-xs bg-primary text-on-primary rounded-lg font-label-sm hover:opacity-90 transition-opacity">
+      تثبيت الآن
+    </button>
+    <button (click)="dismissInstall()" class="p-xs text-on-primary-container/60 hover:text-on-primary-container transition-colors">
+      <span class="material-symbols-outlined text-[18px]">close</span>
+    </button>
+  </div>
+</div>
+
 <app-navbar></app-navbar>
 <router-outlet></router-outlet>
 
 <!-- Floating AI Chatbot (PharmaHub AI Assistant) -->
 <app-chatbot></app-chatbot>
+
+<!-- ================= GLOBAL TOAST NOTIFICATION CONTAINER ================= -->
+<div class="fixed bottom-6 left-6 z-[99999] flex flex-col gap-sm max-w-sm w-full pointer-events-none" dir="rtl">
+  <div *ngFor="let toast of (toasts$ | async)" 
+       class="pointer-events-auto flex items-start gap-sm p-md rounded-2xl shadow-xl border backdrop-blur-md transition-all animate-fade-in-up"
+       [ngClass]="{
+         'bg-surface-container-lowest/95 border-primary/30 text-on-surface': toast.type === 'success',
+         'bg-error-container/95 border-error/30 text-on-error-container': toast.type === 'error',
+         'bg-warning-container/95 border-warning/30 text-on-warning-container': toast.type === 'warning',
+         'bg-surface-container-high/95 border-outline-variant/50 text-on-surface': toast.type === 'info'
+       }">
+    
+    <!-- Icon -->
+    <span class="material-symbols-outlined text-[24px] shrink-0 mt-0.5"
+          [ngClass]="{
+            'text-primary': toast.type === 'success',
+            'text-error': toast.type === 'error',
+            'text-warning': toast.type === 'warning',
+            'text-secondary': toast.type === 'info'
+          }">
+      {{ toast.type === 'success' ? 'check_circle' : (toast.type === 'error' ? 'error' : (toast.type === 'warning' ? 'warning' : 'info')) }}
+    </span>
+
+    <!-- Text -->
+    <div class="flex-1">
+      <h5 *ngIf="toast.title" class="font-label-md font-bold mb-0.5">{{ toast.title }}</h5>
+      <p class="text-body-sm leading-relaxed">{{ toast.message }}</p>
+    </div>
+
+    <!-- Close button -->
+    <button (click)="removeToast(toast.id)" class="p-1 opacity-60 hover:opacity-100 transition-opacity">
+      <span class="material-symbols-outlined text-[16px]">close</span>
+    </button>
+  </div>
+</div>
+
 

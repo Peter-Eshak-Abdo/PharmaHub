@@ -244,5 +244,32 @@ export class DoctorAppointmentsComponent implements OnInit {
     const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
     return `${h12}:${String(m).padStart(2, '0')} ${period}`;
   }
-}
 
+  confirmPayment(apptId: string): void {
+    this.updatingId = apptId;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.appointmentService.confirmPayment(apptId).subscribe({
+      next: (res: any) => {
+        const idx = this.appointments.findIndex((a) => a._id === apptId);
+        if (idx !== -1) {
+          this.appointments[idx] = {
+            ...this.appointments[idx],
+            ...(res.data || res.appointment || {}),
+            paymentStatus: 'Paid',
+            status: res.data?.status || res.appointment?.status || 'Confirmed',
+          };
+        }
+        this.calculateStats();
+        this.successMessage = res.message || 'تم تأكيد الدفع والموعد بنجاح';
+        this.updatingId = null;
+        setTimeout(() => (this.successMessage = ''), 3000);
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || err.message || 'حدث خطأ أثناء تأكيد الدفع';
+        this.updatingId = null;
+      },
+    });
+  }
+}

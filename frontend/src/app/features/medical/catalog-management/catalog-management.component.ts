@@ -102,11 +102,11 @@ export class CatalogManagementComponent implements OnInit {
     this.diagnosisLoading = true;
     this.diagnosisError = '';
     this.catalogService.getDiagnoses(search).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.diagnoses = res?.data ?? [];
         this.diagnosisLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         this.diagnosisError = err.error?.message || 'فشل في تحميل التشخيصات.';
         this.diagnosisLoading = false;
       }
@@ -119,11 +119,11 @@ export class CatalogManagementComponent implements OnInit {
     this.medicationLoading = true;
     this.medicationError = '';
     this.catalogService.getMedications(search).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.medications = res?.data ?? [];
         this.medicationLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         this.medicationError = err.error?.message || 'فشل في تحميل الأدوية.';
         this.medicationLoading = false;
       }
@@ -141,13 +141,13 @@ export class CatalogManagementComponent implements OnInit {
     this.diagnosisSuccess = '';
     this.diagnosisError = '';
     this.catalogService.addDiagnosis(this.diagnosisForm.value).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.diagnosisSubmitting = false;
         this.diagnosisSuccess = `تم إضافة "${res?.data?.name}" بنجاح!`;
         this.diagnosisForm.reset();
         this.loadDiagnoses(this.diagnosisSearchTerm);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.diagnosisSubmitting = false;
         if (err.status === 409) {
           this.diagnosisError = err.error?.message || 'يوجد تشخيص بهذا الاسم أو الكود مسبقاً.';
@@ -180,14 +180,14 @@ export class CatalogManagementComponent implements OnInit {
     this.medicationSuccess = '';
     this.medicationError = '';
     this.catalogService.addMedication(this.medicationForm.value).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.medicationSubmitting = false;
         this.medicationSuccess = `تم إضافة "${res?.data?.name}" بنجاح!`;
         this.medicationForm.reset();
         this.showMedicationModal = false;
         this.loadMedications(this.medicationSearchTerm);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.medicationSubmitting = false;
         if (err.status === 409) {
           this.medicationError = 'يوجد دواء بهذا الاسم مسبقاً.';

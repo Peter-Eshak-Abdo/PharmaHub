@@ -6,6 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppointmentService } from '../services/appointment.service';
 import { ConsultationType } from '../models/appointment.model';
 import { LanguageService } from 'src/app/core/services/language.servics';
+import { OfflineStorageService } from 'src/app/core/services/offline-storage.service';
+import { ToastService } from 'src/app/core/services/toast.service';
 
 @Component({
   selector: 'app-booking-form',
@@ -34,6 +36,12 @@ export class BookingFormComponent implements OnInit {
   successMessage = '';
 
   confirmedAppointment: any = null;
+  paymentInfo: any = null;
+
+  availableDays: any[] = [];
+  hoveredUnavailableDay: any = null;
+  currentMonth = new Date().getMonth() + 1;
+  currentYear = new Date().getFullYear();
 
   minDate = new Date().toISOString().split('T')[0];
 
@@ -56,6 +64,8 @@ export class BookingFormComponent implements OnInit {
     private appointmentService: AppointmentService,
     private translate: TranslateService,
     private languageService: LanguageService,
+    private offlineStorage: OfflineStorageService,
+    private toastService: ToastService,
   ) {}
 
   private t(key: string): string {
@@ -83,6 +93,63 @@ export class BookingFormComponent implements OnInit {
       consultationType: ['In-Clinic', Validators.required],
       reasonForVisit: ['', [Validators.maxLength(500)]],
     });
+
+    this.loadAvailableDays();
+  }
+
+  loadAvailableDays(): void {
+    if (!this.doctorId) return;
+    this.appointmentService
+      .getAvailableDays(this.doctorId, this.currentMonth, this.currentYear)
+      .subscribe({
+        next: (res) => {
+          this.availableDays = res.days || [];
+        },
+        error: (err) => {
+          console.error('Error loading available days:', err);
+        }
+      });
+  }
+
+  prevMonth(): void {
+    if (this.currentMonth === 1) {
+      this.currentMonth = 12;
+      this.currentYear--;
+    } else {
+      this.currentMonth--;
+    }
+    this.loadAvailableDays();
+  }
+
+  nextMonth(): void {
+    if (this.currentMonth === 12) {
+      this.currentMonth = 1;
+      this.currentYear++;
+    } else {
+      this.currentMonth++;
+    }
+    this.loadAvailableDays();
+  }
+
+  getDayInfo(dateStr: string) {
+    return this.availableDays.find(d => d.date === dateStr);
+  }
+
+  onHoverUnavailable(info: any) {
+    if (info && !info.available && info.exception) {
+      this.hoveredUnavailableDay = info;
+    } else {
+      this.hoveredUnavailableDay = null;
+    }
+  }
+
+  getDayClass(dayInfo: any): string {
+    const base = 'relative py-2.5 rounded-xl text-center text-sm font-semibold transition-all ';
+    if (dayInfo.isPast) return base + 'text-outline-variant bg-surface-container-low cursor-not-allowed opacity-40';
+    if (this.selectedDate === dayInfo.date) return base + 'bg-primary text-on-primary font-bold shadow-md';
+    if (dayInfo.exception) return base + 'bg-error-container/60 text-on-error-container hover:bg-error-container cursor-pointer';
+    if (!dayInfo.available) return base + 'text-outline-variant bg-surface-container-low cursor-not-allowed';
+    return base + 'bg-surface-container hover:bg-primary/15 text-on-surface hover:text-primary cursor-pointer border border-outline-variant/40';
   }
 
   onDateChange(date: string): void {
@@ -170,29 +237,55 @@ export class BookingFormComponent implements OnInit {
     this.isSubmitting = true;
     this.errorMessage = '';
 
+    const payload = {
+      doctorId: this.doctorId,
+      appointmentDate: this.selectedDate,
+      appointmentTime: this.selectedTime,
+      consultationType: this.form.value.consultationType,
+      reasonForVisit: this.form.value.reasonForVisit || undefined,
+    };
+
+    // Check if offline
+    if (!navigator.onLine) {
+      this.offlineStorage.queueAppointment(payload).then(() => {
+        this.isSubmitting = false;
+        this.isBookedSuccess = true;
+        this.confirmedAppointment = {
+          doctorName: this.doctorName,
+          appointmentDate: this.selectedDate,
+          appointmentTime: this.selectedTime,
+        };
+        this.toastService.warning(
+          'أنت غير متصل بالإنترنت حالياً. تم حفظ طلب الحجز في ذاكرة التطبيق، وسيتم إرساله وتأكيده تلقائياً فور عودة الاتصال!',
+          'حفظ بدون إنترنت'
+        );
+      }).catch((err) => {
+        this.isSubmitting = false;
+        this.errorMessage = 'تعذر حفظ الحجز في وضع عدم الاتصال.';
+      });
+      return;
+    }
+
     this.appointmentService
-      .createAppointment({
-        doctorId: this.doctorId,
-        appointmentDate: this.selectedDate,
-        appointmentTime: this.selectedTime,
-        consultationType: this.form.value.consultationType,
-        reasonForVisit: this.form.value.reasonForVisit || undefined,
-      })
+      .createAppointment(payload)
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           this.isSubmitting = false;
-          this.confirmedAppointment = res.data || {
+          this.confirmedAppointment = res.data || res.appointment || {
             doctorName: this.doctorName,
             appointmentDate: this.selectedDate,
             appointmentTime: this.selectedTime,
           };
+          this.paymentInfo = res.paymentInfo || null;
           this.isBookedSuccess = true;
         },
-        error: (err) => {
+        error: (err: any) => {
           this.isSubmitting = false;
-          this.errorMessage = err.message || 'حدث خطأ أثناء حجز الموعد';
+          this.errorMessage =
+            err.error?.message ||
+            err.message ||
+            this.t('APPOINTMENTS.BOOKING.ERR_FAILED');
         },
       });
   }
 }
-

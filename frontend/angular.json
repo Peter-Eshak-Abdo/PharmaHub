@@ -23,7 +23,8 @@
             "assets": [
               "src/medbook_logo.png",
               "src/assets",
-              "src/manifest.webmanifest"
+              "src/manifest.webmanifest",
+              "src/OneSignalSDKWorker.js"
             ],
             "styles": [
               "src/styles.css"

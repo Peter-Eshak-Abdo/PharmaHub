@@ -9,10 +9,13 @@ const {
   updateAppointmentStatus,
   cancelAppointment,
   getAvailableSlots,
+  getAvailableDays,
+  confirmPayment,
 } = require("../controllers/appointmentController");
 
-// Public: Available slots (authenticated)
+// Public: Available slots & Available days
 router.get("/available-slots", protect, getAvailableSlots);
+router.get("/doctors/:doctorId/available-days", protect, getAvailableDays);
 
 // Patient routes
 router.post("/", protect, authorize("patient"), createAppointment);
@@ -23,6 +26,12 @@ router.get("/doctor", protect, authorize("doctor"), getDoctorAppointments);
 
 // Shared routes (patient or doctor can access own)
 router.get("/:id", protect, getAppointmentById);
+router.patch(
+  "/:id/confirm-payment",
+  protect,
+  authorize("doctor", "admin"),
+  confirmPayment,
+);
 router.patch(
   "/:id/status",
   protect,
