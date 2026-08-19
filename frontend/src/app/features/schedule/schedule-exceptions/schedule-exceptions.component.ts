@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ScheduleService } from '../services/schedule.service';
-import { LanguageService } from 'src/app/core/services/language.servics';
+import { LanguageService } from '../../../core/services/language.service';
 
 interface ScheduleException {
   _id: string;

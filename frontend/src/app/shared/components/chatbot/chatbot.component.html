@@ -4,7 +4,7 @@
     class="chatbot-launcher-btn" 
     (click)="toggleChat()" 
     aria-label="Open PharmaHub AI Assistant"
-    title="PharmaHub AI Assistant">
+    title="المساعد الذكي لـ PharmaHub">
     <div class="launcher-pulse"></div>
     <div class="launcher-icon">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -38,12 +38,12 @@
         <span class="online-dot"></span>
       </div>
       <div class="header-titles">
-        <div class="bot-title">PharmaHub AI Assistant</div>
+        <div class="bot-title">PharmaHub AI Copilot</div>
         <div class="bot-status" *ngIf="context?.hasHistory">
           <span class="history-tag">⚡ متصل بالسجل الطبي</span>
         </div>
         <div class="bot-status" *ngIf="!context?.hasHistory">
-          <span>مساعد الرعاية والأدوية الذكي</span>
+          <span>المساعد الذكي للرعاية والتنقل</span>
         </div>
       </div>
     </div>
@@ -80,8 +80,27 @@
     </div>
   </div>
 
+  <!-- Quick Shortcut Ribbon -->
+  <div class="shortcuts-ribbon">
+    <button class="shortcut-chip" (click)="navigateTo('/appointments/book')" title="حجز كشف">
+      <span>📅 حجز كشف</span>
+    </button>
+    <button class="shortcut-chip" (click)="navigateTo('/profiles/doctor-list')" title="الأطباء">
+      <span>👨‍⚕️ الأطباء</span>
+    </button>
+    <button class="shortcut-chip" (click)="navigateTo('/medical/catalog')" title="كتالوج الأدوية">
+      <span>💊 الأدوية</span>
+    </button>
+    <button class="shortcut-chip" (click)="navigateTo('/medical/prescription-view')" title="الروشتات">
+      <span>📋 روشتاتي</span>
+    </button>
+    <button class="shortcut-chip" (click)="navigateTo('/medical/medical-history')" title="السجل الطبي">
+      <span>🏥 سجلي الطبي</span>
+    </button>
+  </div>
+
   <!-- Messages Body -->
-  <div class="chat-messages" #messagesContainer>
+  <div class="chat-messages" #messagesContainer (click)="handleMessageClick($event)">
     <div 
       *ngFor="let msg of messages" 
       class="message-row" 
@@ -95,10 +114,43 @@
         </svg>
       </div>
 
-      <div class="message-bubble">
-        <div class="message-content" [innerHTML]="formatMessage(msg.text)"></div>
-        <div class="message-time">
-          {{ msg.timestamp | date:'shortTime' }}
+      <div class="message-bubble-wrapper">
+        <div class="message-bubble">
+          <div class="message-content" [innerHTML]="formatMessage(msg.text)"></div>
+          
+          <!-- Interactive Action Buttons attached to Bot Message -->
+          <div class="message-actions-container" *ngIf="msg.actionButtons && msg.actionButtons.length > 0">
+            <div class="actions-label">⚡ إجراءات مقترحة:</div>
+            <div class="actions-grid">
+              <button 
+                *ngFor="let btn of msg.actionButtons" 
+                class="action-nav-button" 
+                (click)="navigateTo(btn.route)">
+                <span>{{ btn.label }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom bar: Time & Copy Action -->
+          <div class="message-footer-meta">
+            <div class="message-time">
+              {{ msg.timestamp | date:'shortTime' }}
+            </div>
+            <button 
+              class="copy-btn" 
+              *ngIf="msg.sender === 'bot'" 
+              (click)="copyMessage(msg.text, msg.id)" 
+              [title]="copiedMessageId === msg.id ? 'تم النسخ' : 'نسخ النص'">
+              <span *ngIf="copiedMessageId === msg.id" class="copied-indicator">تم النسخ ✓</span>
+              <svg *ngIf="copiedMessageId !== msg.id" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -122,12 +174,23 @@
     </div>
   </div>
 
-  <!-- Quick Suggestion Chips -->
+  <!-- Interactive Categorized Suggestion Chips (Shown on start or when low messages) -->
   <div class="suggestions-container" *ngIf="messages.length <= 2 && !isLoading">
-    <div class="suggestions-title">💡 أسئلة مقترحة:</div>
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <button 
+        *ngFor="let cat of suggestionCategories" 
+        class="category-tab-btn" 
+        [class.active]="activeCategory === cat.id"
+        (click)="selectCategory(cat.id)">
+        {{ cat.label }}
+      </button>
+    </div>
+
+    <!-- Chips for Selected Category -->
     <div class="chips-wrapper">
       <button 
-        *ngFor="let q of suggestedQuestions" 
+        *ngFor="let q of currentQuestions" 
         class="chip-btn" 
         (click)="onSuggestionClick(q)">
         {{ q }}
@@ -142,7 +205,7 @@
         type="text" 
         [(ngModel)]="inputText" 
         name="chatInput"
-        placeholder="اسأل المساعد الطبي عن أدويتك أو صحتك..."
+        placeholder="اسأل عن أي ميزة في التطبيق، حجز كشف، أو استشارة دوائية..."
         autocomplete="off"
         (keydown)="handleKeyDown($event)"
         [disabled]="isLoading"
@@ -159,7 +222,7 @@
       </button>
     </form>
     <div class="disclaimer-text">
-      ⚠️ هذا المساعد لأغراض التوعية والإرشاد ولا يغني عن الاستشارة الطبية المباشرة.
+      ✨ المساعد الذكي يساعدك في استكشاف ميزات PharmaHub والتوجيه الصحي الآمن.
     </div>
   </div>
 </div>

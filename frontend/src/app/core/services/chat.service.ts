@@ -3,13 +3,21 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export interface ActionButton {
+  label: string;
+  route: string;
+  icon?: string;
+}
+
 export interface ChatMessage {
   id: string;
   sender: 'user' | 'bot' | 'system';
   text: string;
   timestamp: Date;
+  actionButtons?: ActionButton[];
   contextSummary?: {
     hasHistory: boolean;
+    isGuest?: boolean;
     patientName?: string;
     totalVisits?: number;
     diagnosesCount?: number;
@@ -21,6 +29,7 @@ export interface ChatMessage {
 
 export interface ContextSummary {
   hasHistory: boolean;
+  isGuest?: boolean;
   patientName?: string;
   patientAge?: number;
   patientGender?: string;
@@ -75,7 +84,7 @@ export class ChatService {
       .pipe(
         catchError(err => {
           console.warn('Could not load chat context:', err);
-          return of({ success: false, summary: null as any });
+          return of({ success: false, summary: { hasHistory: false, isGuest: true, totalVisits: 0, diagnosesCount: 0, medicationsCount: 0, diagnoses: [], medications: [] } });
         })
       )
       .subscribe(res => {
@@ -91,7 +100,12 @@ export class ChatService {
   private initWelcomeMessage(context: ContextSummary | null): void {
     if (this.messagesSubject.value.length > 0) return;
 
-    let welcomeText = `مرحباً بك في **PharmaHub AI Assistant** 🩺\nأنا مساعدك الطبي الذكي، جاهز للإجابة عن استفساراتك حول أدويتك، الجرعات، التفاعلات الدوائية، وإرشادات الرعاية الصحية.`;
+    let welcomeText = `مرحباً بك في **PharmaHub AI Assistant** 🩺\nأنا مساعدك الذكي، هنا لإرشادك في استخدام كل مميزات التطبيق، الإجابة عن استفسارات أدويتك وصحتك، وتسهيل حجز الكشوفات!`;
+    const initialButtons: ActionButton[] = [
+      { label: '📅 حجز موعد كشف', route: '/appointments/book', icon: 'calendar' },
+      { label: '👨‍⚕️ قائمة الأطباء', route: '/profiles/doctor-list', icon: 'users' },
+      { label: '💊 دليل الأدوية', route: '/medical/catalog', icon: 'package' }
+    ];
 
     if (context?.hasHistory) {
       welcomeText += `\n\n✅ **تم ربط المحادثة بسجلك الطبي بنجاح:**\n`;
@@ -101,9 +115,10 @@ export class ChatService {
       if (context.medications?.length) {
         welcomeText += `• **الأدوية الحالية**: ${context.medications.join('، ')}\n`;
       }
-      welcomeText += `\nيمكنك سؤالي مباشرة عن أي تعارضات دوائية أو نصائح متعلقة بعلاجك!`;
+      welcomeText += `\nيمكنك سؤالي مباشرة عن أي تعارضات دوائية، مواعيد الجرعات، أو طلب التنقل لأي قسم!`;
+      initialButtons.push({ label: '📋 عرض روشتاتي', route: '/medical/prescription-view', icon: 'file-text' });
     } else {
-      welcomeText += `\n\nكيف يمكنني مساعدتك اليوم بخصوص صحتك أو أدويتك؟`;
+      welcomeText += `\n\nكيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن طريقة حجز كشف، دليل الأدوية، أو أي استشارة صحية!`;
     }
 
     const welcomeMsg: ChatMessage = {
@@ -111,6 +126,7 @@ export class ChatService {
       sender: 'bot',
       text: welcomeText,
       timestamp: new Date(),
+      actionButtons: initialButtons.slice(0, 3),
       contextSummary: context || undefined
     };
 
@@ -142,7 +158,7 @@ export class ChatService {
         content: m.text
       }));
 
-    this.http.post<{ success: boolean; reply: string; contextSummary?: ContextSummary }>(
+    this.http.post<{ success: boolean; reply: string; actionButtons?: ActionButton[]; contextSummary?: ContextSummary }>(
       `${this.apiUrl}/message`,
       {
         message: trimmed,
@@ -151,10 +167,14 @@ export class ChatService {
     ).pipe(
       catchError(err => {
         console.error('Chat API Error:', err);
-        const errorReply = err?.error?.message || 'عذراً، حدث خطأ أثناء التواصل مع المساعد الذكي. يرجى المحاولة مرة أخرى.';
-        return of<{ success: boolean; reply: string; contextSummary?: ContextSummary }>({
+        const errorReply = err?.error?.message || 'عذراً، حدث خطأ أثناء معالجة الطلب. يرجى المحاولة مرة أخرى.';
+        return of<{ success: boolean; reply: string; actionButtons?: ActionButton[]; contextSummary?: ContextSummary }>({
           success: false,
-          reply: `⚠️ **تنبيه**: ${errorReply}`
+          reply: `⚠️ **تنبيه**: ${errorReply}`,
+          actionButtons: [
+            { label: '📅 حجز كشف', route: '/appointments/book', icon: 'calendar' },
+            { label: '👨‍⚕️ دليل الأطباء', route: '/profiles/doctor-list', icon: 'users' }
+          ]
         });
       }),
       tap(() => this.isLoadingSubject.next(false))
@@ -164,6 +184,7 @@ export class ChatService {
         sender: 'bot',
         text: res.reply || 'تم استلام رد فارغ من المساعد.',
         timestamp: new Date(),
+        actionButtons: res.actionButtons,
         contextSummary: res.contextSummary
       };
 
