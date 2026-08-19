@@ -40,7 +40,7 @@
   <!-- Main Content Container -->
   <div class="main-content-container">
 
-    <!-- Header & Results Count -->
+    <!-- Header & Results Count & Sorting -->
     <div class="list-meta-header">
       <div>
         <h1 class="results-title">
@@ -49,9 +49,52 @@
         <p class="results-subtitle">أطباء معتمدون متاحون للحجز والاستشارة الفورية</p>
       </div>
 
-      <div class="sort-indicator">
-        <span class="material-symbols-outlined">sort</span>
-        <span>الترتيب حسب: الأفضل تقييماً</span>
+      <!-- Sort Controls -->
+      <div class="sort-controls-group">
+        <span class="sort-label">
+          <span class="material-symbols-outlined sort-icon">sort</span>
+          ترتيب حسب:
+        </span>
+        <button
+          type="button"
+          class="sort-btn"
+          [class.active]="sortBy === 'rating'"
+          (click)="onSortChange('rating')">
+          <span>التقييم</span>
+          <span class="material-symbols-outlined sort-arrow" *ngIf="sortBy === 'rating'">
+            {{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}
+          </span>
+        </button>
+        <button
+          type="button"
+          class="sort-btn"
+          [class.active]="sortBy === 'experience'"
+          (click)="onSortChange('experience')">
+          <span>الخبرة</span>
+          <span class="material-symbols-outlined sort-arrow" *ngIf="sortBy === 'experience'">
+            {{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}
+          </span>
+        </button>
+        <button
+          type="button"
+          class="sort-btn"
+          [class.active]="sortBy === 'fee'"
+          (click)="onSortChange('fee')">
+          <span>السعر</span>
+          <span class="material-symbols-outlined sort-arrow" *ngIf="sortBy === 'fee'">
+            {{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}
+          </span>
+        </button>
+        <button
+          type="button"
+          class="sort-btn"
+          [class.active]="sortBy === 'name'"
+          (click)="onSortChange('name')">
+          <span>الاسم</span>
+          <span class="material-symbols-outlined sort-arrow" *ngIf="sortBy === 'name'">
+            {{ sortOrder === 'asc' ? 'arrow_downward' : 'arrow_upward' }}
+          </span>
+        </button>
       </div>
     </div>
 

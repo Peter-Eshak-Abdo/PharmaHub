@@ -131,10 +131,61 @@
 .list-meta-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 32px;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.sort-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sort-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.sort-icon {
+  font-size: 18px;
+}
+
+.sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-btn:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.sort-btn.active {
+  background-color: #00685f;
+  border-color: #00685f;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 104, 95, 0.2);
+}
+
+.sort-arrow {
+  font-size: 15px;
 }
 
 .results-title {

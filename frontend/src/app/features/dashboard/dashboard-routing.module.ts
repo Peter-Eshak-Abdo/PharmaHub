@@ -2,10 +2,22 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PatientDashboardComponent } from './patient-dashboard/patient-dashboard.component';
 import { DoctorDashboardComponent } from './doctor-dashboard/doctor-dashboard.component';
+import { AuthGuard } from '../../core/guards/auth.guard';
+import { RoleGuard } from '../../core/guards/role.guard';
 
 const routes: Routes = [
-  { path: 'patient', component: PatientDashboardComponent },
-  { path: 'doctor', component: DoctorDashboardComponent },
+  {
+    path: 'patient',
+    component: PatientDashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'patient' }
+  },
+  {
+    path: 'doctor',
+    component: DoctorDashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'doctor' }
+  },
 ];
 
 @NgModule({
@@ -13,3 +25,4 @@ const routes: Routes = [
   exports: [RouterModule],
 })
 export class DashboardRoutingModule {}
+
