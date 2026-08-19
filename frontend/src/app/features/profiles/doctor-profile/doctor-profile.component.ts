@@ -11,7 +11,7 @@ import { LanguageService } from 'src/app/core/services/language.servics';
 export class DoctorProfileComponent implements OnInit {
   doctorForm!: FormGroup;
   doctorData: any = null;
-  isEditMode: boolean = true;
+  isEditMode: boolean = false;
   hasProfile: boolean = false;
 
   get isRtl(): boolean {
@@ -46,7 +46,7 @@ export class DoctorProfileComponent implements OnInit {
     this.doctorService.getDoctorProfile().subscribe({
       next: (res: any) => {
         const doctor = res?.data || res;
-        if (doctor && doctor.fullName) {
+        if (doctor) {
           this.doctorData = doctor;
           this.doctorForm.patchValue(doctor);
           this.isEditMode = false;
@@ -54,8 +54,7 @@ export class DoctorProfileComponent implements OnInit {
         }
       },
       error: (err) => {
-        this.hasProfile = false;
-        this.isEditMode = true;
+        console.error('Error loading doctor profile:', err);
       },
     });
   }
@@ -63,11 +62,7 @@ export class DoctorProfileComponent implements OnInit {
   onSubmit() {
     if (this.doctorForm.invalid) return;
 
-    const request$ = this.hasProfile
-      ? this.doctorService.updateDoctorProfile(this.doctorForm.value)
-      : this.doctorService.createDoctorProfile(this.doctorForm.value);
-
-    request$.subscribe({
+    this.doctorService.updateDoctorProfile(this.doctorForm.value).subscribe({
       next: (res: any) => {
         const doctor = res?.data || res?.user || res;
         this.doctorData = doctor;
@@ -76,8 +71,12 @@ export class DoctorProfileComponent implements OnInit {
         }
         this.isEditMode = false;
         this.hasProfile = true;
+        alert('تم حفظ التعديلات بنجاح');
       },
-      error: (err) => console.error('Error saving profile', err),
+      error: (err) => {
+        console.error('Error saving profile', err);
+        alert('حدث خطأ أثناء حفظ التعديلات');
+      },
     });
   }
 
@@ -85,3 +84,4 @@ export class DoctorProfileComponent implements OnInit {
     this.isEditMode = true;
   }
 }
+

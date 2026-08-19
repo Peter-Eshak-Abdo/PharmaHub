@@ -27,6 +27,29 @@ exports.addAvailability = async (req, res) => {
       });
     }
 
+    if (startTime >= endTime) {
+      return res.status(400).json({
+        success: false,
+        message: 'endTime must be greater than startTime',
+      });
+    }
+
+    // Check for overlapping time windows on the same day for this doctor
+    const overlapping = await WeeklyAvailability.findOne({
+      doctorId,
+      dayOfWeek,
+      $or: [
+        { startTime: { $lt: endTime }, endTime: { $gt: startTime } },
+      ],
+    });
+
+    if (overlapping) {
+      return res.status(409).json({
+        success: false,
+        message: 'هذا الوقت يتعارض مع موعد عمل موجود في نفس اليوم',
+      });
+    }
+
     const slot = await WeeklyAvailability.create({
       doctorId,
       dayOfWeek,
@@ -44,7 +67,7 @@ exports.addAvailability = async (req, res) => {
       return res.status(409).json({
         success: false,
         message:
-          'This doctor already has a weekly availability entry for that day',
+          'يوجد موعد يبدأ في نفس هذا الوقت بالفعل لهذا اليوم',
       });
     }
 
@@ -117,6 +140,35 @@ exports.updateAvailability = async (req, res) => {
       });
     }
 
+    const doctorId = req.body.doctorId || existing.doctorId;
+    const dayOfWeek = req.body.dayOfWeek || existing.dayOfWeek;
+    const startTime = req.body.startTime || existing.startTime;
+    const endTime = req.body.endTime || existing.endTime;
+
+    if (startTime >= endTime) {
+      return res.status(400).json({
+        success: false,
+        message: 'endTime must be greater than startTime',
+      });
+    }
+
+    // Check overlap with other slots excluding current slot
+    const overlapping = await WeeklyAvailability.findOne({
+      _id: { $ne: id },
+      doctorId,
+      dayOfWeek,
+      $or: [
+        { startTime: { $lt: endTime }, endTime: { $gt: startTime } },
+      ],
+    });
+
+    if (overlapping) {
+      return res.status(409).json({
+        success: false,
+        message: 'هذا الوقت يتعارض مع موعد عمل موجود في نفس اليوم',
+      });
+    }
+
     Object.assign(existing, req.body);
 
     const updated = await existing.save();
@@ -130,7 +182,7 @@ exports.updateAvailability = async (req, res) => {
       return res.status(409).json({
         success: false,
         message:
-          'This doctor already has a weekly availability entry for that day',
+          'يوجد موعد يبدأ في نفس هذا الوقت بالفعل لهذا اليوم',
       });
     }
 
@@ -200,14 +252,15 @@ exports.getAvailableSlots = async (req, res) => {
     // WEEK_ORDER[0] is Sunday, matching JS Date#getUTCDay() directly.
     const dayName = WEEK_ORDER[parsedDate.getUTCDay()];
 
-    const weeklySlot = await WeeklyAvailability.findOne({
+    const weeklySlots = await WeeklyAvailability.find({
       doctorId,
       dayOfWeek: dayName,
-    });
+    }).sort({ startTime: 1 });
 
-    if (!weeklySlot) {
-      return res.status(404).json({
-        success: false,
+    if (!weeklySlots || weeklySlots.length === 0) {
+      return res.status(200).json({
+        success: true,
+        slots: [],
         message: 'No weekly availability for this day',
       });
     }
@@ -232,10 +285,6 @@ exports.getAvailableSlots = async (req, res) => {
       status: { $ne: 'Cancelled' },
     }).select('appointmentTime');
 
-    const start = weeklySlot.startTime;
-    const end = weeklySlot.endTime;
-    const slotDuration = weeklySlot.slotDurationMinutes;
-
     const toMinutes = (time) => {
       const [hours, minutes] = time.split(':').map(Number);
       return hours * 60 + minutes;
@@ -253,24 +302,27 @@ exports.getAvailableSlots = async (req, res) => {
       return `${hours}:${mins}`;
     };
 
-    const startMin = toMinutes(start);
-    const endMin = toMinutes(end);
-
     const occupied = appointments.map(
       (appointment) => appointment.appointmentTime
     );
 
     const availableSlots = [];
 
-    for (
-      let current = startMin;
-      current + slotDuration <= endMin;
-      current += slotDuration
-    ) {
-      const slotTime = fromMinutes(current);
+    for (const weeklySlot of weeklySlots) {
+      const startMin = toMinutes(weeklySlot.startTime);
+      const endMin = toMinutes(weeklySlot.endTime);
+      const slotDuration = weeklySlot.slotDurationMinutes || 30;
 
-      if (!occupied.includes(slotTime)) {
-        availableSlots.push(slotTime);
+      for (
+        let current = startMin;
+        current + slotDuration <= endMin;
+        current += slotDuration
+      ) {
+        const slotTime = fromMinutes(current);
+
+        if (!occupied.includes(slotTime) && !availableSlots.includes(slotTime)) {
+          availableSlots.push(slotTime);
+        }
       }
     }
 

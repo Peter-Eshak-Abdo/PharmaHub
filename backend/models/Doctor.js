@@ -19,6 +19,18 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      enum: {
+        values: [
+          "باطنة",
+          "أطفال",
+          "قلب",
+          "جراحة",
+          "عيون",
+          "نساء وتوليد",
+          "عظام",
+        ],
+        message: "التخصص الطبي يجب أن يكون من التخصصات المعتمدة",
+      },
     },
 
     education: {

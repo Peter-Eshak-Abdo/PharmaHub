@@ -1,128 +1,209 @@
-<div class="container mt-4" [dir]="isRtl ? 'rtl' : 'ltr'">
+<div class="profile-page-wrapper" dir="rtl">
+  <div class="profile-container">
 
-  <div class="d-flex justify-content-end mb-2">
-    <app-language-toggle></app-language-toggle>
-  </div>
-
-  <!-- وضع التعديل: إدخال وتحديث البيانات -->
-  <div *ngIf="isEditMode" class="card p-4 shadow-sm border-0">
-    <h3 class="mb-4 text-primary">{{ 'PROFILES.PATIENT_PROFILE.EDIT_TITLE' | translate }}</h3>
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-
-      <div class="mb-3">
-        <label class="form-label fw-bold">{{ 'PROFILES.PATIENT_PROFILE.FULL_NAME' | translate }}</label>
-        <input type="text" formControlName="fullName" class="form-control" />
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label fw-bold">{{ 'PROFILES.PATIENT_PROFILE.ADDRESS' | translate }}</label>
-        <input type="text" formControlName="address" class="form-control" />
-      </div>
-
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label fw-bold">{{ 'PROFILES.PATIENT_PROFILE.AGE' | translate }}</label>
-          <input type="number" formControlName="age" class="form-control" />
+    <!-- وضع التعديل (Edit Mode) -->
+    <div *ngIf="isEditMode" class="profile-card edit-card">
+      <div class="card-header-bar">
+        <div class="d-flex align-items-center gap-3">
+          <div class="header-icon-badge">
+            <span class="material-symbols-outlined">edit_document</span>
+          </div>
+          <div>
+            <h3 class="card-main-title">تعديل الملف الشخصي</h3>
+            <p class="card-sub-title">قم بتحديث بياناتك الشخصية ومعلومات الاتصال</p>
+          </div>
         </div>
-        <div class="col-md-6 mt-3 mt-md-0">
-          <label class="form-label fw-bold">{{ 'PROFILES.PATIENT_PROFILE.GENDER' | translate }}</label>
-          <select formControlName="gender" class="form-select">
-            <option value="male">{{ 'PROFILES.PATIENT_PROFILE.GENDER_MALE' | translate }}</option>
-            <option value="female">{{ 'PROFILES.PATIENT_PROFILE.GENDER_FEMALE' | translate }}</option>
-          </select>
-        </div>
+        <button class="btn-close-custom" (click)="isEditMode = false" title="إلغاء">
+          <span class="material-symbols-outlined">close</span>
+        </button>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label fw-bold">{{ 'PROFILES.PATIENT_PROFILE.PHONE' | translate }}</label>
-        <input type="text" formControlName="phoneNumber" class="form-control" />
-      </div>
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+        <div class="form-grid">
 
-      <div class="row mb-3">
-        <div class="col-md-6">
-          <label class="form-label fw-bold">{{ 'PROFILES.PATIENT_PROFILE.OCCUPATION' | translate }}</label>
-          <input type="text" formControlName="occupation" class="form-control" />
+          <div class="form-field">
+            <label>الاسم الكامل</label>
+            <div class="input-container">
+              <span class="material-symbols-outlined field-icon">person</span>
+              <input type="text" formControlName="fullName" placeholder="أدخل الاسم الكامل" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>رقم الهاتف</label>
+            <div class="input-container">
+              <span class="material-symbols-outlined field-icon">phone</span>
+              <input type="tel" formControlName="phoneNumber" placeholder="أدخل رقم الهاتف" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>العمر</label>
+            <div class="input-container">
+              <span class="material-symbols-outlined field-icon">calendar_month</span>
+              <input type="number" formControlName="age" placeholder="أدخل العمر" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>الجنس</label>
+            <div class="input-container select-container">
+              <span class="material-symbols-outlined field-icon">wc</span>
+              <select formControlName="gender" title="Gender">
+                <option value="" disabled>اختر الجنس</option>
+                <option value="male">ذكر</option>
+                <option value="female">أنثى</option>
+              </select>
+              <span class="material-symbols-outlined select-arrow">expand_more</span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>الوظيفة</label>
+            <div class="input-container">
+              <span class="material-symbols-outlined field-icon">work</span>
+              <input type="text" formControlName="occupation" placeholder="أدخل الوظيفة" />
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>اسم الشركة أو جهة العمل</label>
+            <div class="input-container">
+              <span class="material-symbols-outlined field-icon">business</span>
+              <input type="text" formControlName="companyName" placeholder="أدخل اسم الشركة" />
+            </div>
+          </div>
+
+          <div class="form-field full-width">
+            <label>العنوان</label>
+            <div class="input-container">
+              <span class="material-symbols-outlined field-icon">location_on</span>
+              <input type="text" formControlName="address" placeholder="أدخل العنوان بالتفصيل" />
+            </div>
+          </div>
+
         </div>
-        <div class="col-md-6 mt-3 mt-md-0">
-          <label class="form-label fw-bold">{{ 'PROFILES.PATIENT_PROFILE.COMPANY' | translate }}</label>
-          <input type="text" formControlName="companyName" class="form-control" />
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save" [disabled]="profileForm.invalid">
+            <span class="material-symbols-outlined">save</span>
+            <span>حفظ التعديلات</span>
+          </button>
+          <button type="button" class="btn-cancel" (click)="isEditMode = false">
+            <span>إلغاء</span>
+          </button>
         </div>
-      </div>
-
-      <button type="submit" class="btn btn-primary px-4 py-2" [disabled]="profileForm.invalid">{{ 'PROFILES.PATIENT_PROFILE.SAVE' | translate }}</button>
-    </form>
-  </div>
-
-  <!-- وضع العرض: شكل البيانات بعد الحفظ -->
-  <div *ngIf="!isEditMode">
-    <nav style="padding: 16px; display: flex; flex-wrap: wrap; gap: 16px; background: #f3f4f5;">
-      <a routerLink="/appointments/book">حجز موعد (book)</a>
-      <a routerLink="/appointments/patient">مواعيدي (patient-appointments)</a>
-      <a routerLink="/appointments/review">تقييم زيارة (review-form)</a>
-      <a routerLink="/medical/catalog-management">catalog-management</a>
-      <a routerLink="/medical/medical-history">medical-history</a>
-      <a routerLink="/medical/prescription-form">prescription-form</a>
-      <a routerLink="/medical/prescription-view">prescription-view</a>
-      <a routerLink="/schedule/schedule-exceptions">Schedule Exceptions</a>
-      <a routerLink="/schedule/weekly-availability">weekly-availability</a>
-      <a routerLink="/profiles/doctor-detail">doctor-detail</a>
-      <a routerLink="/profiles/doctor-list">قائمة الأطباء (doctor-list)</a>
-    </nav>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="text-primary m-0">{{ 'PROFILES.PATIENT_PROFILE.VIEW_TITLE' | translate }}</h2>
-      <button class="btn btn-outline-secondary" (click)="toggleEditMode()">{{ 'PROFILES.PATIENT_PROFILE.EDIT_BUTTON' | translate }} ✏️</button>
+      </form>
     </div>
 
-    <div class="card p-4 shadow-sm border-0">
+    <!-- وضع العرض (View Mode) -->
+    <div *ngIf="!isEditMode" class="profile-card view-card">
+      <!-- Ambient Glow Effect -->
+      <div class="ambient-glow"></div>
 
-      <div class="row mb-3">
-        <div class="col-sm-3 text-muted">{{ 'PROFILES.PATIENT_PROFILE.FULL_NAME' | translate }}:</div>
-        <div class="col-sm-9 fw-bold fs-5">{{ patientData?.fullName }}</div>
-      </div>
-      <hr class="text-muted">
-
-      <div class="row mb-3">
-        <div class="col-sm-3 text-muted">{{ 'PROFILES.PATIENT_PROFILE.ADDRESS' | translate }}:</div>
-        <div class="col-sm-9 fw-bold">{{ patientData?.address || ('PROFILES.PATIENT_PROFILE.NOT_PROVIDED' | translate) }}</div>
-      </div>
-      <hr class="text-muted">
-
-      <div class="row mb-3">
-        <div class="col-sm-3 text-muted">{{ 'PROFILES.PATIENT_PROFILE.AGE' | translate }}:</div>
-        <div class="col-sm-9 fw-bold">{{ patientData?.age || ('PROFILES.PATIENT_PROFILE.NOT_PROVIDED' | translate) }}</div>
-      </div>
-      <hr class="text-muted">
-
-      <div class="row mb-3">
-        <div class="col-sm-3 text-muted">{{ 'PROFILES.PATIENT_PROFILE.GENDER' | translate }}:</div>
-        <div class="col-sm-9 fw-bold">
-          <span *ngIf="patientData?.gender === 'Male'">{{ 'PROFILES.PATIENT_PROFILE.GENDER_MALE' | translate }}</span>
-          <span *ngIf="patientData?.gender === 'Female'">{{ 'PROFILES.PATIENT_PROFILE.GENDER_FEMALE' | translate }}</span>
-          <span *ngIf="patientData?.gender === 'Other'">{{ 'PROFILES.PATIENT_PROFILE.GENDER_OTHER' | translate }}</span>
-          <span *ngIf="!patientData?.gender">{{ 'PROFILES.PATIENT_PROFILE.NOT_PROVIDED' | translate }}</span>
+      <!-- Header Section -->
+      <div class="profile-header">
+        <div class="avatar-and-info">
+          <div class="avatar-wrapper">
+            <div class="avatar-circle">
+              <span class="material-symbols-outlined avatar-icon">person</span>
+            </div>
+            <div class="status-badge" title="حساب مريض نشط">
+              <span class="material-symbols-outlined">check</span>
+            </div>
+          </div>
+          <div class="user-meta">
+            <h2 class="user-name">{{ patientData?.fullName || 'اسم المريض' }}</h2>
+            <div class="user-role-badge">
+              <span class="material-symbols-outlined text-primary-icon">medical_information</span>
+              <span>ملف المريض النشط</span>
+            </div>
+          </div>
         </div>
-      </div>
-      <hr class="text-muted">
 
-      <div class="row mb-3">
-        <div class="col-sm-3 text-muted">{{ 'PROFILES.PATIENT_PROFILE.PHONE' | translate }}:</div>
-        <div class="col-sm-9 fw-bold" dir="ltr" style="text-align: right;">{{ patientData?.phoneNumber || ('PROFILES.PATIENT_PROFILE.NOT_PROVIDED' | translate) }}
+        <button class="btn-edit-profile" (click)="toggleEditMode()">
+          <span class="material-symbols-outlined">edit</span>
+          <span>تعديل الملف الشخصي</span>
+        </button>
+      </div>
+
+      <!-- Sections Grid -->
+      <div class="sections-container">
+
+        <!-- Section 1: Personal Info -->
+        <div class="profile-section">
+          <h3 class="section-title">
+            <div class="section-title-icon">
+              <span class="material-symbols-outlined">person</span>
+            </div>
+            <span>المعلومات الشخصية</span>
+          </h3>
+
+          <div class="info-grid">
+            <div class="info-tile">
+              <span class="tile-label">الاسم الكامل</span>
+              <span class="tile-value">{{ patientData?.fullName || 'غير محدد' }}</span>
+            </div>
+
+            <div class="info-tile">
+              <span class="tile-label">العمر</span>
+              <span class="tile-value">
+                {{ patientData?.age ? patientData.age + ' سنة' : 'غير محدد' }}
+              </span>
+            </div>
+
+            <div class="info-tile">
+              <span class="tile-label">الجنس</span>
+              <span class="tile-value">
+                <ng-container [ngSwitch]="patientData?.gender?.toLowerCase()">
+                  <span *ngSwitchCase="'male'">ذكر</span>
+                  <span *ngSwitchCase="'female'">أنثى</span>
+                  <span *ngSwitchDefault>{{ patientData?.gender || 'غير محدد' }}</span>
+                </ng-container>
+              </span>
+            </div>
+
+            <div class="info-tile">
+              <span class="tile-label">رقم الهاتف</span>
+              <span class="tile-value phone-value" dir="ltr">{{ patientData?.phoneNumber || 'غير محدد' }}</span>
+            </div>
+          </div>
         </div>
-      </div>
-      <hr class="text-muted">
 
-      <div class="row mb-3">
-        <div class="col-sm-3 text-muted">{{ 'PROFILES.PATIENT_PROFILE.OCCUPATION' | translate }}:</div>
-        <div class="col-sm-9 fw-bold">{{ patientData?.occupation || ('PROFILES.PATIENT_PROFILE.NOT_PROVIDED' | translate) }}</div>
-      </div>
-      <hr class="text-muted">
+        <!-- Section 2: Contact & Work -->
+        <div class="profile-section">
+          <h3 class="section-title">
+            <div class="section-title-icon">
+              <span class="material-symbols-outlined">work</span>
+            </div>
+            <span>معلومات الاتصال والعمل</span>
+          </h3>
 
-      <div class="row mb-3">
-        <div class="col-sm-3 text-muted">{{ 'PROFILES.PATIENT_PROFILE.COMPANY' | translate }}:</div>
-        <div class="col-sm-9 fw-bold">{{ patientData?.companyName || ('PROFILES.PATIENT_PROFILE.NOT_PROVIDED' | translate) }}</div>
-      </div>
+          <div class="info-grid">
+            <div class="info-tile">
+              <span class="tile-label">الوظيفة</span>
+              <span class="tile-value">{{ patientData?.occupation || 'غير محدد' }}</span>
+            </div>
 
+            <div class="info-tile">
+              <span class="tile-label">اسم الشركة</span>
+              <span class="tile-value">{{ patientData?.companyName || 'غير محدد' }}</span>
+            </div>
+
+            <div class="info-tile full-width address-tile">
+              <span class="tile-label">العنوان</span>
+              <div class="address-content">
+                <span class="material-symbols-outlined address-icon">location_on</span>
+                <span class="tile-value">{{ patientData?.address || 'لم يتم تسجيل العنوان بعد' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </div>
 
+  </div>
 </div>
+
+

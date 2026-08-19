@@ -264,6 +264,27 @@
     "FRIDAY": "الجمعة",
     "SATURDAY": "السبت"
   },
+  "COMMON": {
+    "DASHBOARD": "لوحة التحكم",
+    "APPOINTMENTS": "المواعيد",
+    "MY_PROFILE": "ملفي الشخصي",
+    "SETTINGS": "الإعدادات",
+    "LOGOUT": "تسجيل الخروج",
+    "BOOK_APPOINTMENT": "حجز موعد",
+    "UPCOMING": "القادمة",
+    "COMPLETED": "المكتملة",
+    "CANCELLED": "الملغاة",
+    "PENDING": "قيد الانتظار",
+    "CONFIRMED": "مؤكدة",
+    "SEARCH": "بحث",
+    "FILTER": "تصفية",
+    "SAVE": "حفظ",
+    "CANCEL": "إلغاء",
+    "LOADING": "جاري التحميل...",
+    "NO_DATA": "لا توجد بيانات",
+    "ALL_SPECIALTIES": "جميع التخصصات",
+    "DOCTORS": "الأطباء"
+  },
   "TYPES": {
     "VACATION": "إجازة",
     "BLOCKED": "محظور",

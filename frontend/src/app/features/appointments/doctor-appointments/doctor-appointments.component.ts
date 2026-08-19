@@ -26,7 +26,13 @@ const STATUS_KEY: Record<AppointmentStatus, string> = {
 export class DoctorAppointmentsComponent implements OnInit {
   activeTab: AppointmentStatus | 'all' = 'all';
   appointments: Appointment[] = [];
+  todayAppointments: Appointment[] = [];
   selectedDate = '';
+
+  // Summary Stats
+  todayCount = 0;
+  upcomingCount = 0;
+  totalPatientsCount = 0;
 
   isLoading = false;
   errorMessage = '';
@@ -59,6 +65,37 @@ export class DoctorAppointmentsComponent implements OnInit {
       AppointmentStatus,
       { value: AppointmentStatus; label: string; color: string }[]
     >
+  > = {
+    Pending: [
+      {
+        value: 'Confirmed',
+        label: 'تأكيد الحجز',
+        color: 'bg-primary text-on-primary',
+      },
+      {
+        value: 'Cancelled',
+        label: 'إلغاء',
+        color: 'border border-error text-error',
+      },
+    ],
+    Confirmed: [
+      {
+        value: 'Completed',
+        label: 'إتمام الكشف',
+        color: 'bg-tertiary text-on-tertiary',
+      },
+      {
+        value: 'No-Show',
+        label: 'لم يحضر',
+        color: 'border border-outline-variant text-on-surface-variant',
+      },
+      {
+        value: 'Cancelled',
+        label: 'إلغاء',
+        color: 'border border-error text-error',
+      },
+    ],
+  };
   > {
     return {
       Pending: [
@@ -132,15 +169,39 @@ export class DoctorAppointmentsComponent implements OnInit {
       .getDoctorAppointments(status, this.selectedDate || undefined, page)
       .subscribe({
         next: (res) => {
-          this.appointments = res.data;
-          this.pagination = res.pagination;
+          this.appointments = res.data || [];
+          this.pagination = res.pagination || { total: this.appointments.length, page: 1, pages: 1 };
+
+          this.calculateStats();
           this.isLoading = false;
         },
         error: (err) => {
-          this.errorMessage = err.message;
+          this.errorMessage = err.message || 'حدث خطأ أثناء تحميل جدول المواعيد';
           this.isLoading = false;
         },
       });
+  }
+
+  private calculateStats(): void {
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    // Filter appointments for today
+    this.todayAppointments = this.appointments.filter(a => {
+      const aDate = new Date(a.appointmentDate).toISOString().split('T')[0];
+      return aDate === todayStr;
+    });
+
+    this.todayCount = this.todayAppointments.length;
+    this.upcomingCount = this.appointments.filter(a => a.status === 'Confirmed' || a.status === 'Pending').length;
+
+    // Unique patients count
+    const patientIds = new Set();
+    this.appointments.forEach(a => {
+      if (typeof a.patientId === 'object' && a.patientId?._id) {
+        patientIds.add(a.patientId._id);
+      }
+    });
+    this.totalPatientsCount = patientIds.size || this.appointments.length;
   }
 
   updateStatus(apptId: string, newStatus: AppointmentStatus): void {
@@ -151,11 +212,14 @@ export class DoctorAppointmentsComponent implements OnInit {
     this.appointmentService.updateStatus(apptId, newStatus).subscribe({
       next: (updated) => {
         const idx = this.appointments.findIndex((a) => a._id === apptId);
-        if (idx !== -1)
+        if (idx !== -1) {
           this.appointments[idx] = {
             ...this.appointments[idx],
             status: updated.status,
           };
+        }
+        this.calculateStats();
+        this.successMessage = `تم تحديث حالة الموعد إلى "${STATUS_LABELS[newStatus]}" بنجاح`;
         this.successMessage = this.t('APPOINTMENTS.DOCTOR_VIEW.STATUS_UPDATED', {
           status: this.statusLabel(newStatus),
         });
@@ -163,21 +227,29 @@ export class DoctorAppointmentsComponent implements OnInit {
         setTimeout(() => (this.successMessage = ''), 3000);
       },
       error: (err) => {
-        this.errorMessage = err.message;
+        this.errorMessage = err.message || 'حدث خطأ أثناء تحديث الحالة';
         this.updatingId = null;
       },
     });
   }
 
   getPatientName(a: Appointment): string {
+    return typeof a.patientId === 'object' && a.patientId ? a.patientId.fullName : 'المريض';
     return typeof a.patientId === 'object'
       ? a.patientId.fullName
       : this.t('APPOINTMENTS.DOCTOR_VIEW.PATIENT_DEFAULT');
   }
 
   getPatientInfo(a: Appointment): string {
-    if (typeof a.patientId !== 'object') return '';
+    if (typeof a.patientId !== 'object' || !a.patientId) return '';
     const parts = [];
+    if (a.patientId.age) parts.push(`${a.patientId.age} سنة`);
+    if (a.patientId.gender) {
+      parts.push(a.patientId.gender.toLowerCase() === 'male' ? 'ذكر' : 'أنثى');
+    }
+    if (a.patientId.phoneNumber) {
+      parts.push(a.patientId.phoneNumber);
+    }
     if (a.patientId.age) parts.push(`${a.patientId.age} ${this.t('APPOINTMENTS.DOCTOR_VIEW.AGE_SUFFIX')}`);
     if (a.patientId.gender)
       parts.push(
@@ -193,6 +265,8 @@ export class DoctorAppointmentsComponent implements OnInit {
   }
 
   formatDate(dateStr: string): string {
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('ar-EG', {
     return new Date(dateStr).toLocaleDateString(this.isRtl ? 'ar-EG' : 'en-US', {
       weekday: 'short',
       year: 'numeric',
@@ -202,9 +276,11 @@ export class DoctorAppointmentsComponent implements OnInit {
   }
 
   formatTime(time: string): string {
+    if (!time) return '';
     const [h, m] = time.split(':').map(Number);
     const period = this.isRtl ? (h < 12 ? 'ص' : 'م') : (h < 12 ? 'AM' : 'PM');
     const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
     return `${h12}:${String(m).padStart(2, '0')} ${period}`;
   }
 }
+

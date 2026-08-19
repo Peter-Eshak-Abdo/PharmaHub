@@ -264,6 +264,27 @@
     "FRIDAY": "Friday",
     "SATURDAY": "Saturday"
   },
+  "COMMON": {
+    "DASHBOARD": "Dashboard",
+    "APPOINTMENTS": "Appointments",
+    "MY_PROFILE": "My Profile",
+    "SETTINGS": "Settings",
+    "LOGOUT": "Logout",
+    "BOOK_APPOINTMENT": "Book Appointment",
+    "UPCOMING": "Upcoming",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled",
+    "PENDING": "Pending",
+    "CONFIRMED": "Confirmed",
+    "SEARCH": "Search",
+    "FILTER": "Filter",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "LOADING": "Loading...",
+    "NO_DATA": "No data found",
+    "ALL_SPECIALTIES": "All Specialties",
+    "DOCTORS": "Doctors"
+  },
   "TYPES": {
     "VACATION": "Vacation",
     "BLOCKED": "Blocked",

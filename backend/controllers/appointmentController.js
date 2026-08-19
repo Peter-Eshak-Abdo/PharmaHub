@@ -22,28 +22,30 @@ async function validateSlot(doctorId, appointmentDate, appointmentTime) {
   const dayOfWeek = dayNames[date.getDay()];
 
   // 1. Check weekly availability
-  const avail = await WeeklyAvailability.findOne({ doctorId, dayOfWeek });
-  if (!avail) {
+  const avails = await WeeklyAvailability.find({ doctorId, dayOfWeek });
+  if (!avails || avails.length === 0) {
     throw new Error(`الطبيب غير متاح يوم ${dayOfWeek}`);
   }
 
-  // Check time within window
   const [reqH, reqM] = appointmentTime.split(":").map(Number);
-  const [startH, startM] = avail.startTime.split(":").map(Number);
-  const [endH, endM] = avail.endTime.split(":").map(Number);
   const reqMins = reqH * 60 + reqM;
-  const startMins = startH * 60 + startM;
-  const endMins = endH * 60 + endM;
-  if (reqMins < startMins || reqMins >= endMins) {
-    throw new Error(
-      `الوقت المختار خارج ساعات عمل الطبيب (${avail.startTime} - ${avail.endTime})`,
-    );
-  }
 
-  // Check slot granularity
-  if ((reqMins - startMins) % avail.slotDurationMinutes !== 0) {
+  // Find matching slot window
+  const matchingSlot = avails.find((slot) => {
+    const [startH, startM] = slot.startTime.split(":").map(Number);
+    const [endH, endM] = slot.endTime.split(":").map(Number);
+    const startMins = startH * 60 + startM;
+    const endMins = endH * 60 + endM;
+
+    if (reqMins >= startMins && reqMins < endMins) {
+      return (reqMins - startMins) % slot.slotDurationMinutes === 0;
+    }
+    return false;
+  });
+
+  if (!matchingSlot) {
     throw new Error(
-      `الوقت المختار لا يتوافق مع فترات الجلسات (${avail.slotDurationMinutes} دقيقة)`,
+      `الوقت المختار غير متاح ضمن فترات عمل الطبيب في هذا اليوم`,
     );
   }
 
@@ -417,8 +419,12 @@ exports.getAvailableSlots = async (req, res) => {
     ];
     const dayOfWeek = dayNames[targetDate.getDay()];
 
-    const avail = await WeeklyAvailability.findOne({ doctorId, dayOfWeek });
-    if (!avail) {
+    const weeklySlots = await WeeklyAvailability.find({
+      doctorId,
+      dayOfWeek,
+    }).sort({ startTime: 1 });
+
+    if (!weeklySlots || weeklySlots.length === 0) {
       return res.json({
         success: true,
         data: [],
@@ -442,24 +448,29 @@ exports.getAvailableSlots = async (req, res) => {
       return res.json({
         success: true,
         data: [],
-        slotDuration: avail.slotDurationMinutes || 30,
+        slotDuration: weeklySlots[0].slotDurationMinutes || 30,
         message: `يوم إجازة: ${exception.reason || exception.type}`,
       });
     }
 
-    // Generate slots
-    const [startH, startM] = avail.startTime.split(":").map(Number);
-    const [endH, endM] = avail.endTime.split(":").map(Number);
+    // Generate slots across all availability windows
     const slots = [];
-    const slotDuration = avail.slotDurationMinutes || 30;
-    let cur = startH * 60 + startM;
-    const end = endH * 60 + endM;
+    for (const avail of weeklySlots) {
+      const [startH, startM] = avail.startTime.split(":").map(Number);
+      const [endH, endM] = avail.endTime.split(":").map(Number);
+      const slotDuration = avail.slotDurationMinutes || 30;
+      let cur = startH * 60 + startM;
+      const end = endH * 60 + endM;
 
-    while (cur + slotDuration <= end) {
-      const h = String(Math.floor(cur / 60)).padStart(2, "0");
-      const m = String(cur % 60).padStart(2, "0");
-      slots.push(`${h}:${m}`);
-      cur += slotDuration;
+      while (cur + slotDuration <= end) {
+        const h = String(Math.floor(cur / 60)).padStart(2, "0");
+        const m = String(cur % 60).padStart(2, "0");
+        const slotStr = `${h}:${m}`;
+        if (!slots.includes(slotStr)) {
+          slots.push(slotStr);
+        }
+        cur += slotDuration;
+      }
     }
 
     // Remove booked slots

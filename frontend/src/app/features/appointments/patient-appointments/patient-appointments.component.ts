@@ -23,8 +23,10 @@ const STATUS_KEY: Record<AppointmentStatus, string> = {
   styleUrls: ['./patient-appointments.component.css'],
 })
 export class PatientAppointmentsComponent implements OnInit {
-  activeTab: AppointmentStatus | 'all' = 'all';
+  activeTab: string = 'Upcoming';
   appointments: Appointment[] = [];
+  nextAppointment: Appointment | null = null;
+  regularAppointments: Appointment[] = [];
 
   isLoading = false;
   errorMessage = '';
@@ -34,20 +36,12 @@ export class PatientAppointmentsComponent implements OnInit {
 
   STATUS_COLORS = STATUS_COLORS;
 
-  get isRtl(): boolean {
-    return this.languageService.isRtl();
-  }
-
-  get tabs(): { value: AppointmentStatus | 'all'; label: string }[] {
-    return [
-      { value: 'all', label: this.t('APPOINTMENTS.STATUS.ALL') },
-      { value: 'Pending', label: this.statusLabel('Pending') },
-      { value: 'Confirmed', label: this.statusLabel('Confirmed') },
-      { value: 'Completed', label: this.statusLabel('Completed') },
-      { value: 'Cancelled', label: this.statusLabel('Cancelled') },
-      { value: 'No-Show', label: this.statusLabel('No-Show') },
-    ];
-  }
+  tabs: { value: string; label: string }[] = [
+    { value: 'Upcoming', label: 'المواعيد القادمة' },
+    { value: 'Completed', label: 'المكتملة والسابقة' },
+    { value: 'Cancelled', label: 'الملغاة' },
+    { value: 'all', label: 'جميع المواعيد' },
+  ];
 
   constructor(
     private appointmentService: AppointmentService,
@@ -55,6 +49,10 @@ export class PatientAppointmentsComponent implements OnInit {
     private translate: TranslateService,
     private languageService: LanguageService,
   ) {}
+
+  get isRtl(): boolean {
+    return this.languageService.isRtl();
+  }
 
   private t(key: string): string {
     return this.translate.instant(key);
@@ -74,8 +72,8 @@ export class PatientAppointmentsComponent implements OnInit {
     this.loadAppointments();
   }
 
-  setTab(tab: AppointmentStatus | 'all'): void {
-    this.activeTab = tab;
+  setTab(tabValue: string): void {
+    this.activeTab = tabValue;
     this.pagination.page = 1;
     this.loadAppointments();
   }
@@ -84,15 +82,39 @@ export class PatientAppointmentsComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const status = this.activeTab === 'all' ? undefined : this.activeTab;
-    this.appointmentService.getPatientAppointments(status, page).subscribe({
+    let statusParam: AppointmentStatus | undefined;
+    if (this.activeTab === 'Completed') {
+      statusParam = 'Completed';
+    } else if (this.activeTab === 'Cancelled') {
+      statusParam = 'Cancelled';
+    } else if (this.activeTab === 'Upcoming') {
+      // In upcoming we fetch Confirmed/Pending
+      statusParam = undefined;
+    }
+
+    this.appointmentService.getPatientAppointments(statusParam, page).subscribe({
       next: (res) => {
-        this.appointments = res.data;
-        this.pagination = res.pagination;
+        let list = res.data || [];
+
+        if (this.activeTab === 'Upcoming') {
+          list = list.filter((a: Appointment) => a.status === 'Confirmed' || a.status === 'Pending');
+        }
+
+        this.appointments = list;
+        this.pagination = res.pagination || { total: list.length, page: 1, pages: 1 };
+
+        if (this.activeTab === 'Upcoming' && this.appointments.length > 0) {
+          this.nextAppointment = this.appointments[0];
+          this.regularAppointments = this.appointments.slice(1);
+        } else {
+          this.nextAppointment = null;
+          this.regularAppointments = this.appointments;
+        }
+
         this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = err.message;
+        this.errorMessage = err.message || 'حدث خطأ أثناء تحميل المواعيد';
         this.isLoading = false;
       },
     });
@@ -109,7 +131,7 @@ export class PatientAppointmentsComponent implements OnInit {
       },
       error: (err) => {
         this.cancellingId = null;
-        this.errorMessage = err.message;
+        this.errorMessage = err.message || 'حدث خطأ أثناء إلغاء الموعد';
       },
     });
   }
@@ -123,18 +145,17 @@ export class PatientAppointmentsComponent implements OnInit {
   }
 
   getDoctorName(a: Appointment): string {
-    return typeof a.doctorId === 'object'
-      ? a.doctorId.fullName
-      : this.t('APPOINTMENTS.PATIENT_VIEW.DOCTOR_DEFAULT');
+    return typeof a.doctorId === 'object' && a.doctorId ? a.doctorId.fullName : this.t('APPOINTMENTS.PATIENT_VIEW.DOCTOR_DEFAULT');
   }
 
   getDoctorSpecialization(a: Appointment): string {
-    return typeof a.doctorId === 'object' ? a.doctorId.specialization : '';
+    return typeof a.doctorId === 'object' && a.doctorId ? a.doctorId.specialization : this.t('APPOINTMENTS.PATIENT_VIEW.SPECIALIZATION_DEFAULT');
   }
 
   formatDate(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString(this.isRtl ? 'ar-EG' : 'en-US', {
-      weekday: 'short',
+    if (!dateStr) return '';
+    return new Date(dateStr).toLocaleDateString('ar-EG', {
+      weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -142,6 +163,7 @@ export class PatientAppointmentsComponent implements OnInit {
   }
 
   formatTime(time: string): string {
+    if (!time) return '';
     const [h, m] = time.split(':').map(Number);
     const period = this.isRtl ? (h < 12 ? 'ص' : 'م') : (h < 12 ? 'AM' : 'PM');
     const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
@@ -151,10 +173,5 @@ export class PatientAppointmentsComponent implements OnInit {
   goToReview(appointmentId: string): void {
     this.router.navigate(['/appointments/review', appointmentId]);
   }
-
-  isUpcoming(a: Appointment): boolean {
-    return (
-      new Date(a.appointmentDate) >= new Date() && a.status !== 'Cancelled'
-    );
-  }
 }
+

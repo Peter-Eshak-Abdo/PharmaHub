@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { LanguageService } from './core/services/language.service';
+import { LanguageService } from './core/services/language.servics';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -9,9 +10,13 @@ import { LanguageService } from './core/services/language.service';
 export class AppComponent implements OnInit {
   title = 'frontend';
 
-  constructor(private languageService: LanguageService) {}
+  constructor(
+    private languageService: LanguageService,
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit() {
     this.languageService.init();
+    this.themeService.loadSavedTheme();
   }
 }

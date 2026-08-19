@@ -1,84 +1,127 @@
-<!-- <nav>
-  <a routerLink="/">Doctor Appointment System</a>
-  <ul *ngIf="currentUser">
-    <li *ngIf="currentUser.role === 'admin'"><a routerLink="/admin/dashboard">Admin Dashboard</a></li>
-    <li *ngIf="currentUser.role === 'doctor'"><a routerLink="/doctor-dashboard">Doctor Dashboard</a></li>
-    <li *ngIf="currentUser.role === 'patient'"><a routerLink="/appointments">My Appointments</a></li>
-    <li><button (click)="logout()">Logout</button></li>
-  </ul>
-  <ul *ngIf="!currentUser">
-    <li><a routerLink="/auth/login">Login</a></li>
-    <li><a routerLink="/auth/register">Register</a></li>
-  </ul>
-</nav>
-
-<main>
-  <router-outlet></router-outlet>
-</main> -->
-
-<!-- src/app/shared/components/navbar/navbar.component.html -->
-<nav class="bg-slate-900 text-slate-100 p-4 shadow-lg border-b border-slate-700">
-  <div class="container mx-auto flex flex-wrap items-center justify-between gap-4">
-    <a routerLink="/" class="text-xl font-bold text-teal-400 tracking-wide flex items-center gap-2">
-      💊 PharmaHub <span class="text-xs bg-teal-900 text-teal-300 px-2 py-0.5 rounded border border-teal-700">Test
-        Nav</span>
+<nav class="app-navbar" dir="rtl" *ngIf="!isAuthPage">
+  <div class="navbar-container">
+    <!-- Brand / Logo -->
+    <a routerLink="/" class="brand-logo">
+      <span class="material-symbols-outlined logo-icon">medical_services</span>
+      <div class="brand-text">
+        <span class="brand-title">PharmaHub</span>
+        <span class="brand-badge" *ngIf="isDoctor">بوابة الطبيب</span>
+        <span class="brand-badge patient-badge" *ngIf="isPatient">بوابة المريض</span>
+      </div>
     </a>
 
-    <div class="flex flex-wrap items-center gap-2 text-xs font-medium">
-      <!-- Auth -->
-      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
-        <span class="text-slate-400 font-semibold px-1">Auth:</span>
-        <a routerLink="/auth/login" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Login</a>
-        <a routerLink="/auth/register" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Register</a>
-      </div>
+    <!-- Navigation Links -->
+    <div class="nav-links-wrapper">
+      <!-- Doctor Navigation -->
+      <ul *ngIf="isDoctor" class="nav-menu">
+        <li>
+          <a routerLink="/dashboard/doctor" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>لوحة التحكم</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/appointments/doctor" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span>مواعيدي</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/schedule/weekly-availability" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">schedule</span>
+            <span>جدول العمل</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/schedule/schedule-exceptions" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">event_busy</span>
+            <span>الإجازات</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/medical" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">prescriptions</span>
+            <span>السجل الطبي</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/profiles/doctor-profile" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">person</span>
+            <span>ملفي الشخصي</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/settings" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">settings</span>
+            <span>الإعدادات</span>
+          </a>
+        </li>
+      </ul>
 
-      <!-- Profiles -->
-      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
-        <span class="text-slate-400 font-semibold px-1">Profiles:</span>
-        <a routerLink="/doctors" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Doctor List</a>
-        <a routerLink="/patient-profile" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Patient Profile</a>
-      </div>
+      <!-- Patient Navigation -->
+      <ul *ngIf="isPatient" class="nav-menu">
+        <li>
+          <a routerLink="/dashboard/patient" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>الرئيسية</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/profiles/doctor-list" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">stethoscope</span>
+            <span>الأطباء</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/appointments/patient" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">event_available</span>
+            <span>حجوزاتي</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/profiles/patient-profile" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">account_circle</span>
+            <span>ملفي</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/settings" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">settings</span>
+            <span>الإعدادات</span>
+          </a>
+        </li>
+      </ul>
 
-      <!-- Schedule -->
-      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
-        <span class="text-slate-400 font-semibold px-1">Schedule:</span>
-        <a routerLink="/schedule" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Weekly Availability</a>
-        <a routerLink="/schedule/schedule-exceptions" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Exceptions</a>
-      </div>
-      <!-- Appointments -->
-      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
-        <span class="text-slate-400 font-semibold px-1">Appointments:</span>
-        <a routerLink="/appointments/patient" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Patient View</a>
-        <a routerLink="/appointments/doctor" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Doctor View</a>
-        <a routerLink="/appointments/book/6a7a68e2039344ea7b05c884" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Book Form</a>
-      </div>
+      <!-- Guest Navigation -->
+      <ul *ngIf="!currentUser" class="nav-menu">
+        <li>
+          <a routerLink="/profiles/doctor-list" routerLinkActive="active-link" class="nav-item">
+            <span class="material-symbols-outlined">stethoscope</span>
+            <span>قائمة الأطباء</span>
+          </a>
+        </li>
+      </ul>
+    </div>
 
-      <!-- Medical -->
-      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
-        <span class="text-slate-400 font-semibold px-1">Medical:</span>
-        <a routerLink="/prescription/123" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Prescription View</a>
-        <a routerLink="/medical" routerLinkActive="bg-teal-600 text-white"
-          class="px-2 py-1 rounded hover:bg-slate-700 transition">Medical Module</a>
-      </div>
+    <!-- User Actions & Auth -->
+    <div class="user-actions">
+      <ng-container *ngIf="currentUser">
+        <button type="button" class="btn-logout" (click)="logout()" title="تسجيل الخروج">
+          <span class="material-symbols-outlined">logout</span>
+          <span>خروج</span>
+        </button>
+      </ng-container>
+
+      <ng-container *ngIf="!currentUser">
+        <a routerLink="/auth/login" class="btn-nav-login">
+          <span class="material-symbols-outlined">login</span>
+          <span>تسجيل الدخول</span>
+        </a>
+        <a routerLink="/auth/register" class="btn-nav-register">
+          <span>حساب جديد</span>
+        </a>
+      </ng-container>
     </div>
   </div>
-
- <!-- Language -->
-      <div class="flex items-center gap-1.5 bg-slate-800 p-1.5 rounded-md border border-slate-700">
-        <app-language-toggle></app-language-toggle>
-      </div>
-
-
-
-
 </nav>
+

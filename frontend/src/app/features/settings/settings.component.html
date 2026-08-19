@@ -1,0 +1,127 @@
+<div class="settings-page" dir="rtl">
+  <div class="settings-container">
+
+    <!-- Header -->
+    <div class="settings-header">
+      <div class="header-icon-box">
+        <span class="material-symbols-outlined">settings</span>
+      </div>
+      <div>
+        <h1 class="page-title">إعدادات النظام</h1>
+        <p class="page-subtitle">تخصيص المظهر، اللغة، وتفضيلات الحساب الشخصي</p>
+      </div>
+    </div>
+
+    <!-- User Account Summary Card -->
+    <div class="settings-card user-card" *ngIf="currentUser">
+      <div class="user-avatar-circle">
+        <span class="material-symbols-outlined">person</span>
+      </div>
+      <div class="user-details">
+        <div class="user-role-badge">
+          {{ currentUser.role === 'doctor' ? 'حساب طبيب' : 'حساب مريض' }}
+        </div>
+        <h3 class="user-email">{{ currentUser.email }}</h3>
+      </div>
+    </div>
+
+    <!-- Appearance Section -->
+    <div class="settings-card">
+      <div class="section-title-row">
+        <span class="material-symbols-outlined section-icon">palette</span>
+        <div>
+          <h2>المظهر والثيم (Appearance)</h2>
+          <p>اختر الثيم المفضل لواجهة الاستخدام</p>
+        </div>
+      </div>
+
+      <div class="theme-options-grid">
+        <button
+          type="button"
+          class="theme-card"
+          [class.active]="currentTheme === 'light'"
+          (click)="setTheme('light')">
+          <div class="theme-preview light-preview">
+            <div class="preview-header"></div>
+            <div class="preview-content"></div>
+          </div>
+          <div class="theme-info">
+            <span class="material-symbols-outlined">light_mode</span>
+            <span>الوضع الفاتح (Light)</span>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          class="theme-card"
+          [class.active]="currentTheme === 'dark'"
+          (click)="setTheme('dark')">
+          <div class="theme-preview dark-preview">
+            <div class="preview-header"></div>
+            <div class="preview-content"></div>
+          </div>
+          <div class="theme-info">
+            <span class="material-symbols-outlined">dark_mode</span>
+            <span>الوضع الداكن (Dark)</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Language Section -->
+    <div class="settings-card">
+      <div class="section-title-row">
+        <span class="material-symbols-outlined section-icon">translate</span>
+        <div>
+          <h2>اللغة المفضلة (Language)</h2>
+          <p>اختر لغة عرض الواجهة والاتجاه</p>
+        </div>
+      </div>
+
+      <div class="lang-options-grid">
+        <button
+          type="button"
+          class="lang-btn"
+          [class.active]="currentLang === 'ar'"
+          (click)="setLanguage('ar')">
+          <span class="lang-flag">🇪🇬</span>
+          <div class="lang-text">
+            <span class="lang-name">العربية (Arabic)</span>
+            <span class="lang-sub">الاتجاه من اليمين إلى اليسار (RTL)</span>
+          </div>
+          <span class="material-symbols-outlined check-icon" *ngIf="currentLang === 'ar'">check_circle</span>
+        </button>
+
+        <button
+          type="button"
+          class="lang-btn"
+          [class.active]="currentLang === 'en'"
+          (click)="setLanguage('en')">
+          <span class="lang-flag">🇬🇧</span>
+          <div class="lang-text">
+            <span class="lang-name">English</span>
+            <span class="lang-sub">Left-to-Right layout (LTR)</span>
+          </div>
+          <span class="material-symbols-outlined check-icon" *ngIf="currentLang === 'en'">check_circle</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Danger Zone / Logout -->
+    <div class="settings-card danger-card">
+      <div class="section-title-row">
+        <span class="material-symbols-outlined danger-icon">logout</span>
+        <div>
+          <h2>إدارة الجلسة</h2>
+          <p>تسجيل الخروج من الحساب الحالي على هذا الجهاز</p>
+        </div>
+      </div>
+
+      <button type="button" class="btn-logout-action" (click)="logout()">
+        <span class="material-symbols-outlined">logout</span>
+        <span>تسجيل الخروج من النظام</span>
+      </button>
+    </div>
+
+  </div>
+</div>
