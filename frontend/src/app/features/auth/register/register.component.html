@@ -1,83 +1,341 @@
-<div class="auth-page-wrapper">
+<div class="auth-page-wrapper" [dir]="step === 2 ? 'rtl' : 'ltr'">
   <div class="bg-blur blur-top"></div>
   <div class="bg-blur blur-bottom"></div>
 
   <div class="auth-card-container">
 
+    <!-- Header Section -->
     <div class="auth-header">
       <div class="icon-badge">
-        <span class="material-symbols-outlined">health_and_safety</span>
+        <span class="material-symbols-outlined">
+          {{ step === 2 ? (registerForm.get('role')?.value === 'doctor' ? 'medical_services' : 'person') : 'health_and_safety' }}
+        </span>
       </div>
-      <h2>Join Our Network</h2>
-      <p>Set up your account to get started.</p>
+      <ng-container *ngIf="step === 1">
+        <h2>Join Our Network</h2>
+        <p>Set up your account to get started.</p>
+      </ng-container>
+      <ng-container *ngIf="step === 2">
+        <h1 class="step-title">الخطوة 2 من 2</h1>
+        <p class="step-subtitle">
+          {{ registerForm.get('role')?.value === 'doctor' ? 'أكمل بيانات ملفك الطبي' : 'أكمل ملفك الشخصي' }}
+        </p>
+      </ng-container>
     </div>
 
+    <!-- Auth Card -->
     <div class="auth-card">
+      <div *ngIf="errorMessage" class="alert-error">
+        <span class="material-symbols-outlined">error</span>
+        <span>{{ errorMessage }}</span>
+      </div>
+
       <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-        <div class="role-segmented-control">
-          <button
-            type="button"
-            class="role-btn"
-            [class.active]="registerForm.get('role')?.value === 'patient'"
-            (click)="setRole('patient')">
-            Patient
-          </button>
-          <button
-            type="button"
-            class="role-btn"
-            [class.active]="registerForm.get('role')?.value === 'doctor'"
-            (click)="setRole('doctor')">
-            Doctor
-          </button>
-        </div>
 
-        <div class="form-group">
-          <label for="register-email">EMAIL ADDRESS</label>
-          <div class="input-wrapper">
-            <span class="material-symbols-outlined input-icon">mail</span>
-            <input
-              id="register-email"
-              type="email"
-              formControlName="email"
-              placeholder="jane@example.com"
-            />
-          </div>
-          <div *ngIf="submitted && f['email'].errors" class="error-msg">
-            <small *ngIf="f['email'].errors['required']">Email is required</small>
-            <small *ngIf="f['email'].errors['email']">Email must be valid</small>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="register-password">PASSWORD</label>
-          <div class="input-wrapper">
-            <span class="material-symbols-outlined input-icon">lock</span>
-            <input
-              id="register-password"
-              [type]="hidePassword ? 'password' : 'text'"
-              formControlName="password"
-              placeholder="••••••••"
-            />
-            <button type="button" class="password-toggle" (click)="hidePassword = !hidePassword">
-              <span class="material-symbols-outlined">
-                {{ hidePassword ? 'visibility_off' : 'visibility' }}
-              </span>
+        <!-- STEP 1: Account Info -->
+        <div *ngIf="step === 1" class="step-container">
+          <div class="role-segmented-control">
+            <button
+              type="button"
+              class="role-btn"
+              [class.active]="registerForm.get('role')?.value === 'patient'"
+              (click)="setRole('patient')">
+              Patient
+            </button>
+            <button
+              type="button"
+              class="role-btn"
+              [class.active]="registerForm.get('role')?.value === 'doctor'"
+              (click)="setRole('doctor')">
+              Doctor
             </button>
           </div>
-          <div *ngIf="submitted && f['password'].errors" class="error-msg">
-            <small *ngIf="f['password'].errors['required']">Password is required</small>
-            <small *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</small>
+
+          <div class="form-group">
+            <label for="fullName">{{ registerForm.get('role')?.value === 'doctor' ? 'DOCTOR FULL NAME' : 'FULL NAME' }}</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon">person</span>
+              <input
+                id="fullName"
+                type="text"
+                formControlName="fullName"
+                [placeholder]="registerForm.get('role')?.value === 'doctor' ? 'Dr. Jane Doe' : 'Jane Doe'"
+              />
+            </div>
+            <div *ngIf="submitted && f['fullName']?.errors" class="error-msg">
+              <small *ngIf="f['fullName'].errors?.['required']">Full name is required</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-email">EMAIL ADDRESS</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon">mail</span>
+              <input
+                id="register-email"
+                type="email"
+                formControlName="email"
+                placeholder="jane@example.com"
+              />
+            </div>
+            <div *ngIf="submitted && f['email'].errors" class="error-msg">
+              <small *ngIf="f['email'].errors['required']">Email is required</small>
+              <small *ngIf="f['email'].errors['email']">Email must be valid</small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="register-password">PASSWORD</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon">lock</span>
+              <input
+                id="register-password"
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="••••••••"
+              />
+              <button type="button" class="password-toggle" (click)="hidePassword = !hidePassword">
+                <span class="material-symbols-outlined">
+                  {{ hidePassword ? 'visibility_off' : 'visibility' }}
+                </span>
+              </button>
+            </div>
+            <div *ngIf="submitted && f['password'].errors" class="error-msg">
+              <small *ngIf="f['password'].errors['required']">Password is required</small>
+              <small *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</small>
+            </div>
+          </div>
+
+          <button type="button" class="btn-primary" (click)="nextStep()">
+            <span>التالي (Next Step)</span>
+            <span class="material-symbols-outlined btn-icon">arrow_forward</span>
+          </button>
+        </div>
+
+        <!-- STEP 2: Patient Profile Details -->
+        <div *ngIf="step === 2 && registerForm.get('role')?.value === 'patient'" class="step-container">
+          <!-- Phone Number -->
+          <div class="form-group">
+            <label for="phone">رقم الهاتف</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">phone</span>
+              <input
+                id="phone"
+                type="tel"
+                formControlName="phoneNumber"
+                placeholder="أدخل رقم الهاتف"
+                class="rtl-input"
+              />
+            </div>
+            <div *ngIf="submitted && f['phoneNumber']?.errors" class="error-msg">
+              <small *ngIf="f['phoneNumber'].errors?.['required']">رقم الهاتف مطلوب</small>
+            </div>
+          </div>
+
+          <!-- Age -->
+          <div class="form-group">
+            <label for="age">العمر</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">calendar_month</span>
+              <input
+                id="age"
+                type="number"
+                formControlName="age"
+                placeholder="أدخل العمر"
+                class="rtl-input"
+              />
+            </div>
+            <div *ngIf="submitted && f['age']?.errors" class="error-msg">
+              <small *ngIf="f['age'].errors?.['required']">العمر مطلوب</small>
+            </div>
+          </div>
+
+          <!-- Gender -->
+          <div class="form-group">
+            <label for="gender">الجنس</label>
+            <div class="input-wrapper select-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">wc</span>
+              <select id="gender" formControlName="gender" class="rtl-input">
+                <option value="" disabled selected>اختر الجنس</option>
+                <option value="male">ذكر</option>
+                <option value="female">أنثى</option>
+              </select>
+              <span class="material-symbols-outlined select-arrow">expand_more</span>
+            </div>
+            <div *ngIf="submitted && f['gender']?.errors" class="error-msg">
+              <small *ngIf="f['gender'].errors?.['required']">الجنس مطلوب</small>
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="form-group">
+            <label for="address">العنوان</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">location_on</span>
+              <input
+                id="address"
+                type="text"
+                formControlName="address"
+                placeholder="أدخل العنوان"
+                class="rtl-input"
+              />
+            </div>
+          </div>
+
+          <!-- Occupation -->
+          <div class="form-group">
+            <label for="occupation">الوظيفة</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">work</span>
+              <input
+                id="occupation"
+                type="text"
+                formControlName="occupation"
+                placeholder="أدخل الوظيفة"
+                class="rtl-input"
+              />
+            </div>
+          </div>
+
+          <!-- Company -->
+          <div class="form-group">
+            <label for="company">اسم الشركة</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">business</span>
+              <input
+                id="company"
+                type="text"
+                formControlName="companyName"
+                placeholder="أدخل اسم الشركة"
+                class="rtl-input"
+              />
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="step-actions">
+            <button type="submit" class="btn-primary" [disabled]="loading">
+              <span *ngIf="!loading">إكمال التسجيل</span>
+              <span *ngIf="loading">جاري الحفظ...</span>
+              <span class="material-symbols-outlined btn-icon">arrow_back</span>
+            </button>
+            <button type="button" class="btn-secondary" (click)="prevStep()" [disabled]="loading">
+              <span>رجوع</span>
+            </button>
           </div>
         </div>
 
-        <button type="submit" class="btn-primary">
-          <span>Create Account</span>
-          <span class="material-symbols-outlined btn-icon">arrow_forward</span>
-        </button>
+        <!-- STEP 2: Doctor Profile Details -->
+        <div *ngIf="step === 2 && registerForm.get('role')?.value === 'doctor'" class="step-container">
+          <!-- Specialization -->
+          <div class="form-group">
+            <label for="specialization">التخصص الطبي</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">medical_information</span>
+              <input
+                id="specialization"
+                type="text"
+                formControlName="specialization"
+                placeholder="مثال: طب وجراحة العيون، باطنة، قلب..."
+                class="rtl-input"
+              />
+            </div>
+            <div *ngIf="submitted && f['specialization']?.errors" class="error-msg">
+              <small *ngIf="f['specialization'].errors?.['required']">التخصص مطلوب</small>
+            </div>
+          </div>
+
+          <!-- Years of Experience & Consultation Fee -->
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="yearsOfExperience">سنوات الخبرة</label>
+              <div class="input-wrapper">
+                <span class="material-symbols-outlined input-icon right-icon">history_edu</span>
+                <input
+                  id="yearsOfExperience"
+                  type="number"
+                  formControlName="yearsOfExperience"
+                  placeholder="0"
+                  class="rtl-input"
+                />
+              </div>
+            </div>
+            <div class="form-group flex-1">
+              <label for="consultationFeeSnapshot">سعر الكشف ($)</label>
+              <div class="input-wrapper">
+                <span class="material-symbols-outlined input-icon right-icon">payments</span>
+                <input
+                  id="consultationFeeSnapshot"
+                  type="number"
+                  formControlName="consultationFeeSnapshot"
+                  placeholder="0"
+                  class="rtl-input"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Education -->
+          <div class="form-group">
+            <label for="education">التعليم والجامعة</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">school</span>
+              <input
+                id="education"
+                type="text"
+                formControlName="education"
+                placeholder="مثال: بكالوريوس طب وجراحة - جامعة القاهرة"
+                class="rtl-input"
+              />
+            </div>
+          </div>
+
+          <!-- Qualifications -->
+          <div class="form-group">
+            <label for="qualifications">المؤهلات والشهادات الإضافية</label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon right-icon">verified</span>
+              <input
+                id="qualifications"
+                type="text"
+                formControlName="qualifications"
+                placeholder="مثال: زمالة الكلية الملكية البريطانية"
+                class="rtl-input"
+              />
+            </div>
+          </div>
+
+          <!-- Bio -->
+          <div class="form-group">
+            <label for="bio">نبذة تعريفية (Bio)</label>
+            <div class="input-wrapper">
+              <textarea
+                id="bio"
+                formControlName="bio"
+                placeholder="اكتب نبذة مختصرة عن خبراتك وخدماتك العلاجية..."
+                class="rtl-input custom-textarea"
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="step-actions">
+            <button type="submit" class="btn-primary" [disabled]="loading">
+              <span *ngIf="!loading">إكمال تسجيل الطبيب</span>
+              <span *ngIf="loading">جاري إنشاء الحساب...</span>
+              <span class="material-symbols-outlined btn-icon">arrow_back</span>
+            </button>
+            <button type="button" class="btn-secondary" (click)="prevStep()" [disabled]="loading">
+              <span>رجوع</span>
+            </button>
+          </div>
+        </div>
+
       </form>
     </div>
 
-    <div class="auth-footer">
+    <div class="auth-footer" *ngIf="step === 1">
       Already have an account? <a routerLink="/auth/login">Log in</a>
     </div>
   </div>

@@ -12,6 +12,7 @@ import { ConsultationType } from '../models/appointment.model';
 })
 export class BookingFormComponent implements OnInit {
   step = 1; // Step 1: Date/Time, Step 2: Details/Confirm
+  isBookedSuccess = false;
 
   doctorId!: string;
   doctorName!: string;
@@ -29,6 +30,8 @@ export class BookingFormComponent implements OnInit {
   isSubmitting = false;
   errorMessage = '';
   successMessage = '';
+
+  confirmedAppointment: any = null;
 
   minDate = new Date().toISOString().split('T')[0];
 
@@ -50,7 +53,6 @@ export class BookingFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Read doctorId and doctor info from route params/query (no dependency on profiles module)
     this.doctorId =
       this.route.snapshot.queryParamMap.get('doctorId') ||
       this.route.snapshot.paramMap.get('doctorId') ||
@@ -117,11 +119,20 @@ export class BookingFormComponent implements OnInit {
     } else if (window.history.length > 1) {
       this.location.back();
     } else {
-      this.router.navigate(['/profiles/doctors']);
+      this.router.navigate(['/profiles/doctor-list']);
     }
   }
 
+  goToAppointments(): void {
+    this.router.navigate(['/appointments/patient']);
+  }
+
+  goHome(): void {
+    this.router.navigate(['/']);
+  }
+
   formatTime(time: string): string {
+    if (!time) return '';
     const [h, m] = time.split(':').map(Number);
     const period = h < 12 ? 'ص' : 'م';
     const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
@@ -160,16 +171,18 @@ export class BookingFormComponent implements OnInit {
       .subscribe({
         next: (res) => {
           this.isSubmitting = false;
-          this.successMessage = res.message;
-          setTimeout(
-            () => this.router.navigate(['/appointments/patient']),
-            2000,
-          );
+          this.confirmedAppointment = res.data || {
+            doctorName: this.doctorName,
+            appointmentDate: this.selectedDate,
+            appointmentTime: this.selectedTime,
+          };
+          this.isBookedSuccess = true;
         },
         error: (err) => {
           this.isSubmitting = false;
-          this.errorMessage = err.message;
+          this.errorMessage = err.message || 'حدث خطأ أثناء حجز الموعد';
         },
       });
   }
 }
+

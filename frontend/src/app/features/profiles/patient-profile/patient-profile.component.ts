@@ -10,7 +10,7 @@ import { PatientService } from '../services/patient.service';
 export class PatientProfileComponent implements OnInit {
   profileForm!: FormGroup;
   patientData: any = null;
-  isEditMode: boolean = true;
+  isEditMode: boolean = false;
   hasProfile: boolean = false;
 
   constructor(
@@ -36,7 +36,7 @@ export class PatientProfileComponent implements OnInit {
     this.patientService.getPatientProfile().subscribe({
       next: (res: any) => {
         const patient = res?.data || res;
-        if (patient && patient.fullName) {
+        if (patient) {
           this.patientData = patient;
           this.profileForm.patchValue(patient);
           this.isEditMode = false;
@@ -44,23 +44,14 @@ export class PatientProfileComponent implements OnInit {
         }
       },
       error: (err) => {
-      if (err.status === 404) {
-        this.hasProfile = false;
-        this.isEditMode = true;
-      } else {
         console.error('Error loading profile', err);
-      }
       },
     });
   }
 
   onSubmit(): void {
     if (this.profileForm.valid) {
-      const request$ = this.hasProfile
-        ? this.patientService.updatePatientProfile(this.profileForm.value)
-        : this.patientService.createPatientProfile(this.profileForm.value);
-
-      request$.subscribe({
+      this.patientService.updatePatientProfile(this.profileForm.value).subscribe({
         next: (res: any) => {
           const patient = res?.data || res?.user || res;
           this.patientData = patient;
@@ -69,9 +60,12 @@ export class PatientProfileComponent implements OnInit {
           }
           this.isEditMode = false;
           this.hasProfile = true;
-          alert('تم الحفظ بنجاح');
+          alert('تم حفظ التعديلات بنجاح');
         },
-        error: (err:any) => console.error(err),
+        error: (err: any) => {
+          console.error('Error updating profile:', err);
+          alert('حدث خطأ أثناء حفظ التعديلات');
+        },
       });
     }
   }
@@ -80,3 +74,4 @@ export class PatientProfileComponent implements OnInit {
     this.isEditMode = true;
   }
 }
+

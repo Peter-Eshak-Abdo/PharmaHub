@@ -14,8 +14,10 @@ import {
   styleUrls: ['./patient-appointments.component.css'],
 })
 export class PatientAppointmentsComponent implements OnInit {
-  activeTab: AppointmentStatus | 'all' = 'all';
+  activeTab: string = 'Upcoming';
   appointments: Appointment[] = [];
+  nextAppointment: Appointment | null = null;
+  regularAppointments: Appointment[] = [];
 
   isLoading = false;
   errorMessage = '';
@@ -26,13 +28,11 @@ export class PatientAppointmentsComponent implements OnInit {
   STATUS_LABELS = STATUS_LABELS;
   STATUS_COLORS = STATUS_COLORS;
 
-  tabs: { value: AppointmentStatus | 'all'; label: string }[] = [
-    { value: 'all', label: 'الكل' },
-    { value: 'Pending', label: 'في الانتظار' },
-    { value: 'Confirmed', label: 'مؤكد' },
-    { value: 'Completed', label: 'مكتمل' },
-    { value: 'Cancelled', label: 'ملغي' },
-    { value: 'No-Show', label: 'لم يحضر' },
+  tabs: { value: string; label: string }[] = [
+    { value: 'Upcoming', label: 'المواعيد القادمة' },
+    { value: 'Completed', label: 'المكتملة والسابقة' },
+    { value: 'Cancelled', label: 'الملغاة' },
+    { value: 'all', label: 'جميع المواعيد' },
   ];
 
   constructor(
@@ -44,8 +44,8 @@ export class PatientAppointmentsComponent implements OnInit {
     this.loadAppointments();
   }
 
-  setTab(tab: AppointmentStatus | 'all'): void {
-    this.activeTab = tab;
+  setTab(tabValue: string): void {
+    this.activeTab = tabValue;
     this.pagination.page = 1;
     this.loadAppointments();
   }
@@ -54,15 +54,39 @@ export class PatientAppointmentsComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = '';
 
-    const status = this.activeTab === 'all' ? undefined : this.activeTab;
-    this.appointmentService.getPatientAppointments(status, page).subscribe({
+    let statusParam: AppointmentStatus | undefined;
+    if (this.activeTab === 'Completed') {
+      statusParam = 'Completed';
+    } else if (this.activeTab === 'Cancelled') {
+      statusParam = 'Cancelled';
+    } else if (this.activeTab === 'Upcoming') {
+      // In upcoming we fetch Confirmed/Pending
+      statusParam = undefined;
+    }
+
+    this.appointmentService.getPatientAppointments(statusParam, page).subscribe({
       next: (res) => {
-        this.appointments = res.data;
-        this.pagination = res.pagination;
+        let list = res.data || [];
+        
+        if (this.activeTab === 'Upcoming') {
+          list = list.filter((a: Appointment) => a.status === 'Confirmed' || a.status === 'Pending');
+        }
+
+        this.appointments = list;
+        this.pagination = res.pagination || { total: list.length, page: 1, pages: 1 };
+
+        if (this.activeTab === 'Upcoming' && this.appointments.length > 0) {
+          this.nextAppointment = this.appointments[0];
+          this.regularAppointments = this.appointments.slice(1);
+        } else {
+          this.nextAppointment = null;
+          this.regularAppointments = this.appointments;
+        }
+
         this.isLoading = false;
       },
       error: (err) => {
-        this.errorMessage = err.message;
+        this.errorMessage = err.message || 'حدث خطأ أثناء تحميل المواعيد';
         this.isLoading = false;
       },
     });
@@ -79,7 +103,7 @@ export class PatientAppointmentsComponent implements OnInit {
       },
       error: (err) => {
         this.cancellingId = null;
-        this.errorMessage = err.message;
+        this.errorMessage = err.message || 'حدث خطأ أثناء إلغاء الموعد';
       },
     });
   }
@@ -93,16 +117,17 @@ export class PatientAppointmentsComponent implements OnInit {
   }
 
   getDoctorName(a: Appointment): string {
-    return typeof a.doctorId === 'object' ? a.doctorId.fullName : 'الطبيب';
+    return typeof a.doctorId === 'object' && a.doctorId ? a.doctorId.fullName : 'الطبيب المعالج';
   }
 
   getDoctorSpecialization(a: Appointment): string {
-    return typeof a.doctorId === 'object' ? a.doctorId.specialization : '';
+    return typeof a.doctorId === 'object' && a.doctorId ? a.doctorId.specialization : 'استشاري';
   }
 
   formatDate(dateStr: string): string {
+    if (!dateStr) return '';
     return new Date(dateStr).toLocaleDateString('ar-EG', {
-      weekday: 'short',
+      weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -110,6 +135,7 @@ export class PatientAppointmentsComponent implements OnInit {
   }
 
   formatTime(time: string): string {
+    if (!time) return '';
     const [h, m] = time.split(':').map(Number);
     const period = h < 12 ? 'ص' : 'م';
     const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
@@ -119,10 +145,5 @@ export class PatientAppointmentsComponent implements OnInit {
   goToReview(appointmentId: string): void {
     this.router.navigate(['/appointments/review', appointmentId]);
   }
-
-  isUpcoming(a: Appointment): boolean {
-    return (
-      new Date(a.appointmentDate) >= new Date() && a.status !== 'Cancelled'
-    );
-  }
 }
+
