@@ -1,13 +1,16 @@
-<div class="min-h-screen bg-background" dir="rtl">
+<div class="min-h-screen bg-background" [dir]="isRtl ? 'rtl' : 'ltr'">
 
   <!-- Header -->
   <div class="bg-surface-container-lowest border-b border-outline-variant px-sm md:px-xl py-md">
-    <a routerLink="/appointments/patient"
-      class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors mb-sm">
-      <span class="material-symbols-outlined">arrow_forward</span>
-      <span class="font-label-md text-label-md">العودة لمواعيدي</span>
-    </a>
-    <h1 class="font-headline-lg text-headline-lg text-on-surface">تقييم الزيارة</h1>
+    <div class="flex items-center justify-between mb-sm">
+      <a routerLink="/appointments/patient"
+        class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_forward</span>
+        <span class="font-label-md text-label-md">{{ 'APPOINTMENTS.REVIEW.BACK' | translate }}</span>
+      </a>
+      <app-language-toggle></app-language-toggle>
+    </div>
+    <h1 class="font-headline-lg text-headline-lg text-on-surface">{{ 'APPOINTMENTS.REVIEW.TITLE' | translate }}</h1>
   </div>
 
   <div class="max-w-xl mx-auto px-sm md:px-xl py-lg">
@@ -15,7 +18,7 @@
     <!-- Loading -->
     <div *ngIf="isLoadingAppt" class="text-center py-lg text-on-surface-variant">
       <div class="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-sm"></div>
-      <p class="font-body-sm text-body-sm">جاري التحميل...</p>
+      <p class="font-body-sm text-body-sm">{{ 'APPOINTMENTS.REVIEW.LOADING' | translate }}</p>
     </div>
 
     <ng-container *ngIf="!isLoadingAppt">
@@ -27,14 +30,14 @@
         <p class="font-body-md text-body-md">{{ errorMessage }}</p>
         <a routerLink="/appointments/patient"
           class="mt-md inline-block px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md">
-          العودة للمواعيد
+          {{ 'APPOINTMENTS.REVIEW.BACK_TO_APPOINTMENTS' | translate }}
         </a>
       </div>
 
       <!-- Success -->
       <div *ngIf="successMessage" class="bg-tertiary-container text-on-tertiary-container rounded-xl p-lg text-center">
         <span class="material-symbols-outlined text-5xl block mb-sm">task_alt</span>
-        <h2 class="font-headline-md text-headline-md mb-xs">شكراً لتقييمك!</h2>
+        <h2 class="font-headline-md text-headline-md mb-xs">{{ 'APPOINTMENTS.REVIEW.THANK_YOU' | translate }}</h2>
         <p class="font-body-sm text-body-sm">{{ successMessage }}</p>
       </div>
 
@@ -43,7 +46,7 @@
 
         <!-- Appointment Summary -->
         <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md">
-          <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">تفاصيل الزيارة
+          <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">{{ 'APPOINTMENTS.REVIEW.VISIT_DETAILS' | translate }}
           </h3>
           <div class="flex items-center gap-md">
             <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -52,7 +55,7 @@
             <div>
               <p class="font-headline-sm text-headline-sm text-on-surface">{{ getDoctorName() }}</p>
               <p class="font-body-sm text-body-sm text-on-surface-variant">
-                {{ formatDate(appointment.appointmentDate) }} في {{ appointment.appointmentTime }}
+                {{ formatDate(appointment.appointmentDate) }} {{ 'APPOINTMENTS.REVIEW.AT_TIME' | translate }} {{ appointment.appointmentTime }}
               </p>
             </div>
           </div>
@@ -69,7 +72,7 @@
 
           <!-- Star Rating -->
           <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md">
-            <h3 class="font-headline-sm text-headline-sm text-on-surface mb-sm text-center">كيف كانت زيارتك؟</h3>
+            <h3 class="font-headline-sm text-headline-sm text-on-surface mb-sm text-center">{{ 'APPOINTMENTS.REVIEW.HOW_WAS_VISIT' | translate }}</h3>
 
             <!-- Stars -->
             <div class="flex justify-center gap-sm mb-sm">
@@ -87,26 +90,26 @@
             <!-- Rating Label -->
             <p class="text-center font-label-md text-label-md transition-all"
               [class]="form.get('rating')?.value > 0 ? 'text-primary' : 'text-on-surface-variant'">
-              {{ getRatingLabel(hoveredStar || form.get('rating')?.value) || 'اختر تقييماً' }}
+              {{ getRatingLabel(hoveredStar || form.get('rating')?.value) || ('APPOINTMENTS.REVIEW.CHOOSE_RATING' | translate) }}
             </p>
 
             <p *ngIf="form.get('rating')?.invalid && form.get('rating')?.touched"
               class="text-center text-error font-body-sm text-body-sm mt-xs">
-              يرجى اختيار تقييم
+              {{ 'APPOINTMENTS.REVIEW.RATING_ERROR' | translate }}
             </p>
           </div>
 
           <!-- Comment -->
           <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md">
             <label class="font-label-md text-label-md text-on-surface-variant block mb-sm">
-              تعليقك <span class="font-body-sm text-body-sm">(اختياري)</span>
+              {{ 'APPOINTMENTS.REVIEW.COMMENT_LABEL' | translate }} <span class="font-body-sm text-body-sm">{{ 'APPOINTMENTS.REVIEW.OPTIONAL' | translate }}</span>
             </label>
-            <textarea formControlName="comment" rows="4" placeholder="شاركنا تجربتك مع الطبيب..."
+            <textarea formControlName="comment" rows="4" placeholder="{{ 'APPOINTMENTS.REVIEW.COMMENT_PLACEHOLDER' | translate }}"
               class="w-full border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface bg-surface placeholder:text-on-surface-variant/50
                      focus:border-primary focus:ring-4 focus:ring-primary/20 outline-none transition-all resize-none"></textarea>
             <div class="flex justify-between mt-xs">
               <p *ngIf="form.get('comment')?.hasError('maxlength')" class="text-error font-body-sm text-body-sm">
-                الحد الأقصى 1000 حرف
+                {{ 'APPOINTMENTS.REVIEW.COMMENT_MAXLENGTH' | translate }}
               </p>
               <p class="font-label-sm text-label-sm text-on-surface-variant mr-auto">
                 {{ form.get('comment')?.value?.length || 0 }}/1000
@@ -121,7 +124,7 @@
             <div *ngIf="isLoading"
               class="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></div>
             <span class="material-symbols-outlined text-[18px]" *ngIf="!isLoading">send</span>
-            {{ isLoading ? 'جاري الإرسال...' : 'إرسال التقييم' }}
+            {{ (isLoading ? 'APPOINTMENTS.REVIEW.SUBMITTING' : 'APPOINTMENTS.REVIEW.SUBMIT') | translate }}
           </button>
         </form>
 

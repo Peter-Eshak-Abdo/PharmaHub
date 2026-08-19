@@ -1,11 +1,14 @@
-<div class="min-h-screen bg-background" dir="rtl">
+<div class="min-h-screen bg-background" [dir]="isRtl ? 'rtl' : 'ltr'">
   <!-- Header -->
   <div class="bg-surface-container-lowest border-b border-outline-variant px-sm md:px-xl py-md">
-    <button (click)="goBack()" class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors mb-sm">
-      <span class="material-symbols-outlined">arrow_forward</span>
-      <span class="font-label-md text-label-md">رجوع</span>
-    </button>
-    <h1 class="font-headline-lg text-headline-lg text-on-surface">حجز موعد جديد</h1>
+    <div class="flex items-center justify-between mb-sm">
+      <button (click)="goBack()" class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">arrow_forward</span>
+        <span class="font-label-md text-label-md">{{ 'APPOINTMENTS.BOOKING.BACK' | translate }}</span>
+      </button>
+      <app-language-toggle></app-language-toggle>
+    </div>
+    <h1 class="font-headline-lg text-headline-lg text-on-surface">{{ 'APPOINTMENTS.BOOKING.TITLE' | translate }}</h1>
     <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ doctorName }} — {{ doctorSpecialization }}</p>
   </div>
 
@@ -14,14 +17,14 @@
     <div class="flex items-center gap-sm max-w-md">
       <div class="flex items-center gap-xs">
         <div [class]="step >= 1 ? 'w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md' : 'w-8 h-8 rounded-full bg-surface-container border-2 border-outline flex items-center justify-center text-on-surface-variant font-label-md text-label-md'">1</div>
-        <span class="font-label-md text-label-md" [class]="step >= 1 ? 'text-primary' : 'text-on-surface-variant'">اختيار الموعد</span>
+        <span class="font-label-md text-label-md" [class]="step >= 1 ? 'text-primary' : 'text-on-surface-variant'">{{ 'APPOINTMENTS.BOOKING.STEP1_LABEL' | translate }}</span>
       </div>
       <div class="flex-1 h-0.5 bg-outline-variant">
         <div class="h-full bg-primary transition-all duration-300" [style.width]="step >= 2 ? '100%' : '0%'"></div>
       </div>
       <div class="flex items-center gap-xs">
         <div [class]="step >= 2 ? 'w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md' : 'w-8 h-8 rounded-full bg-surface-container border-2 border-outline flex items-center justify-center text-on-surface-variant font-label-md text-label-md'">2</div>
-        <span class="font-label-md text-label-md" [class]="step >= 2 ? 'text-primary' : 'text-on-surface-variant'">تأكيد الحجز</span>
+        <span class="font-label-md text-label-md" [class]="step >= 2 ? 'text-primary' : 'text-on-surface-variant'">{{ 'APPOINTMENTS.BOOKING.STEP2_LABEL' | translate }}</span>
       </div>
     </div>
   </div>
@@ -37,7 +40,7 @@
       <div *ngIf="!doctorId" class="mt-xs">
         <a routerLink="/profiles/doctor-list" class="inline-flex items-center gap-xs px-md py-xs bg-primary text-on-primary rounded-lg font-label-sm text-label-sm hover:opacity-90 transition-opacity">
           <span class="material-symbols-outlined text-[16px]">person_search</span>
-          <span>الانتقال لقائمة الأطباء</span>
+          <span>{{ 'APPOINTMENTS.BOOKING.GO_TO_DOCTOR_LIST' | translate }}</span>
         </a>
       </div>
     </div>
@@ -52,7 +55,7 @@
     <div *ngIf="step === 1">
       <!-- Date Picker -->
       <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md">
-        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">اختر التاريخ</h2>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">{{ 'APPOINTMENTS.BOOKING.CHOOSE_DATE' | translate }}</h2>
         <div class="relative">
           <input
             type="date"
@@ -67,13 +70,13 @@
 
       <!-- Time Slots -->
       <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md" *ngIf="selectedDate">
-        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-sm">اختر الوقت</h2>
-        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">كل جلسة {{ slotDuration }} دقيقة</p>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-sm">{{ 'APPOINTMENTS.BOOKING.CHOOSE_TIME' | translate }}</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ 'APPOINTMENTS.BOOKING.SLOT_DURATION_PREFIX' | translate }} {{ slotDuration }} {{ 'APPOINTMENTS.BOOKING.SLOT_DURATION_SUFFIX' | translate }}</p>
 
         <!-- Loading -->
         <div *ngIf="isLoadingSlots" class="flex items-center justify-center py-lg gap-sm text-on-surface-variant">
           <div class="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <span class="font-body-sm text-body-sm">جاري تحميل المواعيد...</span>
+          <span class="font-body-sm text-body-sm">{{ 'APPOINTMENTS.BOOKING.LOADING_SLOTS' | translate }}</span>
         </div>
 
         <!-- Slots Grid -->
@@ -93,13 +96,13 @@
         <div *ngIf="!isLoadingSlots && availableSlots.length === 0 && !errorMessage"
           class="text-center py-lg text-on-surface-variant">
           <span class="material-symbols-outlined text-4xl mb-sm block">event_busy</span>
-          <p class="font-body-sm text-body-sm">لا توجد مواعيد متاحة في هذا اليوم</p>
+          <p class="font-body-sm text-body-sm">{{ 'APPOINTMENTS.BOOKING.NO_SLOTS' | translate }}</p>
         </div>
       </div>
 
       <!-- Fee Preview -->
       <div *ngIf="doctorFee > 0" class="bg-surface-container rounded-lg px-md py-sm mb-md flex items-center justify-between">
-        <span class="font-label-md text-label-md text-on-surface-variant">رسوم الكشف</span>
+        <span class="font-label-md text-label-md text-on-surface-variant">{{ 'APPOINTMENTS.BOOKING.CONSULTATION_FEE' | translate }}</span>
         <span class="font-headline-sm text-headline-sm text-primary">{{ doctorFee | currency:'EGP':'symbol':'1.0-0' }}</span>
       </div>
 
@@ -111,7 +114,7 @@
                bg-primary text-on-primary hover:bg-primary-container shadow-sm
                disabled:opacity-40 disabled:cursor-not-allowed focus:ring-4 focus:ring-primary/20"
       >
-        التالي: تفاصيل الحجز
+        {{ 'APPOINTMENTS.BOOKING.NEXT_BUTTON' | translate }}
       </button>
     </div>
 
@@ -119,14 +122,14 @@
     <div *ngIf="step === 2">
       <!-- Booking Summary -->
       <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md mb-md">
-        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">ملخص الحجز</h2>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">{{ 'APPOINTMENTS.BOOKING.SUMMARY_TITLE' | translate }}</h2>
         <div class="space-y-sm">
           <div class="flex items-center gap-md">
             <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <span class="material-symbols-outlined text-primary">person</span>
             </div>
             <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant">الطبيب</p>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">{{ 'APPOINTMENTS.BOOKING.DOCTOR_LABEL' | translate }}</p>
               <p class="font-label-md text-label-md text-on-surface">{{ doctorName }}</p>
             </div>
           </div>
@@ -135,7 +138,7 @@
               <span class="material-symbols-outlined text-primary">calendar_today</span>
             </div>
             <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant">التاريخ</p>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">{{ 'APPOINTMENTS.BOOKING.DATE_LABEL' | translate }}</p>
               <p class="font-label-md text-label-md text-on-surface">{{ formatDate(selectedDate) }}</p>
             </div>
           </div>
@@ -144,7 +147,7 @@
               <span class="material-symbols-outlined text-primary">schedule</span>
             </div>
             <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant">الوقت</p>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">{{ 'APPOINTMENTS.BOOKING.TIME_LABEL' | translate }}</p>
               <p class="font-label-md text-label-md text-on-surface">{{ formatTime(selectedTime) }}</p>
             </div>
           </div>
@@ -153,7 +156,7 @@
               <span class="material-symbols-outlined text-primary">payments</span>
             </div>
             <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant">رسوم الكشف</p>
+              <p class="font-label-sm text-label-sm text-on-surface-variant">{{ 'APPOINTMENTS.BOOKING.CONSULTATION_FEE' | translate }}</p>
               <p class="font-label-md text-label-md text-primary">{{ doctorFee | currency:'EGP':'symbol':'1.0-0' }}</p>
             </div>
           </div>
@@ -164,7 +167,7 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-md">
         <!-- Consultation Type -->
         <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md">
-          <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">نوع الاستشارة</h3>
+          <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">{{ 'APPOINTMENTS.BOOKING.CONSULTATION_TYPE' | translate }}</h3>
           <div class="grid grid-cols-2 gap-sm">
             <button
               type="button"
@@ -187,17 +190,17 @@
         <!-- Reason for Visit -->
         <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md">
           <label class="font-label-md text-label-md text-on-surface-variant block mb-sm">
-            سبب الزيارة <span class="font-body-sm text-body-sm">(اختياري)</span>
+            {{ 'APPOINTMENTS.BOOKING.REASON_LABEL' | translate }} <span class="font-body-sm text-body-sm">{{ 'APPOINTMENTS.BOOKING.OPTIONAL' | translate }}</span>
           </label>
           <textarea
             formControlName="reasonForVisit"
             rows="3"
-            placeholder="اذكر باختصار سبب زيارتك للطبيب..."
+            placeholder="{{ 'APPOINTMENTS.BOOKING.REASON_PLACEHOLDER' | translate }}"
             class="w-full border border-outline-variant rounded-lg px-md py-sm font-body-md text-body-md text-on-surface bg-surface placeholder:text-on-surface-variant/50
                    focus:border-primary focus:ring-4 focus:ring-primary/20 outline-none transition-all resize-none"
           ></textarea>
           <p *ngIf="form.get('reasonForVisit')?.hasError('maxlength')" class="text-error font-body-sm text-body-sm mt-xs">
-            الحد الأقصى 500 حرف
+            {{ 'APPOINTMENTS.BOOKING.REASON_MAXLENGTH' | translate }}
           </p>
         </div>
 
@@ -208,7 +211,7 @@
             (click)="goBack()"
             class="flex-1 py-sm rounded-lg font-label-md text-label-md border-2 border-primary text-primary hover:bg-primary/5 transition-all"
           >
-            رجوع
+            {{ 'APPOINTMENTS.BOOKING.BACK' | translate }}
           </button>
           <button
             type="submit"
@@ -217,7 +220,7 @@
                    disabled:opacity-40 disabled:cursor-not-allowed focus:ring-4 focus:ring-primary/20 flex items-center justify-center gap-xs"
           >
             <div *ngIf="isSubmitting" class="w-4 h-4 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></div>
-            <span>{{ isSubmitting ? 'جاري الحجز...' : 'تأكيد الحجز' }}</span>
+            <span>{{ (isSubmitting ? 'APPOINTMENTS.BOOKING.SUBMITTING' : 'APPOINTMENTS.BOOKING.CONFIRM_BUTTON') | translate }}</span>
           </button>
         </div>
       </form>
