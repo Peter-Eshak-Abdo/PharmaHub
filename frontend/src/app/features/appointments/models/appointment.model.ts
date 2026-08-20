@@ -9,15 +9,22 @@ export type ConsultationType = 'In-Clinic' | 'Online';
 export interface Appointment {
   _id: string;
   patientId: PatientRef | string;
+  patientName?: string;
+  patientPhone?: string;
   doctorId: DoctorRef | string;
+  doctorName?: string;
+  doctorSpecialization?: string;
+  clinicId?: string;
+  clinicName?: string;
   appointmentDate: string;
   appointmentTime: string;
   consultationType: ConsultationType;
   reasonForVisit?: string;
   estimatedDurationMinutes?: number;
+  durationMinutes?: number;
   status: AppointmentStatus;
   consultationFeeSnapshot?: number;
-  bookingDate: string;
+  bookingDate?: string;
   createdAt: string;
   updatedAt: string;
 }

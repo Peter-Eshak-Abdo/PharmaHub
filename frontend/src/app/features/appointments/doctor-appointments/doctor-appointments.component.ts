@@ -7,7 +7,7 @@ import {
   STATUS_COLORS,
   STATUS_TRANSITIONS,
 } from '../models/appointment.model';
-import { LanguageService } from 'src/app/core/services/language.servics';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 // Maps each status to its translation key suffix under APPOINTMENTS.STATUS
 const STATUS_KEY: Record<AppointmentStatus, string> = {

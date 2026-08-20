@@ -11,6 +11,8 @@ const routes: Routes = [
   { path: 'doctor-profile', component: DoctorProfileComponent },
   { path: 'doctor-detail/:id', component: DoctorDetailComponent },
   { path: 'doctor-detail', component: DoctorDetailComponent },
+  { path: 'doctor/:id', component: DoctorDetailComponent },
+  { path: 'doctor', component: DoctorDetailComponent },
   { path: '', redirectTo: 'doctor-list', pathMatch: 'full' },
 ];
 

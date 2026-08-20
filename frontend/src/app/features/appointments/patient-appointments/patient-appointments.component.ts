@@ -7,7 +7,7 @@ import {
   AppointmentStatus,
   STATUS_COLORS,
 } from '../models/appointment.model';
-import { LanguageService } from 'src/app/core/services/language.servics';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 const STATUS_KEY: Record<AppointmentStatus, string> = {
   Pending: 'PENDING',

@@ -100,7 +100,7 @@ export class ChatService {
   private initWelcomeMessage(context: ContextSummary | null): void {
     if (this.messagesSubject.value.length > 0) return;
 
-    let welcomeText = `مرحباً بك في **PharmaHub AI Assistant** 🩺\nأنا مساعدك الذكي، هنا لإرشادك في استخدام كل مميزات التطبيق، الإجابة عن استفسارات أدويتك وصحتك، وتسهيل حجز الكشوفات!`;
+    let welcomeText = `مرحباً بك في **طمني AI Assistant** 🩺\nأنا مساعدك الذكي، هنا لإرشادك في استخدام كل مميزات التطبيق، الإجابة عن استفسارات أدويتك وصحتك، وتسهيل حجز الكشوفات!`;
     const initialButtons: ActionButton[] = [
       { label: '📅 حجز موعد كشف', route: '/appointments/book', icon: 'calendar' },
       { label: '👨‍⚕️ قائمة الأطباء', route: '/profiles/doctor-list', icon: 'users' },

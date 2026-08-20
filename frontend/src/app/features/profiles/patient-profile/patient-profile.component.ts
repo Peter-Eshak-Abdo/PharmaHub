@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import { PatientService } from '../services/patient.service';
-import { LanguageService } from 'src/app/core/services/language.servics';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 @Component({
   selector: 'app-patient-profile',
@@ -22,7 +21,6 @@ export class PatientProfileComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private patientService: PatientService,
-    private translate: TranslateService,
     private languageService: LanguageService,
   ) {}
 
@@ -62,13 +60,11 @@ export class PatientProfileComponent implements OnInit {
       this.patientService.updatePatientProfile(this.profileForm.value).subscribe({
         next: (res: any) => {
           const patient = res?.data || res?.user || res;
-          this.patientData = patient;
-          if (patient) {
-            this.profileForm.patchValue(patient);
-          }
+          this.patientData = { ...this.patientData, ...patient };
+          this.profileForm.patchValue(this.patientData);
           this.isEditMode = false;
           this.hasProfile = true;
-          alert(this.translate.instant('PROFILES.PATIENT_PROFILE.SAVE_SUCCESS'));
+          alert('تم حفظ بيانات المريض بنجاح!');
         },
         error: (err: any) => {
           console.error('Error updating profile:', err);
@@ -82,4 +78,3 @@ export class PatientProfileComponent implements OnInit {
     this.isEditMode = true;
   }
 }
-

@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { AppointmentService } from '../services/appointment.service';
 import { ConsultationType } from '../models/appointment.model';
-import { LanguageService } from 'src/app/core/services/language.servics';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 @Component({
   selector: 'app-booking-form',

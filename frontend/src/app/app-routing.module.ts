@@ -61,7 +61,11 @@ const routes: Routes = [
         (m) => m.UnauthorizedModule,
       ),
   },
-  { path: '', redirectTo: '/auth/login', pathMatch: 'full' },
+  {
+    path: '',
+    loadChildren: () =>
+      import('./features/landing/landing.module').then((m) => m.LandingModule),
+  },
   {
     path: '**',
     loadChildren: () =>
