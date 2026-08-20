@@ -2,33 +2,53 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export type AppTheme = 'light' | 'dark';
+const STORAGE_KEY = 'tammeni-theme';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
-  private readonly THEME_KEY = 'app-theme';
-  private currentThemeSubject = new BehaviorSubject<AppTheme>('light');
-  public currentTheme$ = this.currentThemeSubject.asObservable();
+  private themeSubject = new BehaviorSubject<AppTheme>('light');
 
-  constructor() {}
+  public theme$ = this.themeSubject.asObservable();
+  public currentTheme$ = this.themeSubject.asObservable();
 
-  get currentTheme(): AppTheme {
-    return this.currentThemeSubject.value;
+  constructor() {
+    this.initTheme();
   }
 
-  setTheme(theme: AppTheme): void {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem(this.THEME_KEY, theme);
-    this.currentThemeSubject.next(theme);
-  }
-
-  toggleTheme(): void {
-    this.setTheme(this.currentTheme === 'light' ? 'dark' : 'light');
-  }
-
-  loadSavedTheme(): void {
-    const saved = (localStorage.getItem(this.THEME_KEY) as AppTheme) || 'light';
+  public initTheme(): void {
+    const saved = (localStorage.getItem(STORAGE_KEY) as AppTheme) || 'light';
     this.setTheme(saved);
+  }
+
+  public loadSavedTheme(): void {
+    this.initTheme();
+  }
+
+  public get currentTheme(): AppTheme {
+    return this.themeSubject.value;
+  }
+
+  public isDark(): boolean {
+    return this.currentTheme === 'dark';
+  }
+
+  public setTheme(theme: AppTheme): void {
+    this.themeSubject.next(theme);
+    localStorage.setItem(STORAGE_KEY, theme);
+
+    document.documentElement.setAttribute('data-theme', theme);
+
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+
+  public toggleTheme(): void {
+    const next = this.currentTheme === 'light' ? 'dark' : 'light';
+    this.setTheme(next);
   }
 }

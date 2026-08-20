@@ -127,52 +127,24 @@
   </div>
 </div>
 
-<!-- ================= BOOKING FORM STEPS ================= -->
-<div *ngIf="!isBookedSuccess" class="min-h-screen bg-background" dir="rtl">
-  <!-- Header -->
-  <div class="bg-surface-container-lowest border-b border-outline-variant px-sm md:px-xl py-md">
-    <div class="flex items-center justify-between mb-sm">
-      <button (click)="goBack()" class="flex items-center gap-xs text-on-surface-variant hover:text-primary transition-colors">
-        <span class="material-symbols-outlined">arrow_forward</span>
-        <span class="font-label-md text-label-md">{{ 'APPOINTMENTS.BOOKING.BACK' | translate }}</span>
-      </button>
-      <app-language-toggle></app-language-toggle>
-    </div>
-    <h1 class="font-headline-lg text-headline-lg text-on-surface">{{ 'APPOINTMENTS.BOOKING.TITLE' | translate }}</h1>
-    <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ doctorName }} — {{ doctorSpecialization }}</p>
-  </div>
-
-  <!-- Progress Steps -->
-  <div class="px-sm md:px-xl py-md bg-surface-container-low border-b border-outline-variant">
-    <div class="flex items-center gap-sm max-w-md">
-      <div class="flex items-center gap-xs">
-        <div [class]="step >= 1 ? 'w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md' : 'w-8 h-8 rounded-full bg-surface-container border-2 border-outline flex items-center justify-center text-on-surface-variant font-label-md text-label-md'">1</div>
-        <span class="font-label-md text-label-md" [class]="step >= 1 ? 'text-primary' : 'text-on-surface-variant'">{{ 'APPOINTMENTS.BOOKING.STEP1_LABEL' | translate }}</span>
+    <!-- Stepper indicator -->
+    <div class="flex items-center justify-center gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-sm">
+      <div class="flex items-center gap-2" [class.text-teal-700]="step >= 1" [class.font-bold]="step >= 1">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black"
+              [class.bg-teal-600]="step >= 1" [class.text-white]="step >= 1" [class.bg-slate-100]="step < 1">1</span>
+        <span>اختر التاريخ والوقت</span>
       </div>
-      <div class="flex-1 h-0.5 bg-outline-variant">
-        <div class="h-full bg-primary transition-all duration-300" [style.width]="step >= 2 ? '100%' : '0%'"></div>
-      </div>
-      <div class="flex items-center gap-xs">
-        <div [class]="step >= 2 ? 'w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary font-label-md text-label-md' : 'w-8 h-8 rounded-full bg-surface-container border-2 border-outline flex items-center justify-center text-on-surface-variant font-label-md text-label-md'">2</div>
-        <span class="font-label-md text-label-md" [class]="step >= 2 ? 'text-primary' : 'text-on-surface-variant'">{{ 'APPOINTMENTS.BOOKING.STEP2_LABEL' | translate }}</span>
+      <div class="w-12 h-0.5 bg-slate-200"></div>
+      <div class="flex items-center gap-2" [class.text-teal-700]="step >= 2" [class.font-bold]="step >= 2">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black"
+              [class.bg-teal-600]="step >= 2" [class.text-white]="step >= 2" [class.bg-slate-100]="step < 2">2</span>
+        <span>بيانات الكشف والتأكيد</span>
       </div>
     </div>
-  </div>
-
-  <div class="max-w-2xl mx-auto px-sm md:px-xl py-lg">
 
     <!-- Error Message -->
-    <div *ngIf="errorMessage" class="bg-error-container text-on-error-container rounded-lg px-md py-sm mb-md flex flex-col gap-xs">
-      <div class="flex items-start gap-sm">
-        <span class="material-symbols-outlined text-[20px] mt-0.5 shrink-0">error</span>
-        <span class="font-body-sm text-body-sm">{{ errorMessage }}</span>
-      </div>
-      <div *ngIf="!doctorId" class="mt-xs">
-        <a routerLink="/profiles/doctor-list" class="inline-flex items-center gap-xs px-md py-xs bg-primary text-on-primary rounded-lg font-label-sm text-label-sm hover:opacity-90 transition-opacity">
-          <span class="material-symbols-outlined text-[16px]">person_search</span>
-          <span>{{ 'APPOINTMENTS.BOOKING.GO_TO_DOCTOR_LIST' | translate }}</span>
-        </a>
-      </div>
+    <div *ngIf="errorMessage" class="p-4 bg-red-50 border-r-4 border-red-500 text-red-700 rounded-xl text-sm font-medium">
+      {{ errorMessage }}
     </div>
 
     <!-- ======== STEP 1: Date & Time ======== -->
@@ -285,16 +257,6 @@
         <span class="font-headline-sm text-headline-sm text-primary">{{ doctorFee | currency:'EGP':'symbol':'1.0-0' }}</span>
       </div>
 
-      <!-- Next Button -->
-      <button
-        (click)="goToStep2()"
-        [disabled]="!selectedDate || !selectedTime"
-        class="w-full py-sm rounded-lg font-label-md text-label-md transition-all
-               bg-primary text-on-primary hover:bg-primary-container shadow-sm
-               disabled:opacity-40 disabled:cursor-not-allowed focus:ring-4 focus:ring-primary/20"
-      >
-        {{ 'APPOINTMENTS.BOOKING.NEXT_BUTTON' | translate }}
-      </button>
     </div>
 
     <!-- ======== STEP 2: Details & Confirm ======== -->
@@ -345,24 +307,30 @@
       <!-- Form Details -->
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-md">
         <!-- Consultation Type -->
-        <div class="bg-surface-container-lowest rounded-xl shadow-sm p-md">
-          <h3 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-sm">{{ 'APPOINTMENTS.BOOKING.CONSULTATION_TYPE' | translate }}</h3>
-          <div class="grid grid-cols-2 gap-sm">
-            <button
-              type="button"
-              *ngFor="let type of consultationTypes"
-              (click)="form.get('consultationType')?.setValue(type.value)"
-              [class]="form.get('consultationType')?.value === type.value
-                ? 'p-sm rounded-lg border-2 border-primary bg-primary/5 flex flex-col items-center gap-xs transition-all'
-                : 'p-sm rounded-lg border-2 border-outline-variant flex flex-col items-center gap-xs transition-all hover:border-primary/50'"
-            >
-              <span class="material-symbols-outlined text-2xl" [class]="form.get('consultationType')?.value === type.value ? 'text-primary' : 'text-on-surface-variant'">
-                {{ type.icon }}
-              </span>
-              <span class="font-label-md text-label-md" [class]="form.get('consultationType')?.value === type.value ? 'text-primary' : 'text-on-surface-variant'">
-                {{ type.label }}
-              </span>
-            </button>
+        <div class="space-y-2">
+          <label class="block text-sm font-bold text-slate-800">نوع الكشف</label>
+          <div class="grid grid-cols-2 gap-4">
+            <label class="flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition"
+                   [class.border-teal-600]="form.value.consultationType === 'In-Clinic'"
+                   [class.bg-teal-50]="form.value.consultationType === 'In-Clinic'"
+                   [class.border-slate-200]="form.value.consultationType !== 'In-Clinic'">
+              <input type="radio" formControlName="consultationType" value="In-Clinic" class="text-teal-600 focus:ring-teal-500">
+              <div>
+                <div class="font-bold text-sm text-slate-900">كشف بالعيادة</div>
+                <div class="text-xs text-slate-500">حضور شخصي للعيادة</div>
+              </div>
+            </label>
+
+            <label class="flex items-center gap-3 p-4 rounded-2xl border cursor-pointer transition"
+                   [class.border-teal-600]="form.value.consultationType === 'Online'"
+                   [class.bg-teal-50]="form.value.consultationType === 'Online'"
+                   [class.border-slate-200]="form.value.consultationType !== 'Online'">
+              <input type="radio" formControlName="consultationType" value="Online" class="text-teal-600 focus:ring-teal-500">
+              <div>
+                <div class="font-bold text-sm text-slate-900">استشارة أونلاين</div>
+                <div class="text-xs text-slate-500">كشف عبر الڤيديو أونلاين</div>
+              </div>
+            </label>
           </div>
         </div>
 
@@ -384,13 +352,9 @@
         </div>
 
         <!-- Buttons -->
-        <div class="flex gap-sm">
-          <button
-            type="button"
-            (click)="goBack()"
-            class="flex-1 py-sm rounded-lg font-label-md text-label-md border-2 border-primary text-primary hover:bg-primary/5 transition-all"
-          >
-            {{ 'APPOINTMENTS.BOOKING.BACK' | translate }}
+        <div class="pt-6 border-t border-slate-100 flex items-center justify-between">
+          <button type="button" (click)="goBack()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-sm hover:bg-slate-50">
+            تعديل الموعد
           </button>
           <button
             type="submit"
@@ -405,6 +369,36 @@
       </form>
     </div>
 
-  </div>
-</div>
+    <!-- Success Confirmation Screen -->
+    <div *ngIf="isBookedSuccess" class="bg-white p-8 rounded-3xl border border-slate-200 text-center shadow-xl space-y-6">
+      <div class="w-20 h-20 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mx-auto shadow-inner">
+        <span class="material-symbols-outlined text-4xl">check_circle</span>
+      </div>
 
+      <div class="space-y-2">
+        <h2 class="text-2xl font-extrabold text-slate-900">تم حجز الموعد بنجاح!</h2>
+        <p class="text-slate-600 text-sm max-w-md mx-auto">
+          تم تأكيد موعدك مع {{ confirmedAppointment?.doctorName || doctorName }}. يمكنك متابعة حالة الموعد والروشتة في أي وقت.
+        </p>
+      </div>
+
+      <div class="p-6 bg-slate-50 rounded-2xl border border-slate-200 max-w-md mx-auto text-right text-sm space-y-2">
+        <div class="flex justify-between">
+          <span class="text-slate-500">التاريخ:</span>
+          <strong class="text-slate-800">{{ formatDate(confirmedAppointment?.appointmentDate || selectedDate) }}</strong>
+        </div>
+        <div class="flex justify-between border-t border-slate-200 pt-2">
+          <span class="text-slate-500">التوقيت:</span>
+          <strong class="text-slate-800">{{ formatTime(confirmedAppointment?.appointmentTime || selectedTime) }}</strong>
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+        <button (click)="goToAppointments()" class="w-full sm:w-auto px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-sm shadow">
+          عرض مواعيدي
+        </button>
+        <button (click)="goHome()" class="w-full sm:w-auto px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-sm">
+          العودة للرئيسية
+        </button>
+      </div>
+    </div>

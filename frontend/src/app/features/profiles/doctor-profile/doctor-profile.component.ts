@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DoctorService } from '../services/doctor.service';
-import { LanguageService } from 'src/app/core/services/language.servics';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 @Component({
   selector: 'app-doctor-profile',
@@ -48,7 +48,15 @@ export class DoctorProfileComponent implements OnInit {
         const doctor = res?.data || res;
         if (doctor) {
           this.doctorData = doctor;
-          this.doctorForm.patchValue(doctor);
+          this.doctorForm.patchValue({
+            fullName: doctor.fullName || '',
+            specialization: doctor.specialization || '',
+            education: doctor.education || '',
+            qualifications: doctor.qualifications || '',
+            yearsOfExperience: doctor.yearsOfExperience || doctor.yearsExperience || 0,
+            bio: doctor.bio || '',
+            consultationFeeSnapshot: doctor.consultationFeeSnapshot || doctor.consultationFee || 0,
+          });
           this.isEditMode = false;
           this.hasProfile = true;
         }
@@ -62,16 +70,21 @@ export class DoctorProfileComponent implements OnInit {
   onSubmit() {
     if (this.doctorForm.invalid) return;
 
-    this.doctorService.updateDoctorProfile(this.doctorForm.value).subscribe({
+    const val = this.doctorForm.value;
+    const payload = {
+      ...val,
+      yearsExperience: val.yearsOfExperience,
+      consultationFee: val.consultationFeeSnapshot
+    };
+
+    this.doctorService.updateDoctorProfile(payload).subscribe({
       next: (res: any) => {
         const doctor = res?.data || res?.user || res;
-        this.doctorData = doctor;
-        if (doctor) {
-          this.doctorForm.patchValue(doctor);
-        }
+        this.doctorData = { ...this.doctorData, ...doctor };
+        this.doctorForm.patchValue(this.doctorData);
         this.isEditMode = false;
         this.hasProfile = true;
-        alert('تم حفظ التعديلات بنجاح');
+        alert('تم حفظ بيانات الملف الشخصي للطبيب بنجاح!');
       },
       error: (err) => {
         console.error('Error saving profile', err);
@@ -84,4 +97,3 @@ export class DoctorProfileComponent implements OnInit {
     this.isEditMode = true;
   }
 }
-

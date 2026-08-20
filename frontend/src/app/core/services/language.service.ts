@@ -10,16 +10,16 @@ const RTL_LANGUAGES: AppLanguage[] = ['ar'];
   providedIn: 'root'
 })
 export class LanguageService {
-  private currentLangSubject = new BehaviorSubject<AppLanguage>('en');
+  private currentLangSubject = new BehaviorSubject<AppLanguage>('ar');
   currentLang$ = this.currentLangSubject.asObservable();
 
   constructor(private translate: TranslateService) {
     this.translate.addLangs(['en', 'ar']);
-    this.translate.setDefaultLang('en');
+    this.translate.setDefaultLang('ar');
   }
 
   init() {
-    const saved = (localStorage.getItem(STORAGE_KEY) as AppLanguage) || 'en';
+    const saved = (localStorage.getItem(STORAGE_KEY) as AppLanguage) || 'ar';
     this.setLanguage(saved);
   }
 

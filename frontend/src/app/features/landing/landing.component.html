@@ -1,0 +1,316 @@
+<div class="landing-container rtl text-right">
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden bg-gradient-to-b from-teal-900 via-teal-800 to-teal-950 text-white pt-12 pb-20 px-4 sm:px-6 lg:px-8">
+    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <!-- Hero Text & Search -->
+        <div class="lg:col-span-7 space-y-8">
+          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-teal-500/20 border border-teal-400/30 text-teal-200 text-sm font-medium">
+            <span class="material-symbols-outlined text-teal-300 text-base">verified</span>
+            <span>المنصة الرائدة لرعاية وتيسير حجز الأطباء بمصر</span>
+          </div>
+
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight text-white tracking-tight">
+            احجز موعدك الطبي بكل <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-cyan-300">سهولة وأمان</span>
+          </h1>
+
+          <p class="text-lg sm:text-xl text-teal-100/90 max-w-2xl font-normal leading-relaxed">
+            اختر من بين نخبة الأطباء والاستشاريين المعتمدين، احجز بالعيادة أو كشف أونلاين عبر الڤيديو، وتابع سجلاتك الطبية في مكان واحد.
+          </p>
+
+          <!-- Search Widget Card -->
+          <div class="bg-white/95 backdrop-blur-md rounded-2xl p-4 sm:p-6 shadow-2xl border border-white/20 text-slate-800 mt-6">
+            <form (ngSubmit)="onSearch()" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-12 gap-3 items-center">
+              
+              <!-- Search Query -->
+              <div class="sm:col-span-3 lg:col-span-4 relative">
+                <label class="block text-xs font-bold text-slate-500 mb-1">اسم الطبيب أو العيادة</label>
+                <div class="relative">
+                  <input type="text" [(ngModel)]="searchQuery" name="searchQuery" 
+                         placeholder="د. أحمد، عيادة النور..." 
+                         class="w-full pl-3 pr-9 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-800">
+                  <span class="material-symbols-outlined absolute right-2.5 top-2.5 text-slate-400 text-lg">search</span>
+                </div>
+              </div>
+
+              <!-- Specialty -->
+              <div class="sm:col-span-3 lg:col-span-3 relative">
+                <label class="block text-xs font-bold text-slate-500 mb-1">التخصص الطبي</label>
+                <select [(ngModel)]="selectedSpecialty" name="selectedSpecialty"
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-800">
+                  <option value="">جميع التخصصات</option>
+                  <option *ngFor="let spec of specialties" [value]="spec.name">{{ spec.name }}</option>
+                </select>
+              </div>
+
+              <!-- City -->
+              <div class="sm:col-span-3 lg:col-span-3 relative">
+                <label class="block text-xs font-bold text-slate-500 mb-1">المدينة / المنطقة</label>
+                <select [(ngModel)]="selectedCity" name="selectedCity"
+                        class="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-800">
+                  <option value="">جميع المناطق</option>
+                  <option value="القاهرة">القاهرة</option>
+                  <option value="الجيزة">الجيزة</option>
+                  <option value="الإسكندرية">الإسكندرية</option>
+                  <option value="المنصورة">المنصورة</option>
+                </select>
+              </div>
+
+              <!-- Search Button -->
+              <div class="sm:col-span-3 lg:col-span-2 pt-5">
+                <button type="submit" 
+                        class="w-full bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-teal-600/30 transition duration-200 flex items-center justify-center gap-1.5 text-sm">
+                  <span class="material-symbols-outlined text-lg">search</span>
+                  <span>ابحث</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Quick tags -->
+          <div class="flex flex-wrap items-center gap-2 pt-2 text-sm text-teal-100/80">
+            <span class="font-bold">الأكثر بحثاً:</span>
+            <button (click)="selectSpecialty('طب الأطفال')" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full transition text-xs">أطفال</button>
+            <button (click)="selectSpecialty('أمراض القلب')" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full transition text-xs">قلب</button>
+            <button (click)="selectSpecialty('الجلدية والتناسلية')" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full transition text-xs">جلدية</button>
+            <button (click)="selectSpecialty('العظام والمفاصل')" class="px-3 py-1 bg-white/10 hover:bg-white/20 rounded-full transition text-xs">عظام</button>
+          </div>
+        </div>
+
+        <!-- Hero Image Showcase -->
+        <div class="lg:col-span-5 relative hidden lg:block">
+          <div class="relative mx-auto max-w-md">
+            <div class="absolute -top-4 -right-4 w-72 h-72 bg-teal-400/20 rounded-full blur-3xl"></div>
+            <div class="relative bg-gradient-to-tr from-teal-700 to-teal-500 rounded-3xl p-3 shadow-2xl border border-teal-300/30">
+              <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80" 
+                   alt="Doctor" class="rounded-2xl object-cover h-96 w-full shadow-inner">
+              
+              <!-- Floating Card Badge 1 -->
+              <div class="absolute -bottom-6 -left-6 bg-white text-slate-800 p-4 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-100">
+                <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center font-bold">
+                  <span class="material-symbols-outlined text-2xl">verified</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm">أطباء معتمدون</h4>
+                  <p class="text-xs text-slate-500">حجز مؤكد فوري</p>
+                </div>
+              </div>
+
+              <!-- Floating Card Badge 2 -->
+              <div class="absolute -top-6 -left-4 bg-white text-slate-800 p-3 rounded-2xl shadow-xl flex items-center gap-2 border border-slate-100">
+                <span class="material-symbols-outlined text-amber-500">star</span>
+                <span class="font-bold text-sm">4.9 / 5.0</span>
+                <span class="text-xs text-slate-500">(+12k تقييم)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Bar -->
+  <section class="bg-white border-b border-slate-200 py-8 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div *ngFor="let stat of stats" class="p-4 rounded-xl bg-slate-50 border border-slate-100 transition hover:shadow-md">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-teal-100 text-teal-700 mb-3">
+            <span class="material-symbols-outlined text-2xl">{{ stat.icon }}</span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-slate-800">{{ stat.value }}</div>
+          <div class="text-sm font-medium text-slate-500 mt-1">{{ stat.label }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Specialties Grid -->
+  <section class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <h2 class="text-3xl font-extrabold text-slate-900">اختر التخصص الطبي المطلوب</h2>
+        <p class="text-slate-600 mt-3 text-base">تصفح أشهر التخصصات الطبية واحجز مع أفضل الأطباء المتاحين الآن</p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div *ngFor="let spec of specialties" 
+             (click)="selectSpecialty(spec.name)"
+             class="bg-white p-6 rounded-2xl border border-slate-200 hover:border-teal-500 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group text-center">
+          <div class="w-16 h-16 rounded-2xl bg-teal-50 text-teal-600 group-hover:bg-teal-600 group-hover:text-white flex items-center justify-center mx-auto mb-4 transition-colors">
+            <span class="material-symbols-outlined text-3xl">{{ spec.icon }}</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-800 group-hover:text-teal-700 mb-1 transition-colors">{{ spec.name }}</h3>
+          <p class="text-xs text-slate-500 font-medium">{{ spec.count }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Doctors Showcase -->
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
+        <div>
+          <h2 class="text-3xl font-extrabold text-slate-900">نخبة الأطباء والاستشاريين</h2>
+          <p class="text-slate-600 mt-2 text-base">احجز كشفك الآن مع أكثر الأطباء تقييماً وخبرة</p>
+        </div>
+        <a routerLink="/profiles/doctor-list" class="inline-flex items-center gap-1 text-teal-700 font-bold hover:text-teal-800 text-sm">
+          <span>عرض جميع الأطباء</span>
+          <span class="material-symbols-outlined text-base">arrow_back</span>
+        </a>
+      </div>
+
+      <!-- Doctors Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div *ngFor="let doc of popularDoctors" 
+             class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <!-- Doctor Image & Status -->
+            <div class="relative h-48 bg-slate-100">
+              <img [src]="doc.avatar || 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80'" 
+                   [alt]="doc.fullName" 
+                   class="w-full h-full object-cover">
+              <div class="absolute top-3 right-3 bg-teal-600 text-white text-xs font-bold px-2.5 py-1 rounded-full shadow">
+                {{ doc.specialization }}
+              </div>
+            </div>
+
+            <!-- Doctor Details -->
+            <div class="p-5">
+              <div class="flex items-center gap-1 text-amber-500 text-sm mb-1">
+                <span class="material-symbols-outlined text-base">star</span>
+                <span class="font-bold text-slate-800">{{ doc.rating }}</span>
+                <span class="text-xs text-slate-400">({{ doc.reviewCount || 45 }} تقييم)</span>
+              </div>
+
+              <h3 class="text-lg font-bold text-slate-900 hover:text-teal-700 transition cursor-pointer"
+                  (click)="goToDoctorDetail(doc._id)">
+                {{ doc.fullName }}
+              </h3>
+              <p class="text-xs text-slate-500 mt-1 line-clamp-2">{{ doc.qualifications || doc.education || 'استشاري ورئيس قسم بالمستشفى التعليمي' }}</p>
+
+              <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-slate-400 text-base">payments</span>
+                  <span>الكشف: <strong>{{ doc.consultationFee }} ج.م</strong></span>
+                </span>
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-slate-400 text-base">work_history</span>
+                  <span>{{ doc.yearsExperience }} سنوات خبرة</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Action Buttons -->
+          <div class="p-5 pt-0 flex items-center gap-2">
+            <button (click)="goToDoctorDetail(doc._id)"
+                    class="flex-1 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold py-2.5 rounded-xl transition duration-200 flex items-center justify-center gap-1 text-xs border border-slate-200"
+                    title="مشاهدة الملف والتفاصيل الكاملة">
+              <span class="material-symbols-outlined text-base text-teal-600">info</span>
+              <span>التفاصيل</span>
+            </button>
+            <button (click)="goToBooking(doc._id)"
+                    class="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl transition duration-200 flex items-center justify-center gap-1 text-xs shadow-md shadow-teal-600/20">
+              <span class="material-symbols-outlined text-base">calendar_month</span>
+              <span>احجز الآن</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="py-16 bg-slate-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <h2 class="text-3xl font-extrabold">كيف تعمل منصة طمّني؟</h2>
+        <p class="text-slate-400 mt-3 text-base">خطوات بسيطة وسريعة للحصول على الرعاية الطبية الفائقة</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center relative">
+        <!-- Step 1 -->
+        <div class="bg-slate-800/80 p-8 rounded-2xl border border-slate-700 relative">
+          <div class="w-14 h-14 rounded-2xl bg-teal-500 text-white font-black text-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-teal-500/30">
+            1
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">ابحث عن الطبيب المناسب</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            استعرض نخبة الأطباء حسب التخصص والمنطقة والتقييمات الحقيقية للمرضى السابقين.
+          </p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="bg-slate-800/80 p-8 rounded-2xl border border-slate-700 relative">
+          <div class="w-14 h-14 rounded-2xl bg-teal-500 text-white font-black text-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-teal-500/30">
+            2
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">اختر الموعد وتأكيد الحجز</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            حدد التاريخ والوقت المناسب لك سواء لكشف العيادة أو الاستشارة الفورية عبر الإنترنت.
+          </p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="bg-slate-800/80 p-8 rounded-2xl border border-slate-700 relative">
+          <div class="w-14 h-14 rounded-2xl bg-teal-500 text-white font-black text-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-teal-500/30">
+            3
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">احصل على الروشتة والمتابعة</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            استلم روشتتك الطبية الإلكترونية وتذكير مواعيد الأدوية وتابع حالتك مع الطبيب.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <h2 class="text-3xl font-extrabold text-slate-900">ماذا يقول مرضانا عنا؟</h2>
+        <p class="text-slate-600 mt-2 text-base">ثقة آلاف المرضى هي الدافع الأساسي لنا لتوفير أفضل تجربة طبية</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div *ngFor="let item of testimonials" class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center gap-1 text-amber-400 mb-4">
+              <span *ngFor="let s of [1,2,3,4,5]" class="material-symbols-outlined text-lg">star</span>
+            </div>
+            <p class="text-slate-700 text-sm leading-relaxed italic mb-6">"{{ item.comment }}"</p>
+          </div>
+          <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+            <img [src]="item.avatar" [alt]="item.name" class="w-10 h-10 rounded-full object-cover">
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm">{{ item.name }}</h4>
+              <p class="text-xs text-slate-500">{{ item.role }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action Banner -->
+  <section class="py-12 bg-gradient-to-r from-teal-700 to-cyan-800 text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-right flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold">هل أنت طبيب وتريد الانضمام لشبكتنا؟</h2>
+        <p class="text-teal-100 text-sm mt-1">سجل الآن لإنشاء عيادتك الرقمية واستقبال المرضى بسهولة واحترافية.</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <a routerLink="/auth/register" class="bg-white text-teal-800 font-bold px-6 py-3 rounded-xl shadow hover:bg-teal-50 transition text-sm">
+          تسجيل كطبيب
+        </a>
+        <a routerLink="/auth/login" class="bg-teal-900/50 hover:bg-teal-900 text-white font-bold px-6 py-3 rounded-xl border border-white/20 transition text-sm">
+          تسجيل الدخول
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

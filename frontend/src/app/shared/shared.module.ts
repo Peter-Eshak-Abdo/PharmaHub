@@ -5,13 +5,17 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LanguageToggleComponent } from './components/language-toggle/language-toggle.component';
+import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.component';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
+import { FooterComponent } from './components/footer/footer.component';
 
 @NgModule({
   declarations: [
     NavbarComponent,
     LanguageToggleComponent,
-    ChatbotComponent
+    ThemeToggleComponent,
+    ChatbotComponent,
+    FooterComponent
   ],
   imports: [
     CommonModule,
@@ -28,7 +32,9 @@ import { ChatbotComponent } from './components/chatbot/chatbot.component';
     TranslateModule,
     NavbarComponent,
     LanguageToggleComponent,
-    ChatbotComponent
+    ThemeToggleComponent,
+    ChatbotComponent,
+    FooterComponent
   ]
 })
 export class SharedModule { }

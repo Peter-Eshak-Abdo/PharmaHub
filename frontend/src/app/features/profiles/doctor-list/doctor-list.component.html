@@ -1,195 +1,188 @@
-<div class="doctor-list-page" dir="rtl">
+<div class="min-h-screen bg-slate-50 py-10 rtl text-right">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Page Header & Title -->
+    <div class="mb-8 bg-gradient-to-r from-teal-900 via-teal-800 to-slate-900 text-white rounded-3xl p-8 shadow-lg relative overflow-hidden">
+      <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#2dd4bf_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      <div class="relative z-10">
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">البحث واكتشاف الأطباء</h1>
+        <p class="text-teal-100 text-sm mt-2 max-w-xl">اختر الطبيب المناسب وتعرف على مواعيد الكشف وسعر الاستشارة والتقييمات الحقيقية</p>
+        
+        <!-- Search bar inside header -->
+        <div class="mt-6 flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <input type="text" [(ngModel)]="searchQuery" (input)="onSearchChange()"
+                   placeholder="ابحث باسم الطبيب، التخصص، أو الكلمات المفتاحية..."
+                   class="w-full pl-4 pr-11 py-3 bg-white text-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-400 shadow">
+            <span class="material-symbols-outlined absolute right-3.5 top-3 text-slate-400">search</span>
+          </div>
 
-  <!-- Top Search & Filter Bar (Sticky) -->
-  <div class="search-filter-sticky">
-    <div class="search-filter-inner">
-      <!-- Search Input -->
-      <div class="search-input-wrapper">
-        <span class="material-symbols-outlined search-icon">search</span>
-        <input
-          type="text"
-          [(ngModel)]="searchQuery"
-          (ngModelChange)="onSearchChange()"
-          placeholder="ابحث عن طبيب بالاسم، التخصص، أو المستشفى..."
-          class="search-input"
-        />
-        <button *ngIf="searchQuery" class="clear-search-btn" (click)="searchQuery = ''; onSearchChange()">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-
-      <!-- Specialty Filter Pills -->
-      <div class="specialty-pills-container">
-        <button
-          class="pill-btn"
-          [class.active]="selectedSpecialty === ''"
-          (click)="setSpecialty('')">
-          جميع التخصصات
-        </button>
-        <button
-          *ngFor="let spec of specialties"
-          class="pill-btn"
-          [class.active]="selectedSpecialty === spec"
-          (click)="setSpecialty(spec)">
-          {{ spec }}
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content Container -->
-  <div class="main-content-container">
-
-    <!-- Header & Results Count & Sorting -->
-    <div class="list-meta-header">
-      <div>
-        <h1 class="results-title">
-          تم العثور على <span>{{ filteredDoctors.length }}</span> طبيب استشاري
-        </h1>
-        <p class="results-subtitle">أطباء معتمدون متاحون للحجز والاستشارة الفورية</p>
-      </div>
-
-      <!-- Sort Controls -->
-      <div class="sort-controls-group">
-        <span class="sort-label">
-          <span class="material-symbols-outlined sort-icon">sort</span>
-          ترتيب حسب:
-        </span>
-        <button
-          type="button"
-          class="sort-btn"
-          [class.active]="sortBy === 'rating'"
-          (click)="onSortChange('rating')">
-          <span>التقييم</span>
-          <span class="material-symbols-outlined sort-arrow" *ngIf="sortBy === 'rating'">
-            {{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}
-          </span>
-        </button>
-        <button
-          type="button"
-          class="sort-btn"
-          [class.active]="sortBy === 'experience'"
-          (click)="onSortChange('experience')">
-          <span>الخبرة</span>
-          <span class="material-symbols-outlined sort-arrow" *ngIf="sortBy === 'experience'">
-            {{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}
-          </span>
-        </button>
-        <button
-          type="button"
-          class="sort-btn"
-          [class.active]="sortBy === 'fee'"
-          (click)="onSortChange('fee')">
-          <span>السعر</span>
-          <span class="material-symbols-outlined sort-arrow" *ngIf="sortBy === 'fee'">
-            {{ sortOrder === 'desc' ? 'arrow_downward' : 'arrow_upward' }}
-          </span>
-        </button>
-        <button
-          type="button"
-          class="sort-btn"
-          [class.active]="sortBy === 'name'"
-          (click)="onSortChange('name')">
-          <span>الاسم</span>
-          <span class="material-symbols-outlined sort-arrow" *ngIf="sortBy === 'name'">
-            {{ sortOrder === 'asc' ? 'arrow_downward' : 'arrow_upward' }}
-          </span>
-        </button>
+          <div class="flex items-center gap-2">
+            <select (change)="onSortChange($any($event.target).value)" 
+                    class="bg-white text-slate-800 px-4 py-3 rounded-xl text-sm font-bold shadow focus:outline-none cursor-pointer">
+              <option value="rating">الأعلى تقييماً</option>
+              <option value="experience">الأكثر خبرة</option>
+              <option value="fee">الأقل سعراً</option>
+              <option value="name">أبجدياً (أ-ي)</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div *ngIf="loading" class="loading-state">
-      <div class="spinner"></div>
-      <p>جاري تحميل قائمة الأطباء...</p>
-    </div>
+    <!-- Content Layout: Sidebar + Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Sidebar Filters -->
+      <div class="lg:col-span-3 space-y-6">
+        <!-- Specialty Filter Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center justify-between">
+            <span>التخصص الطبي</span>
+            <button *ngIf="selectedSpecialty" (click)="setSpecialty('')" class="text-xs text-red-600 hover:underline">إلغاء</button>
+          </h3>
 
-    <!-- Empty State -->
-    <div *ngIf="!loading && filteredDoctors.length === 0" class="empty-state">
-      <div class="empty-icon-circle">
-        <span class="material-symbols-outlined">person_search</span>
+          <div class="space-y-2">
+            <button *ngFor="let spec of specialties" 
+                    (click)="setSpecialty(spec)"
+                    [class.bg-teal-50]="selectedSpecialty === spec"
+                    [class.text-teal-700]="selectedSpecialty === spec"
+                    [class.font-bold]="selectedSpecialty === spec"
+                    class="w-full text-right px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-slate-50 transition flex items-center justify-between">
+              <span>{{ spec }}</span>
+              <span *ngIf="selectedSpecialty === spec" class="material-symbols-outlined text-sm text-teal-600">check_circle</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- City Filter Card -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center justify-between">
+            <span>المدينة</span>
+            <button *ngIf="selectedCity" (click)="setCity('')" class="text-xs text-red-600 hover:underline">إلغاء</button>
+          </h3>
+
+          <div class="space-y-2">
+            <button *ngFor="let city of cities" 
+                    (click)="setCity(city)"
+                    [class.bg-teal-50]="selectedCity === city"
+                    [class.text-teal-700]="selectedCity === city"
+                    [class.font-bold]="selectedCity === city"
+                    class="w-full text-right px-3 py-2 rounded-xl text-xs text-slate-700 hover:bg-slate-50 transition flex items-center justify-between">
+              <span>{{ city }}</span>
+              <span *ngIf="selectedCity === city" class="material-symbols-outlined text-sm text-teal-600">check_circle</span>
+            </button>
+          </div>
+        </div>
       </div>
-      <h3>لم يتم العثور على أطباء مطابقين للبحث</h3>
-      <p>جرب البحث بكلمات مختلفة أو اختر تخصصاً آخر</p>
-      <button class="btn-reset" (click)="selectedSpecialty = ''; searchQuery = ''; onSearchChange()">
-        عرض جميع الأطباء
-      </button>
-    </div>
 
-    <!-- Doctors Mosaic Grid -->
-    <div *ngIf="!loading && filteredDoctors.length > 0" class="doctors-grid">
-      <div *ngFor="let doctor of filteredDoctors" class="doctor-card group">
+      <!-- Main Doctor Cards List -->
+      <div class="lg:col-span-9 space-y-4">
+        
+        <!-- Results stats bar -->
+        <div class="flex items-center justify-between bg-white px-6 py-4 rounded-2xl border border-slate-200 shadow-sm text-sm text-slate-600">
+          <div>تم إيجاد <strong class="text-teal-700 font-extrabold">{{ filteredDoctors.length }}</strong> طبيب مطبق للبحث</div>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="text-slate-400">طريقة العرض:</span>
+            <span class="font-bold text-slate-800">بطاقات مفصلة</span>
+          </div>
+        </div>
 
-        <!-- Decorative Ambient Corner -->
-        <div class="corner-glow"></div>
+        <!-- Loading Spinner -->
+        <div *ngIf="loading" class="py-20 text-center">
+          <div class="inline-block animate-spin w-10 h-10 border-4 border-teal-600 border-t-transparent rounded-full mb-3"></div>
+          <p class="text-slate-500 font-medium text-sm">جاري تحميل أطباء المنصة...</p>
+        </div>
 
-        <!-- Doctor Header Info -->
-        <div class="doctor-card-header">
-          <div class="avatar-ring-wrapper">
-            <div class="doctor-avatar-circle">
-              <span class="material-symbols-outlined avatar-doc-icon">stethoscope</span>
+        <!-- Empty State -->
+        <div *ngIf="!loading && filteredDoctors.length === 0" class="bg-white p-12 rounded-2xl border border-slate-200 text-center">
+          <div class="w-16 h-16 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+            <span class="material-symbols-outlined text-3xl">search_off</span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-800 mb-1">لم نجد أطباء يطابقون خيارات البحث الحالية</h3>
+          <p class="text-slate-500 text-xs mb-6">جرب تغيير التخصص أو استخدام كلمة بحث أخرى</p>
+          <button (click)="searchQuery = ''; selectedSpecialty = ''; selectedCity = ''; applyFilters();" 
+                  class="bg-teal-600 text-white font-bold px-6 py-2.5 rounded-xl text-sm hover:bg-teal-700 transition">
+            إعادة ضبط الفلاتر
+          </button>
+        </div>
+
+        <!-- Doctor Cards Grid -->
+        <div *ngIf="!loading && filteredDoctors.length > 0" class="space-y-4">
+          <div *ngFor="let doc of filteredDoctors" 
+               class="bg-white p-6 rounded-2xl border border-slate-200 hover:border-teal-400 shadow-sm hover:shadow-lg transition-all duration-300">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              
+              <!-- Doctor Info & Avatar -->
+              <div class="flex items-start gap-4">
+                <div class="relative">
+                  <img [src]="doc.avatar || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=200&q=80'" 
+                       [alt]="doc.fullName"
+                       class="w-24 h-24 rounded-2xl object-cover border-2 border-teal-100 shadow-sm">
+                  <div class="absolute -bottom-2 -right-2 bg-teal-600 text-white rounded-full p-1 shadow" title="طبيب معتمد">
+                    <span class="material-symbols-outlined text-xs block">verified</span>
+                  </div>
+                </div>
+
+                <div class="space-y-1">
+                  <div class="flex items-center gap-2">
+                    <h2 (click)="goToDoctorDetail(doc._id)" 
+                        class="text-xl font-bold text-slate-900 hover:text-teal-700 transition cursor-pointer">
+                      {{ doc.fullName }}
+                    </h2>
+                    <span class="bg-teal-50 text-teal-700 text-xs font-bold px-2.5 py-0.5 rounded-full border border-teal-200">
+                      {{ doc.specialization }}
+                    </span>
+                  </div>
+
+                  <p class="text-xs text-slate-500 font-medium">{{ doc.qualifications || doc.education || 'استشاري ورئيس قسم بالمستشفى' }}</p>
+
+                  <!-- Address & Clinic -->
+                  <div class="flex flex-wrap items-center gap-3 text-xs text-slate-600 pt-2">
+                    <span class="flex items-center gap-1">
+                      <span class="material-symbols-outlined text-slate-400 text-sm">domain</span>
+                      <span>{{ doc.clinicName || 'العيادة التخصصية' }}</span>
+                    </span>
+                    <span>•</span>
+                    <span class="flex items-center gap-1">
+                      <span class="material-symbols-outlined text-slate-400 text-sm">location_on</span>
+                      <span>{{ doc.address || doc.city || 'القاهرة' }}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Price & Rating & Action -->
+              <div class="w-full md:w-auto flex md:flex-col items-center md:items-end justify-between border-t md:border-t-0 pt-4 md:pt-0 border-slate-100 gap-4">
+                
+                <div class="text-right">
+                  <div class="flex items-center gap-1 text-amber-500 text-sm justify-end">
+                    <span class="material-symbols-outlined text-base">star</span>
+                    <span class="font-bold text-slate-900">{{ doc.rating }}</span>
+                    <span class="text-xs text-slate-400">({{ doc.reviewCount || 30 }})</span>
+                  </div>
+                  <div class="text-xs text-slate-500 mt-1">
+                    سعر الكشف: <strong class="text-teal-700 font-extrabold text-lg">{{ doc.consultationFee }} ج.م</strong>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <button (click)="goToDoctorDetail(doc._id)" 
+                          class="px-4 py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold text-xs transition">
+                    التفاصيل
+                  </button>
+                  <button (click)="goToBooking(doc._id)" 
+                          class="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-md shadow-teal-600/20 transition flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">calendar_month</span>
+                    <span>احجز الآن</span>
+                  </button>
+                </div>
+              </div>
             </div>
-            <span class="verified-badge-icon material-symbols-outlined" title="طبيب معتمد">verified</span>
           </div>
-
-          <div class="doctor-header-details">
-            <div class="name-badge-row">
-              <h2 class="doctor-name">د. {{ doctor.fullName }}</h2>
-            </div>
-            <p class="doctor-spec-tag">{{ doctor.specialization }}</p>
-
-            <div class="doctor-rating-row">
-              <span class="material-symbols-outlined star-icon">star</span>
-              <span class="rating-number">{{ doctor.rating || '4.9' }}</span>
-              <span class="review-count">({{ doctor.yearsOfExperience ? doctor.yearsOfExperience * 12 + 15 : '85' }} تقييم)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Doctor Key Specs -->
-        <div class="doctor-specs-list">
-          <div class="spec-row" *ngIf="doctor.education">
-            <span class="material-symbols-outlined spec-icon">school</span>
-            <span class="spec-text truncate">{{ doctor.education }}</span>
-          </div>
-          <div class="spec-row">
-            <span class="material-symbols-outlined spec-icon">history_edu</span>
-            <span class="spec-text">خبرة {{ doctor.yearsOfExperience || 0 }} سنوات في المجال الطبي</span>
-          </div>
-          <div class="spec-row">
-            <span class="material-symbols-outlined spec-icon">payments</span>
-            <span class="spec-text price-text">${{ doctor.consultationFeeSnapshot || 0 }} سعر كشف الاستشارة</span>
-          </div>
-        </div>
-
-        <!-- Tags / Highlights -->
-        <div class="tags-container">
-          <span class="spec-pill" *ngIf="doctor.specialization">{{ doctor.specialization }}</span>
-          <span class="spec-pill" *ngIf="doctor.qualifications">{{ doctor.qualifications }}</span>
-          <span class="spec-pill available-pill">
-            <span class="available-dot"></span>
-            متاح للحجز
-          </span>
-        </div>
-
-        <!-- Card Actions -->
-        <div class="card-action-buttons">
-          <a [routerLink]="['/profiles/doctor-detail', doctor._id]" class="btn-view-profile">
-            <span>الملف الشخصي</span>
-            <span class="material-symbols-outlined">person</span>
-          </a>
-
-          <a [routerLink]="['/appointments/book']"
-             [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
-             class="btn-book-calendar"
-             title="حجز موعد فوري">
-            <span class="material-symbols-outlined">calendar_month</span>
-          </a>
         </div>
 
       </div>
     </div>
-
   </div>
 </div>
-

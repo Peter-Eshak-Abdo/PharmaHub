@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ReviewService } from '../services/review.service';
 import { AppointmentService } from '../services/appointment.service';
 import { Appointment } from '../models/appointment.model';
-import { LanguageService } from 'src/app/core/services/language.servics';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 @Component({
   selector: 'app-review-form',

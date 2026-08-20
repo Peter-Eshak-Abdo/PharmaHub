@@ -12,6 +12,7 @@ import { User } from '../../../core/models/user.model';
 export class NavbarComponent implements OnInit {
   currentUser: User | null = null;
   currentUrl: string = '';
+  isMobileMenuOpen = false;
 
   constructor(private authService: AuthService, private router: Router) {
     this.currentUrl = this.router.url;
@@ -19,7 +20,12 @@ export class NavbarComponent implements OnInit {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentUrl = event.urlAfterRedirects || event.url;
+        this.isMobileMenuOpen = false;
       });
+  }
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
   ngOnInit(): void {

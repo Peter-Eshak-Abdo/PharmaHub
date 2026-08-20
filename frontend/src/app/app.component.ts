@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { LanguageService } from './core/services/language.servics';
+import { LanguageService } from './core/services/language.service';
 import { ThemeService } from './core/services/theme.service';
 import { PwaService } from './core/services/pwa.service';
 import { SyncService } from './core/services/sync.service';

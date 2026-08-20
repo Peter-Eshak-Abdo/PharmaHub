@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { DoctorService } from '../services/doctor.service';
-import { LanguageService } from 'src/app/core/services/language.servics';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DoctorService, Doctor } from '../services/doctor.service';
+import { LanguageService } from 'src/app/core/services/language.service';
 
 @Component({
   selector: 'app-doctor-list',
@@ -8,36 +9,45 @@ import { LanguageService } from 'src/app/core/services/language.servics';
   styleUrls: ['./doctor-list.component.css']
 })
 export class DoctorListComponent implements OnInit {
-  doctors: any[] = [];
-  filteredDoctors: any[] = [];
+  doctors: Doctor[] = [];
+  filteredDoctors: Doctor[] = [];
   searchQuery: string = '';
   selectedSpecialty: string = '';
+  selectedCity: string = '';
   sortBy: 'rating' | 'experience' | 'name' | 'fee' = 'rating';
   sortOrder: 'asc' | 'desc' = 'desc';
   loading: boolean = false;
 
   specialties: string[] = [
-    'باطنة',
-    'أطفال',
-    'قلب',
-    'جراحة',
-    'عيون',
-    'نساء وتوليد',
-    'عظام'
+    'أمراض القلب',
+    'طب الأطفال',
+    'الجلدية والتناسلية',
+    'العظام والمفاصل',
+    'المخ والأعصاب',
+    'طب وجراحة الأسنان'
   ];
+
+  cities: string[] = ['القاهرة', 'الجيزة', 'الإسكندرية', 'المنصورة'];
 
   constructor(
     private doctorService: DoctorService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadDoctors();
+    this.route.queryParams.subscribe(params => {
+      if (params['search']) this.searchQuery = params['search'];
+      if (params['specialty']) this.selectedSpecialty = params['specialty'];
+      if (params['city']) this.selectedCity = params['city'];
+      this.loadDoctors();
+    });
   }
 
   loadDoctors(): void {
     this.loading = true;
-    this.doctorService.getDoctors().subscribe({
+    this.doctorService.getDoctors(this.selectedSpecialty, this.selectedCity).subscribe({
       next: (res: any) => {
         this.loading = false;
         this.doctors = Array.isArray(res) ? res : (res?.data || []);
@@ -52,7 +62,12 @@ export class DoctorListComponent implements OnInit {
   }
 
   setSpecialty(specialty: string): void {
-    this.selectedSpecialty = specialty;
+    this.selectedSpecialty = this.selectedSpecialty === specialty ? '' : specialty;
+    this.applyFilters();
+  }
+
+  setCity(city: string): void {
+    this.selectedCity = this.selectedCity === city ? '' : city;
     this.applyFilters();
   }
 
@@ -76,11 +91,17 @@ export class DoctorListComponent implements OnInit {
     // Filter by Specialty
     if (this.selectedSpecialty) {
       result = result.filter(d =>
-        (d.specialization || '').trim() === this.selectedSpecialty.trim()
+        (d.specialization || '').includes(this.selectedSpecialty) ||
+        this.selectedSpecialty.includes(d.specialization || '')
       );
     }
 
-    // Filter by Search Query (Name, specialization, education, bio)
+    // Filter by City
+    if (this.selectedCity) {
+      result = result.filter(d => (d.city || '') === this.selectedCity);
+    }
+
+    // Filter by Search Query
     if (this.searchQuery.trim()) {
       const q = this.searchQuery.trim().toLowerCase();
       result = result.filter(d =>
@@ -100,11 +121,11 @@ export class DoctorListComponent implements OnInit {
         valA = Number(a.rating) || 0;
         valB = Number(b.rating) || 0;
       } else if (this.sortBy === 'experience') {
-        valA = Number(a.yearsOfExperience) || 0;
-        valB = Number(b.yearsOfExperience) || 0;
+        valA = Number(a.yearsExperience) || 0;
+        valB = Number(b.yearsExperience) || 0;
       } else if (this.sortBy === 'fee') {
-        valA = Number(a.consultationFeeSnapshot) || 0;
-        valB = Number(b.consultationFeeSnapshot) || 0;
+        valA = Number(a.consultationFee) || 0;
+        valB = Number(b.consultationFee) || 0;
       } else if (this.sortBy === 'name') {
         valA = a.fullName || '';
         valB = b.fullName || '';
@@ -119,5 +140,12 @@ export class DoctorListComponent implements OnInit {
 
     this.filteredDoctors = result;
   }
-}
 
+  goToBooking(doctorId: string): void {
+    this.router.navigate(['/appointments/book'], { queryParams: { doctorId } });
+  }
+
+  goToDoctorDetail(doctorId: string): void {
+    this.router.navigate(['/profiles/doctor', doctorId]);
+  }
+}

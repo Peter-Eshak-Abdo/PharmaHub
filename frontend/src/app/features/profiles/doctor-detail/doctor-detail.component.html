@@ -1,67 +1,65 @@
-<div class="w-full pt-6 bg-background min-h-screen animate-fade-in" [dir]="isRtl ? 'rtl' : 'ltr'">
-  <div class="max-w-container-max mx-auto px-4 md:px-8 mb-4 flex justify-end">
-    <app-language-toggle></app-language-toggle>
-  </div>
+<div class="min-h-screen bg-slate-50 py-10 rtl text-right">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
-  <ng-container *ngIf="doctor">
-    <!-- Hero Section -->
-    <div class="bg-surface-container-lowest border-b border-outline-variant shadow-sm">
-      <div class="max-w-container-max mx-auto px-4 md:px-8 py-6">
-        <div class="flex flex-col md:flex-row gap-6 items-start">
+    <!-- Back Button -->
+    <a routerLink="/profiles/doctor-list" class="inline-flex items-center gap-1 text-slate-600 hover:text-teal-700 font-bold text-sm">
+      <span class="material-symbols-outlined text-lg">arrow_forward</span>
+      <span>العودة لقائمة الأطباء</span>
+    </a>
 
-          <!-- صورة الدكتور -->
-          <div class="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-md shrink-0 bg-surface-container border border-outline-variant flex items-center justify-center">
-            <img *ngIf="doctor?.profilePicture" [src]="doctor?.profilePicture"
-                 [alt]="doctor?.fullName"
-                 class="w-full h-full object-cover" />
-            <span *ngIf="!doctor?.profilePicture" class="material-symbols-outlined text-[64px] text-on-surface-variant">person</span>
-          </div>
+    <!-- Loading State -->
+    <div *ngIf="!doctor" class="py-20 text-center bg-white rounded-3xl border border-slate-200 shadow-sm">
+      <div class="inline-block animate-spin w-10 h-10 border-4 border-teal-600 border-t-transparent rounded-full mb-3"></div>
+      <p class="text-slate-500 font-medium text-sm">جاري تحميل بيانات الطبيب...</p>
+    </div>
 
-          <!-- معلومات الدكتور -->
-          <div class="flex-grow">
-            <div class="flex flex-wrap items-center gap-3 mb-2">
-              <h1 class="font-headline-lg text-2xl md:text-3xl font-bold text-on-surface">
-                د. {{ doctor?.fullName }}
-              </h1>
-              <!-- Badge التخصص -->
-              <span class="inline-flex items-center gap-1 px-3 py-1 bg-primary-container text-on-primary-container rounded-full">
-                <span class="material-symbols-outlined text-[16px]">medical_services</span>
-                <span class="font-label-sm font-semibold text-sm">{{ doctor?.specialization }}</span>
-              </span>
-            </div>
+    <div *ngIf="doctor" class="space-y-8">
 
-            <p class="font-body-md text-on-surface-variant mb-4 max-w-2xl leading-relaxed">
-              {{ doctor?.bio || ('PROFILES.DOCTOR_DETAIL.BIO' | translate) }}
-            </p>
+      <!-- Doctor Profile Hero Header -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm relative overflow-hidden">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
 
-            <!-- إحصائيات سريعة -->
-            <div class="flex flex-wrap gap-6 pt-2 border-t border-outline-variant/50">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-amber-500 text-[22px]">star</span>
-                <span class="font-headline-sm font-bold text-on-surface">{{ doctor?.rating || 5 | number:'1.1-1' }}</span>
-                <span class="font-body-sm text-on-surface-variant text-sm">تقييم</span>
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <img [src]="doctor.avatar || 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=300&q=80'"
+                 [alt]="doctor.fullName"
+                 class="w-32 h-32 rounded-3xl object-cover border-4 border-teal-50 shadow-md">
+
+            <div class="space-y-2">
+              <div class="flex flex-wrap items-center gap-2">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ doctor.fullName }}</h1>
+                <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full border border-teal-200">
+                  {{ doctor.specialization }}
+                </span>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-primary text-[22px]">work_history</span>
-                <span class="font-headline-sm font-bold text-on-surface">{{ doctor?.yearsOfExperience || 0 }}</span>
-                <span class="font-body-sm text-on-surface-variant text-sm">{{ 'PROFILES.DOCTOR_DETAIL.YEARS_SUFFIX' | translate }}</span>
-              </div>
-              <div class="flex items-center gap-2" *ngIf="doctor?.education">
-                <span class="material-symbols-outlined text-primary text-[22px]">school</span>
-                <span class="font-body-sm text-on-surface-variant text-sm">{{ doctor?.education }}</span>
+
+              <p class="text-slate-600 text-sm font-medium">{{ doctor.education || 'استشاري ومجال التخصص الطبي المعتمد' }}</p>
+
+              <div class="flex items-center gap-4 text-xs text-slate-500 pt-1">
+                <span class="flex items-center gap-1 text-amber-500 font-bold">
+                  <span class="material-symbols-outlined text-base">star</span>
+                  <span class="text-slate-800 text-sm">{{ doctor.rating || 4.9 }}</span>
+                  <span class="text-slate-400 font-normal">({{ doctor.reviewCount || 45 }} تقييم)</span>
+                </span>
+                <span>•</span>
+                <span class="flex items-center gap-1">
+                  <span class="material-symbols-outlined text-slate-400 text-base">work_history</span>
+                  <span>خبرة {{ doctor.yearsExperience || 12 }} سنة</span>
+                </span>
               </div>
             </div>
           </div>
 
-          <!-- زرار الحجز السريع -->
-          <div class="shrink-0 w-full md:w-auto">
-            <a [routerLink]="['/appointments/book']"
-               [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
-               class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-on-primary font-semibold rounded-xl hover:bg-primary-hover shadow-md hover:shadow-lg transition-all card-hover">
-              <span class="material-symbols-outlined text-[20px]">calendar_add_on</span>
-              <span>{{ 'PROFILES.DOCTOR_DETAIL.BOOK_WITH_DOCTOR' | translate }}</span>
+          <!-- Quick Action Booking Box -->
+          <div class="w-full md:w-auto bg-slate-50 p-6 rounded-2xl border border-slate-200 text-center md:text-right space-y-3">
+            <div class="text-xs text-slate-500">قيمة الاستشارة / الكشف</div>
+            <div class="text-3xl font-black text-teal-700">{{ doctor.consultationFee }} ج.م</div>
+
+            <a [routerLink]="['/appointments/book']" [queryParams]="{ doctorId: doctor._id }"
+               class="block w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-teal-600/30 transition text-sm">
+              احجز موعد كشف الآن
             </a>
           </div>
+
         </div>
       </div>
     </div>
@@ -107,28 +105,149 @@
               <span class="text-base text-on-surface-variant font-medium">$</span>
             </div>
 
-            <a [routerLink]="['/appointments/book']"
-               [queryParams]="{ doctorId: doctor._id, doctorName: doctor.fullName, specialization: doctor.specialization, fee: doctor.consultationFeeSnapshot || 0 }"
-               class="w-full inline-flex items-center justify-center gap-2 py-3 bg-primary text-on-primary font-semibold rounded-xl hover:bg-primary-hover shadow-sm hover:shadow-md transition-all">
-              <span class="material-symbols-outlined text-[20px]">calendar_month</span>
-              <span>احجز موعدك الآن</span>
-            </a>
+      <!-- Details Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-            <a routerLink="/profiles/doctor-list" class="w-full mt-3 inline-flex items-center justify-center gap-2 py-2.5 bg-surface-container-low text-on-surface hover:bg-surface-container-high rounded-xl transition-colors font-medium text-sm">
-              <span class="material-symbols-outlined text-[18px]">arrow_back</span>
-              <span>{{ 'PROFILES.DOCTOR_DETAIL.BACK_TO_LIST' | translate }}</span>
-            </a>
+        <!-- Main Bio & Info -->
+        <div class="lg:col-span-8 space-y-6">
+
+          <!-- Bio -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="text-lg font-bold text-slate-900 border-r-4 border-teal-600 pr-3">نبذة عن الطبيب</h3>
+            <p class="text-slate-700 text-sm leading-relaxed">{{ doctor.bio || 'طبيب استشاري متخصص ذو خبرة واسعة في تقديم الرعاية الطبية وفق أعلى المعايير العالمية والتجهيزات الحديثة.' }}</p>
+          </div>
+
+          <!-- Qualifications & Education -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="text-lg font-bold text-slate-900 border-r-4 border-teal-600 pr-3">المؤهلات والشهادات العلمية</h3>
+            <ul class="space-y-2 text-sm text-slate-700">
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-teal-600 text-base">school</span>
+                <span>{{ doctor.education || 'دكتوراه وتخصص طب جراحة قصر العيني' }}</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-teal-600 text-base">workspace_premium</span>
+                <span>{{ doctor.qualifications || 'عضو الكلية الملكية للأطباء وعضو الجمعية المصرية للتخصصات' }}</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Patient Reviews & Add Review Section -->
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+            <h3 class="text-lg font-bold text-slate-900 border-r-4 border-teal-600 pr-3 flex items-center justify-between">
+              <span>تقييمات وملاحظات المرضى</span>
+              <span class="text-xs font-normal text-slate-500">({{ reviews.length }} تقييم)</span>
+            </h3>
+
+            <!-- Add Review Form -->
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+              <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-teal-600 text-base">rate_review</span>
+                <span>أضف تقييمك وملاحظاتك عن الكشف</span>
+              </h4>
+
+              <div *ngIf="reviewSuccessMessage" class="p-3 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold flex items-center gap-2">
+                <span class="material-symbols-outlined text-base">check_circle</span>
+                <span>{{ reviewSuccessMessage }}</span>
+              </div>
+
+              <form (ngSubmit)="submitReview()" class="space-y-3 text-xs">
+                <!-- Star selection -->
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-700">التقييم:</span>
+                  <div class="flex items-center gap-1">
+                    <button type="button" *ngFor="let s of [1,2,3,4,5]" (click)="setRating(s)"
+                            class="focus:outline-none transition hover:scale-110">
+                      <span class="material-symbols-outlined text-2xl"
+                            [class.text-amber-400]="s <= newReview.rating"
+                            [class.text-slate-300]="s > newReview.rating">
+                        star
+                      </span>
+                    </button>
+                  </div>
+                  <span class="font-bold text-slate-600 text-sm">({{ newReview.rating }} / 5)</span>
+                </div>
+
+                <!-- Patient Name Input -->
+                <div>
+                  <input type="text" [(ngModel)]="newReview.patientName" name="patientName"
+                         placeholder="اسمك (اختياري، مثلاً: أحمد فؤاد)"
+                         class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-800">
+                </div>
+
+                <!-- Comment Input -->
+                <div>
+                  <textarea [(ngModel)]="newReview.comment" name="comment" rows="3" required
+                            placeholder="اكتب ملاحظاتك وتقييمك لعيادة الطبيب وتجربة الكشف بكل أمانة..."
+                            class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 text-slate-800"></textarea>
+                </div>
+
+                <button type="submit" [disabled]="!newReview.comment.trim() || isSubmittingReview"
+                        class="w-full bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white font-bold py-2.5 rounded-xl shadow transition text-xs flex items-center justify-center gap-1.5">
+                  <span class="material-symbols-outlined text-base">send</span>
+                  <span>{{ isSubmittingReview ? 'جاري إرسال التقييم...' : 'نشر التقييم والملاحظات' }}</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Existing Reviews List -->
+            <div class="space-y-3">
+              <div *ngIf="reviews.length === 0" class="text-center py-6 text-slate-400 text-xs">
+                لا توجد تقييمات سابقة لهذا الطبيب بعد، كن أول من يضيف تقييمه!
+              </div>
+
+              <div *ngFor="let rev of reviews" class="p-4 rounded-xl bg-slate-50 border border-slate-100 space-y-2">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-bold text-slate-800">{{ rev.patientName }}</span>
+                  <span class="text-slate-400">{{ rev.createdAt }}</span>
+                </div>
+                <div class="flex items-center gap-1 text-amber-400">
+                  <span *ngFor="let i of [1,2,3,4,5]" class="material-symbols-outlined text-sm"
+                        [class.text-amber-400]="i <= rev.rating"
+                        [class.text-slate-300]="i > rev.rating">star</span>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed">{{ rev.comment }}</p>
+              </div>
+            </div>
           </div>
 
         </div>
-      </div>
-    </div>
-  </ng-container>
 
-  <!-- Empty State if no doctor found -->
-  <div class="max-w-md mx-auto px-4 py-16 text-center" *ngIf="!doctor">
-    <div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mx-auto mb-4 text-on-surface-variant">
-      <span class="material-symbols-outlined text-3xl">person_off</span>
+        <!-- Sidebar Clinic Info -->
+        <div class="lg:col-span-4 space-y-6">
+          <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <h3 class="text-lg font-bold text-slate-900 border-r-4 border-teal-600 pr-3">معلومات العيادة والموقع</h3>
+
+            <div class="space-y-3 text-sm text-slate-700">
+              <div class="flex items-start gap-3">
+                <span class="material-symbols-outlined text-teal-600 text-xl">domain</span>
+                <div>
+                  <div class="font-bold text-slate-900">{{ doctor.clinicName || 'العيادة التخصصية الحديثة' }}</div>
+                  <div class="text-xs text-slate-500">{{ doctor.address || 'شارع مصطفى النحاس، مدينة نصر، القاهرة' }}</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 pt-2 border-t border-slate-100">
+                <span class="material-symbols-outlined text-teal-600 text-xl">schedule</span>
+                <div>
+                  <div class="font-bold text-slate-900">ساعات العمل الأسبوعية</div>
+                  <div class="text-xs text-slate-500">السبت إلى الأربعاء (5:00 م - 10:00 م)</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 pt-2 border-t border-slate-100">
+                <span class="material-symbols-outlined text-teal-600 text-xl">phone_in_talk</span>
+                <div>
+                  <div class="font-bold text-slate-900">تليفون العيادة</div>
+                  <div class="text-xs text-slate-500" dir="ltr">{{ doctor.phone || '01001234567' }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
     <h3 class="text-xl font-bold text-on-surface mb-2">{{ 'PROFILES.DOCTOR_DETAIL.NO_DOCTOR_TITLE' | translate }}</h3>
     <p class="text-on-surface-variant text-sm mb-6">{{ 'PROFILES.DOCTOR_DETAIL.NO_DOCTOR_SUBTITLE' | translate }}</p>

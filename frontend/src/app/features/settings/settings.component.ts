@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService, AppTheme } from '../../core/services/theme.service';
-import { LanguageService, AppLanguage } from '../../core/services/language.servics';
+import { LanguageService, AppLanguage } from '../../core/services/language.service';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
