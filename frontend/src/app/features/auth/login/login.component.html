@@ -1,4 +1,4 @@
-<div class="auth-page-wrapper" dir="rtl">
+<div class="auth-page-wrapper">
   <!-- Decorative Background Blur -->
   <div class="bg-blur blur-top"></div>
   <div class="bg-blur blur-bottom"></div>
@@ -8,8 +8,8 @@
       <div class="icon-badge">
         <span class="material-symbols-outlined">health_and_safety</span>
       </div>
-      <h2>مرحباً بعودتك</h2>
-      <p>سجّل الدخول للوصول إلى حسابك الطبي.</p>
+      <h2>{{ 'AUTH.LOGIN.TITLE' | translate }}</h2>
+      <p>{{ 'AUTH.LOGIN.SUBTITLE' | translate }}</p>
     </div>
 
     <div class="auth-card">
@@ -20,7 +20,7 @@
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="form-group">
-          <label for="login-email">البريد الإلكتروني</label>
+          <label for="login-email">{{ 'AUTH.LOGIN.EMAIL' | translate }}</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined input-icon right-icon">mail</span>
             <input 
@@ -32,13 +32,13 @@
             />
           </div>
           <div *ngIf="submitted && f['email'].errors" class="error-msg">
-            <small *ngIf="f['email'].errors['required']">البريد الإلكتروني مطلوب</small>
-            <small *ngIf="f['email'].errors['email']">يرجى إدخال بريد إلكتروني صالح</small>
+            <small *ngIf="f['email'].errors['required']">{{ 'AUTH.LOGIN.EMAIL_REQUIRED' | translate }}</small>
+            <small *ngIf="f['email'].errors['email']">{{ 'AUTH.LOGIN.EMAIL_INVALID' | translate }}</small>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="login-password">كلمة المرور</label>
+          <label for="login-password">{{ 'AUTH.LOGIN.PASSWORD' | translate }}</label>
           <div class="input-wrapper">
             <span class="material-symbols-outlined input-icon right-icon">lock</span>
             <input 
@@ -55,21 +55,22 @@
             </button>
           </div>
           <div *ngIf="submitted && f['password'].errors" class="error-msg">
-            <small *ngIf="f['password'].errors['required']">كلمة المرور مطلوبة</small>
-            <small *ngIf="f['password'].errors['minlength']">كلمة المرور يجب أن لا تقل عن 6 أحرف</small>
+            <small *ngIf="f['password'].errors['required']">{{ 'AUTH.LOGIN.PASSWORD_REQUIRED' | translate }}</small>
+            <small *ngIf="f['password'].errors['minlength']">{{ 'AUTH.REGISTER.PASSWORD_MINLENGTH' | translate }}</small>
           </div>
         </div>
 
         <button type="submit" class="btn-primary" [disabled]="loading">
-          <span *ngIf="!loading">تسجيل الدخول</span>
-          <span *ngIf="loading">جاري تسجيل الدخول...</span>
-          <span class="material-symbols-outlined btn-icon">arrow_back</span>
+          <span *ngIf="!loading">{{ 'AUTH.LOGIN.SUBMIT' | translate }}</span>
+          <span *ngIf="loading">{{ 'COMMON.LOADING' | translate }}</span>
+          <span class="material-symbols-outlined btn-icon">arrow_forward</span>
         </button>
       </form>
     </div>
 
     <div class="auth-footer">
-      ليس لديك حساب؟ <a routerLink="/auth/register">إنشاء حساب جديد</a>
+      {{ 'AUTH.REGISTER.HAVE_ACCOUNT' | translate }} <a routerLink="/auth/register">{{ 'AUTH.REGISTER.SUBMIT' | translate }}</a>
     </div>
   </div>
-</div>
+</div>
+

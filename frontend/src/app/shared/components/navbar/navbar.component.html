@@ -1,13 +1,13 @@
-<nav class="app-navbar" dir="rtl" *ngIf="!isAuthPage">
+<nav class="app-navbar" *ngIf="!isAuthPage">
   <div class="navbar-container">
     <!-- Brand / Logo -->
     <a routerLink="/" class="brand-logo">
       <span class="material-symbols-outlined logo-icon">medical_services</span>
       <div class="brand-text">
-        <span class="brand-title">PharmaHub</span>
-        <span class="brand-badge" *ngIf="isDoctor">بوابة الطبيب</span>
-        <span class="brand-badge patient-badge" *ngIf="isPatient">بوابة المريض</span>
-        <span class="brand-badge admin-badge" *ngIf="isAdmin">لوحة الإدارة</span>
+        <span class="brand-title">{{ 'NAV.BRAND' | translate }}</span>
+        <span class="brand-badge" *ngIf="isDoctor">{{ 'NAV.DOCTOR_PORTAL' | translate }}</span>
+        <span class="brand-badge patient-badge" *ngIf="isPatient">{{ 'NAV.PATIENT_PORTAL' | translate }}</span>
+        <span class="brand-badge admin-badge" *ngIf="isAdmin">{{ 'NAV.ADMIN_PORTAL' | translate }}</span>
       </div>
     </a>
 
@@ -18,25 +18,25 @@
         <li>
           <a routerLink="/admin/dashboard" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">dashboard</span>
-            <span>لوحة التحكم</span>
+            <span>{{ 'NAV.DASHBOARD' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/admin/doctors" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">medical_services</span>
-            <span>الأطباء</span>
+            <span>{{ 'NAV.DOCTORS' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/admin/patients" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">group</span>
-            <span>المرضى</span>
+            <span>{{ 'NAV.PATIENTS' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/settings" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">settings</span>
-            <span>الإعدادات</span>
+            <span>{{ 'NAV.SETTINGS' | translate }}</span>
           </a>
         </li>
       </ul>
@@ -46,43 +46,43 @@
         <li>
           <a routerLink="/dashboard/doctor" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">dashboard</span>
-            <span>لوحة التحكم</span>
+            <span>{{ 'NAV.DASHBOARD' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/appointments/doctor" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">calendar_month</span>
-            <span>مواعيدي</span>
+            <span>{{ 'NAV.MY_APPOINTMENTS' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/schedule/weekly-availability" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">schedule</span>
-            <span>جدول العمل</span>
+            <span>{{ 'NAV.WORK_SCHEDULE' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/schedule/schedule-exceptions" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">event_busy</span>
-            <span>الإجازات</span>
+            <span>{{ 'NAV.EXCEPTIONS' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/medical" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">prescriptions</span>
-            <span>السجل الطبي</span>
+            <span>{{ 'NAV.MEDICAL_RECORD' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/profiles/doctor-profile" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">person</span>
-            <span>ملفي الشخصي</span>
+            <span>{{ 'NAV.MY_PROFILE' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/settings" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">settings</span>
-            <span>الإعدادات</span>
+            <span>{{ 'NAV.SETTINGS' | translate }}</span>
           </a>
         </li>
       </ul>
@@ -92,31 +92,31 @@
         <li>
           <a routerLink="/dashboard/patient" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">dashboard</span>
-            <span>الرئيسية</span>
+            <span>{{ 'NAV.HOME' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/profiles/doctor-list" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">stethoscope</span>
-            <span>الأطباء</span>
+            <span>{{ 'NAV.DOCTORS' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/appointments/patient" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">event_available</span>
-            <span>حجوزاتي</span>
+            <span>{{ 'NAV.MY_BOOKINGS' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/profiles/patient-profile" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">account_circle</span>
-            <span>ملفي</span>
+            <span>{{ 'NAV.MY_PROFILE' | translate }}</span>
           </a>
         </li>
         <li>
           <a routerLink="/settings" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">settings</span>
-            <span>الإعدادات</span>
+            <span>{{ 'NAV.SETTINGS' | translate }}</span>
           </a>
         </li>
       </ul>
@@ -126,7 +126,7 @@
         <li>
           <a routerLink="/profiles/doctor-list" routerLinkActive="active-link" class="nav-item">
             <span class="material-symbols-outlined">stethoscope</span>
-            <span>قائمة الأطباء</span>
+            <span>{{ 'NAV.DOCTORS_LIST' | translate }}</span>
           </a>
         </li>
       </ul>
@@ -135,22 +135,23 @@
     <!-- User Actions & Auth -->
     <div class="user-actions">
       <ng-container *ngIf="currentUser">
-        <button type="button" class="btn-logout" (click)="logout()" title="تسجيل الخروج">
+        <button type="button" class="btn-logout" (click)="logout()" [title]="'NAV.LOGOUT' | translate">
           <span class="material-symbols-outlined">logout</span>
-          <span>خروج</span>
+          <span>{{ 'NAV.LOGOUT' | translate }}</span>
         </button>
       </ng-container>
 
       <ng-container *ngIf="!currentUser">
         <a routerLink="/auth/login" class="btn-nav-login">
           <span class="material-symbols-outlined">login</span>
-          <span>تسجيل الدخول</span>
+          <span>{{ 'NAV.LOGIN' | translate }}</span>
         </a>
         <a routerLink="/auth/register" class="btn-nav-register">
-          <span>حساب جديد</span>
+          <span>{{ 'NAV.REGISTER' | translate }}</span>
         </a>
       </ng-container>
     </div>
   </div>
 </nav>
+
 

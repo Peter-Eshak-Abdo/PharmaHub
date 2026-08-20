@@ -1,4 +1,4 @@
-<div class="settings-page" dir="rtl">
+<div class="settings-page">
   <div class="settings-container">
 
     <!-- Header -->
@@ -7,8 +7,8 @@
         <span class="material-symbols-outlined">settings</span>
       </div>
       <div>
-        <h1 class="page-title">إعدادات النظام</h1>
-        <p class="page-subtitle">تخصيص المظهر، اللغة، وتفضيلات الحساب الشخصي</p>
+        <h1 class="page-title">{{ 'SETTINGS.TITLE' | translate }}</h1>
+        <p class="page-subtitle">{{ 'SETTINGS.SUBTITLE' | translate }}</p>
       </div>
     </div>
 
@@ -19,7 +19,7 @@
       </div>
       <div class="user-details">
         <div class="user-role-badge">
-          {{ currentUser.role === 'doctor' ? 'حساب طبيب' : 'حساب مريض' }}
+          {{ (currentUser.role === 'doctor' ? 'SETTINGS.DOCTOR_ACCOUNT' : (currentUser.role === 'admin' ? 'SETTINGS.ADMIN_ACCOUNT' : 'SETTINGS.PATIENT_ACCOUNT')) | translate }}
         </div>
         <h3 class="user-email">{{ currentUser.email }}</h3>
       </div>
@@ -30,8 +30,8 @@
       <div class="section-title-row">
         <span class="material-symbols-outlined section-icon">palette</span>
         <div>
-          <h2>المظهر والثيم (Appearance)</h2>
-          <p>اختر الثيم المفضل لواجهة الاستخدام</p>
+          <h2>{{ 'SETTINGS.APPEARANCE_TITLE' | translate }}</h2>
+          <p>{{ 'SETTINGS.APPEARANCE_SUBTITLE' | translate }}</p>
         </div>
       </div>
 
@@ -47,7 +47,7 @@
           </div>
           <div class="theme-info">
             <span class="material-symbols-outlined">light_mode</span>
-            <span>الوضع الفاتح (Light)</span>
+            <span>{{ 'SETTINGS.LIGHT_THEME' | translate }}</span>
           </div>
         </button>
 
@@ -62,7 +62,7 @@
           </div>
           <div class="theme-info">
             <span class="material-symbols-outlined">dark_mode</span>
-            <span>الوضع الداكن (Dark)</span>
+            <span>{{ 'SETTINGS.DARK_THEME' | translate }}</span>
           </div>
         </button>
       </div>
@@ -73,8 +73,8 @@
       <div class="section-title-row">
         <span class="material-symbols-outlined section-icon">translate</span>
         <div>
-          <h2>اللغة المفضلة (Language)</h2>
-          <p>اختر لغة عرض الواجهة والاتجاه</p>
+          <h2>{{ 'SETTINGS.LANG_TITLE' | translate }}</h2>
+          <p>{{ 'SETTINGS.LANG_SUBTITLE' | translate }}</p>
         </div>
       </div>
 
@@ -86,8 +86,8 @@
           (click)="setLanguage('ar')">
           <span class="lang-flag">🇪🇬</span>
           <div class="lang-text">
-            <span class="lang-name">العربية (Arabic)</span>
-            <span class="lang-sub">الاتجاه من اليمين إلى اليسار (RTL)</span>
+            <span class="lang-name">{{ 'SETTINGS.ARABIC' | translate }}</span>
+            <span class="lang-sub">{{ 'SETTINGS.ARABIC_SUB' | translate }}</span>
           </div>
           <span class="material-symbols-outlined check-icon" *ngIf="currentLang === 'ar'">check_circle</span>
         </button>
@@ -99,8 +99,8 @@
           (click)="setLanguage('en')">
           <span class="lang-flag">🇬🇧</span>
           <div class="lang-text">
-            <span class="lang-name">English</span>
-            <span class="lang-sub">Left-to-Right layout (LTR)</span>
+            <span class="lang-name">{{ 'SETTINGS.ENGLISH' | translate }}</span>
+            <span class="lang-sub">{{ 'SETTINGS.ENGLISH_SUB' | translate }}</span>
           </div>
           <span class="material-symbols-outlined check-icon" *ngIf="currentLang === 'en'">check_circle</span>
         </button>
@@ -112,16 +112,17 @@
       <div class="section-title-row">
         <span class="material-symbols-outlined danger-icon">logout</span>
         <div>
-          <h2>إدارة الجلسة</h2>
-          <p>تسجيل الخروج من الحساب الحالي على هذا الجهاز</p>
+          <h2>{{ 'SETTINGS.SESSION_TITLE' | translate }}</h2>
+          <p>{{ 'SETTINGS.SESSION_SUBTITLE' | translate }}</p>
         </div>
       </div>
 
       <button type="button" class="btn-logout-action" (click)="logout()">
         <span class="material-symbols-outlined">logout</span>
-        <span>تسجيل الخروج من النظام</span>
+        <span>{{ 'SETTINGS.LOGOUT_BTN' | translate }}</span>
       </button>
     </div>
 
   </div>
 </div>
+
