@@ -1,0 +1,91 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-cyan-600 text-3xl">manage_accounts</span>
+        <span>إدارة المستخدمين والأدوار (Users & Roles)</span>
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">التحكم في أدوار الحسابات (Roles) وحالات تفعيل الحسابات بالمنظومة.</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="relative">
+      <span class="material-symbols-outlined absolute right-3 top-3 text-slate-400 text-xl">search</span>
+      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilter()" placeholder="ابحث بالبريد الإلكتروني..." class="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
+    </div>
+
+    <div>
+      <select [(ngModel)]="roleFilter" (change)="applyFilter()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
+        <option *ngFor="let opt of roleOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+    </div>
+
+    <div>
+      <select [(ngModel)]="statusFilter" (change)="applyFilter()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
+        <option value="">جميع الحالات</option>
+        <option value="active">مفعل (Active)</option>
+        <option value="inactive">معطل (Blocked)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-right text-sm">
+        <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+          <tr>
+            <th class="p-4">البريد الإلكتروني</th>
+            <th class="p-4">الدور الحالي (Role)</th>
+            <th class="p-4">تاريخ التسجيل</th>
+            <th class="p-4">حالة الحساب</th>
+            <th class="p-4 text-center">تغيير الدور</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let user of filteredUsers" class="hover:bg-slate-50/80 transition">
+            <td class="p-4 font-bold text-slate-900 dir-ltr text-right">
+              {{ user.email }}
+            </td>
+
+            <td class="p-4">
+              <span class="px-2.5 py-1 text-xs font-bold rounded-lg border {{ getRoleBadgeClass(user.role) }}">
+                {{ getRoleArabic(user.role) }}
+              </span>
+            </td>
+
+            <td class="p-4 text-xs text-slate-500 dir-ltr text-right">
+              {{ user.createdAt }}
+            </td>
+
+            <td class="p-4">
+              <button (click)="toggleStatus(user)" class="px-3 py-1 text-xs font-bold rounded-full border transition flex items-center gap-1.5" [ngClass]="user.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'">
+                <span class="w-2 h-2 rounded-full" [ngClass]="user.is_active ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+                <span>{{ user.is_active ? 'مفعل' : 'محظور / معطل' }}</span>
+              </button>
+            </td>
+
+            <td class="p-4 text-center">
+              <select [ngModel]="user.role" (ngModelChange)="changeRole(user, $event)" class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none">
+                <option value="admin">مسؤول نظام (admin)</option>
+                <option value="doctor">طبيب (doctor)</option>
+                <option value="patient">مريض (patient)</option>
+              </select>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="5" class="p-8 text-center text-slate-400">
+              لا يطابق أي مستخدم نتائج البحث والتصفية
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

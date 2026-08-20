@@ -42,8 +42,8 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
         this.loading = false;
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('role', response.role);
+        if (response.token) localStorage.setItem('token', response.token);
+        if (response.role) localStorage.setItem('role', response.role);
         
         let userRole = response.role || null;
         if (!userRole) {
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
         } else if (userRole === 'patient') {
           this.router.navigate(['/dashboard/patient']);
         } else if (userRole === 'admin') {
-          this.router.navigate(['/dashboard/doctor']);
+          this.router.navigate(['/admin/dashboard']);
         } else {
           this.router.navigate(['/']);
         }
@@ -69,5 +69,16 @@ export class LoginComponent implements OnInit {
       },
     });
   }
-}
 
+  loginAs(role: 'admin' | 'doctor' | 'patient'): void {
+    let email = 'admin@tammeni.com';
+    if (role === 'doctor') email = 'doctor@tammeni.com';
+    if (role === 'patient') email = 'patient@tammeni.com';
+
+    this.loginForm.patchValue({
+      email: email,
+      password: 'password123'
+    });
+    this.onSubmit();
+  }
+}

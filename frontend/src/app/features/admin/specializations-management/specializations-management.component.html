@@ -1,0 +1,99 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-pink-600 text-3xl">category</span>
+        <span>إدارة التخصصات الطبية (Dynamic Specializations)</span>
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">إضافة، تعديل وحذف التخصصات المتاحة للحجز والبحث في الموقع.</p>
+    </div>
+    <button (click)="openAddModal()" class="px-5 py-2.5 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white rounded-xl text-sm font-bold flex items-center gap-2 transition shadow-md shadow-pink-600/20 self-start sm:self-auto">
+      <span class="material-symbols-outlined text-lg">add</span>
+      <span>تخصص جديد</span>
+    </button>
+  </div>
+
+  <!-- Specializations Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div *ngFor="let spec of specializations" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80 hover:shadow-md transition flex flex-col justify-between space-y-4">
+      
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-600 flex items-center justify-center font-bold text-2xl border border-pink-100">
+            <span class="material-symbols-outlined text-2xl">{{ spec.icon || 'medical_services' }}</span>
+          </div>
+
+          <span class="text-xs font-bold px-2.5 py-1 bg-purple-50 text-purple-700 rounded-lg border border-purple-100">
+            {{ spec.doctorCount || 0 }} طبيب
+          </span>
+        </div>
+
+        <div>
+          <h3 class="font-extrabold text-slate-900 text-base">{{ spec.nameAr }}</h3>
+          <p class="text-xs font-semibold text-slate-400 dir-ltr text-right mt-0.5">{{ spec.name }}</p>
+          <p class="text-xs text-slate-600 mt-2 line-clamp-2">{{ spec.description || 'لا يوجد وصف حالياً لهذا التخصص.' }}</p>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+        <span class="text-xs font-bold px-2 py-0.5 rounded-full" [ngClass]="spec.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'">
+          {{ spec.isActive ? 'مفعل' : 'معطل' }}
+        </span>
+
+        <div class="flex items-center gap-2">
+          <button (click)="openEditModal(spec)" class="p-2 text-slate-600 hover:text-purple-600 hover:bg-purple-50 rounded-xl transition" title="تعديل التخصص">
+            <span class="material-symbols-outlined text-lg">edit</span>
+          </button>
+          <button (click)="deleteSpecialization(spec)" class="p-2 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition" title="حذف">
+            <span class="material-symbols-outlined text-lg">delete</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div *ngIf="isModalOpen" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md border border-slate-100 p-6 space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <h3 class="text-lg font-bold text-slate-900">{{ isEditMode ? 'تعديل التخصص' : 'إضافة تخصص جديد' }}</h3>
+        <button (click)="closeModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg">
+          <span class="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">الاسم بالعربية *</label>
+          <input type="text" [(ngModel)]="specForm.nameAr" placeholder="مثال: أمراض القلب" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">الاسم بالإنجليزي</label>
+          <input type="text" [(ngModel)]="specForm.name" placeholder="Cardiology" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 dir-ltr text-right">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">الأيقونة المعبرة</label>
+          <select [(ngModel)]="specForm.icon" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none">
+            <option *ngFor="let item of iconOptions" [value]="item.icon">{{ item.label }} ({{ item.icon }})</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">وصف مختصر</label>
+          <textarea rows="3" [(ngModel)]="specForm.description" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none"></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+        <button (click)="closeModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">إلغاء</button>
+        <button (click)="saveSpecialization()" class="px-5 py-2 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl text-sm shadow-md shadow-pink-600/20">حفظ</button>
+      </div>
+    </div>
+  </div>
+
+</div>

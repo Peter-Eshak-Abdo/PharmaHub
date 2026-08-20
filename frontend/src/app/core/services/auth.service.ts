@@ -37,17 +37,24 @@ export class AuthService {
       }),
       catchError(() => {
         // Fallback for demo / offline mode
-        const role = credentials.email?.includes('doctor') ? 'doctor' : 'patient';
+        let role = 'patient';
+        if (credentials.email?.includes('admin')) {
+          role = 'admin';
+        } else if (credentials.email?.includes('doctor')) {
+          role = 'doctor';
+        }
+
         const mockUser: User = {
           _id: 'u_' + Date.now(),
-          email: credentials.email || (role === 'doctor' ? 'doctor@pharmahub.com' : 'patient@pharmahub.com'),
-          role: role
+          email: credentials.email || 'admin@tammeni.com',
+          role: role as 'patient' | 'doctor' | 'admin'
         };
         const mockToken = `mock_token_${Date.now()}`;
         localStorage.setItem('token', mockToken);
+        localStorage.setItem('role', role);
         localStorage.setItem('user', JSON.stringify(mockUser));
         this.currentUserSubject.next(mockUser);
-        return of({ success: true, token: mockToken, user: mockUser });
+        return of({ success: true, token: mockToken, user: mockUser, role: role });
       })
     );
   }

@@ -43,17 +43,22 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'history',
+    component: MedicalHistoryComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'history/:patientId',
     component: MedicalHistoryComponent,
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['doctor', 'patient'] }
+    data: { roles: ['doctor', 'patient', 'admin'] }
   },
   { 
     path: 'medical-history', 
-    redirectTo: 'catalog',
+    redirectTo: 'history',
     pathMatch: 'full' 
   },
-  { path: '', redirectTo: 'catalog', pathMatch: 'full' },
+  { path: '', redirectTo: 'history', pathMatch: 'full' },
 ];
 
 @NgModule({

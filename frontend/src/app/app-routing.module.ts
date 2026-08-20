@@ -4,6 +4,14 @@ import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
+    path: 'admin',
+    loadChildren: () =>
+      import('./features/admin/admin.module').then(
+        (m) => m.AdminModule,
+      ),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'dashboard',
     loadChildren: () =>
       import('./features/dashboard/dashboard.module').then(

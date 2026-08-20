@@ -1,0 +1,150 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-teal-600 text-3xl">group</span>
+        <span>إدارة المرضى (Patients Management)</span>
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">عرض ومراجعة حسابات المرضى وتفعيل أو تجميد الوصول للمنظومة.</p>
+    </div>
+  </div>
+
+  <!-- Search & Filters -->
+  <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="relative">
+      <span class="material-symbols-outlined absolute right-3 top-3 text-slate-400 text-xl">search</span>
+      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilter()" placeholder="ابحث باسم المريض، البريد أو الهاتف..." class="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500">
+    </div>
+
+    <div>
+      <select [(ngModel)]="selectedGender" (change)="applyFilter()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
+        <option value="">جميع الجنسين (ذكر/أنثى)</option>
+        <option value="ذكر">ذكر</option>
+        <option value="أنثى">أنثى</option>
+      </select>
+    </div>
+
+    <div>
+      <select [(ngModel)]="selectedStatus" (change)="applyFilter()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
+        <option value="">جميع الحالات</option>
+        <option value="active">حساب مفعل</option>
+        <option value="inactive">حساب معطل</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-right text-sm">
+        <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+          <tr>
+            <th class="p-4">اسم المريض</th>
+            <th class="p-4">العمر والجنس</th>
+            <th class="p-4">بيانات التواصل</th>
+            <th class="p-4">العنوان / السكن</th>
+            <th class="p-4">حالة الحساب</th>
+            <th class="p-4 text-center">إجراءات</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let pat of filteredPatients" class="hover:bg-slate-50/80 transition">
+            <td class="p-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-700 font-black flex items-center justify-center text-sm border border-teal-200">
+                  {{ pat.full_name.charAt(0) }}
+                </div>
+                <div>
+                  <div class="font-extrabold text-slate-900">{{ pat.full_name }}</div>
+                  <div class="text-xs text-slate-400">{{ pat.occupation || 'غير محدد' }}</div>
+                </div>
+              </div>
+            </td>
+
+            <td class="p-4">
+              <span class="font-bold text-slate-800">{{ pat.age }} سنة</span>
+              <span class="text-xs text-slate-400 block">{{ pat.gender }}</span>
+            </td>
+
+            <td class="p-4 text-xs">
+              <div class="font-semibold text-slate-800 dir-ltr text-right">{{ pat.email }}</div>
+              <div class="text-slate-400 dir-ltr text-right">{{ pat.phone }}</div>
+            </td>
+
+            <td class="p-4 text-xs text-slate-600 font-medium">
+              {{ pat.address }}
+            </td>
+
+            <td class="p-4">
+              <button (click)="togglePatientStatus(pat)" class="px-3 py-1 text-xs font-bold rounded-full border transition flex items-center gap-1.5" [ngClass]="pat.is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' : 'bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100'">
+                <span class="w-2 h-2 rounded-full" [ngClass]="pat.is_active ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+                <span>{{ pat.is_active ? 'نشط' : 'معطل' }}</span>
+              </button>
+            </td>
+
+            <td class="p-4 text-center">
+              <button (click)="viewPatientDetails(pat)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1 mx-auto">
+                <span class="material-symbols-outlined text-base">visibility</span>
+                <span>التفاصيل</span>
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredPatients.length === 0">
+            <td colspan="6" class="p-8 text-center text-slate-400">
+              لا يوجد مرضى مسجلين ينطبق عليهم تصفية البحث الحالية
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Patient Details Modal -->
+  <div *ngIf="isDetailsModalOpen && selectedPatient" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg border border-slate-100 p-6 space-y-5">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <h3 class="text-lg font-bold text-slate-900">ملف بيانات المريض</h3>
+        <button (click)="closeDetailsModal()" class="p-1 text-slate-400 hover:text-slate-600 rounded-lg">
+          <span class="material-symbols-outlined text-2xl">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-sm">
+        <div class="flex justify-between py-2 border-b border-slate-100">
+          <span class="text-slate-400 font-medium">الاسم بالكامل:</span>
+          <span class="font-bold text-slate-900">{{ selectedPatient.full_name }}</span>
+        </div>
+        <div class="flex justify-between py-2 border-b border-slate-100">
+          <span class="text-slate-400 font-medium">البريد الإلكتروني:</span>
+          <span class="font-bold text-slate-900 dir-ltr">{{ selectedPatient.email }}</span>
+        </div>
+        <div class="flex justify-between py-2 border-b border-slate-100">
+          <span class="text-slate-400 font-medium">رقم الهاتف:</span>
+          <span class="font-bold text-slate-900 dir-ltr">{{ selectedPatient.phone }}</span>
+        </div>
+        <div class="flex justify-between py-2 border-b border-slate-100">
+          <span class="text-slate-400 font-medium">العمر والجنس:</span>
+          <span class="font-bold text-slate-900">{{ selectedPatient.age }} سنة ({{ selectedPatient.gender }})</span>
+        </div>
+        <div class="flex justify-between py-2 border-b border-slate-100">
+          <span class="text-slate-400 font-medium">العنوان:</span>
+          <span class="font-bold text-slate-900">{{ selectedPatient.address }}</span>
+        </div>
+        <div class="flex justify-between py-2 border-b border-slate-100">
+          <span class="text-slate-400 font-medium">الوظيفة والجهة:</span>
+          <span class="font-bold text-slate-900">{{ selectedPatient.occupation || '-' }} ({{ selectedPatient.company_name || '-' }})</span>
+        </div>
+      </div>
+
+      <div class="pt-4 flex justify-end">
+        <button (click)="closeDetailsModal()" class="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold">
+          إغلاق
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

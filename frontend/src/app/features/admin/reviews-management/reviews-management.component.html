@@ -1,0 +1,75 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+        <span class="material-symbols-outlined text-amber-500 text-3xl">rate_review</span>
+        <span>إدارة التقييمات والمراجعات (Reviews & Moderation)</span>
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">عرض ومراجعة التقييمات المستلمة وحذف التعليقات المخالفة للشروط.</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div class="relative">
+      <span class="material-symbols-outlined absolute right-3 top-3 text-slate-400 text-xl">search</span>
+      <input type="text" [(ngModel)]="searchQuery" (input)="applyFilter()" placeholder="ابحث بالنص، المريض أو الطبيب..." class="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
+    </div>
+
+    <div>
+      <select [(ngModel)]="ratingFilter" (change)="applyFilter()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20">
+        <option value="">جميع النجوم والتقييمات</option>
+        <option value="5">5 نجوم (ممتاز)</option>
+        <option value="4">4 نجوم (جيد جداً)</option>
+        <option value="3">3 نجوم (متوسط)</option>
+        <option value="2">2 نجوم (ضعيف)</option>
+        <option value="1">1 نجمة (سيء - يتطلب مراجعة)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Reviews List Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div *ngFor="let rev of filteredReviews" class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex flex-col justify-between space-y-4 hover:shadow-md transition">
+      
+      <div class="space-y-3">
+        <!-- Patient & Doctor Details -->
+        <div class="flex items-start justify-between">
+          <div>
+            <h3 class="font-extrabold text-slate-900 text-sm">{{ rev.patientName }}</h3>
+            <p class="text-xs text-purple-700 font-bold mt-0.5">تقييم للطبيب: {{ rev.doctorName }}</p>
+          </div>
+          
+          <!-- Rating Stars -->
+          <div class="flex items-center gap-1 bg-amber-50 px-2.5 py-1 rounded-lg text-amber-500 border border-amber-100 font-black text-xs">
+            <span class="material-symbols-outlined text-base fill-1">star</span>
+            <span>{{ rev.rating }} / 5</span>
+          </div>
+        </div>
+
+        <!-- Comment Text -->
+        <p class="text-slate-700 text-xs leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+          "{{ rev.comment }}"
+        </p>
+      </div>
+
+      <!-- Footer Info & Moderation Action -->
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+        <span class="text-slate-400 font-semibold dir-ltr">{{ rev.submittedDate }}</span>
+        
+        <button (click)="deleteReview(rev)" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-xl transition flex items-center gap-1">
+          <span class="material-symbols-outlined text-base">delete</span>
+          <span>حذف التقييم (Moderation)</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div *ngIf="filteredReviews.length === 0" class="col-span-full bg-white p-8 text-center text-slate-400 rounded-2xl border border-slate-200">
+      لا توجد تقييمات مطابقة لتصفية البحث
+    </div>
+  </div>
+
+</div>

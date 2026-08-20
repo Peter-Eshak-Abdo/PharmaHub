@@ -1,0 +1,166 @@
+<div class="space-y-6">
+  
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+    <div>
+      <h1 class="text-2xl font-black text-slate-900 flex items-center gap-2">
+        <span>لوحة التحليلات والإحصائيات</span>
+        <span class="text-xs bg-purple-100 text-purple-700 font-extrabold px-2.5 py-1 rounded-full border border-purple-200">الرئيسية</span>
+      </h1>
+      <p class="text-slate-500 text-sm mt-1">مرحباً بك في لوحة تحكم مسئول النظام. إليك ملخص حول نشاط المنظومة.</p>
+    </div>
+    <button (click)="loadStats()" class="self-start sm:self-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-bold flex items-center gap-2 transition shadow-sm">
+      <span class="material-symbols-outlined text-lg">refresh</span>
+      <span>تحديث البيانات</span>
+    </button>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    
+    <!-- Total Patients -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+      <div>
+        <p class="text-xs font-bold text-slate-500">إجمالي المرضى</p>
+        <h3 class="text-3xl font-black text-slate-900 mt-1">{{ stats.totalPatients | number }}</h3>
+        <p class="text-xs text-teal-600 font-semibold mt-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">trending_up</span>
+          <span>حسابات نشطة بالمنظومة</span>
+        </p>
+      </div>
+      <div class="w-13 h-13 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-2xl border border-teal-100">
+        <span class="material-symbols-outlined text-3xl">groups</span>
+      </div>
+    </div>
+
+    <!-- Total Doctors -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+      <div>
+        <p class="text-xs font-bold text-slate-500">إجمالي الأطباء</p>
+        <h3 class="text-3xl font-black text-slate-900 mt-1">{{ stats.totalDoctors | number }}</h3>
+        <p class="text-xs text-blue-600 font-semibold mt-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">verified</span>
+          <span>أطباء معتمدين</span>
+        </p>
+      </div>
+      <div class="w-13 h-13 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-2xl border border-blue-100">
+        <span class="material-symbols-outlined text-3xl">stethoscope</span>
+      </div>
+    </div>
+
+    <!-- Total Appointments -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+      <div>
+        <p class="text-xs font-bold text-slate-500">إجمالي الحجوزات</p>
+        <h3 class="text-3xl font-black text-slate-900 mt-1">{{ stats.totalAppointments | number }}</h3>
+        <p class="text-xs text-indigo-600 font-semibold mt-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">event_available</span>
+          <span>في كافة التخصصات</span>
+        </p>
+      </div>
+      <div class="w-13 h-13 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-2xl border border-indigo-100">
+        <span class="material-symbols-outlined text-3xl">calendar_month</span>
+      </div>
+    </div>
+
+    <!-- Pending Appointments -->
+    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200/80 flex items-center justify-between hover:shadow-md transition">
+      <div>
+        <p class="text-xs font-bold text-slate-500">حجوزات معلقة</p>
+        <h3 class="text-3xl font-black text-amber-600 mt-1">{{ stats.pendingAppointments | number }}</h3>
+        <p class="text-xs text-amber-600 font-semibold mt-1 flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">hourglass_empty</span>
+          <span>تتطلب مراجعة/تأكيد</span>
+        </p>
+      </div>
+      <div class="w-13 h-13 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-2xl border border-amber-100">
+        <span class="material-symbols-outlined text-3xl">pending_actions</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Secondary Charts & Lists Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Recent Appointments (2 cols) -->
+    <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">آخر الحجوزات المسجلة</h2>
+          <p class="text-xs text-slate-500">قائمة بأحدث طلبات الحجز المستلمة حديثاً</p>
+        </div>
+        <a routerLink="/admin/appointments" class="text-xs font-bold text-purple-600 hover:text-purple-700 flex items-center gap-1">
+          <span>عرض كافة الحجوزات</span>
+          <span class="material-symbols-outlined text-sm">arrow_back</span>
+        </a>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-right text-sm">
+          <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+            <tr>
+              <th class="p-3 rounded-r-xl">المريض</th>
+              <th class="p-3">الطبيب والتخصص</th>
+              <th class="p-3">التاريخ والوقت</th>
+              <th class="p-3 rounded-l-xl">الحالة</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr *ngFor="let app of stats.recentAppointments" class="hover:bg-slate-50/80 transition">
+              <td class="p-3 font-bold text-slate-900">{{ app.patientName }}</td>
+              <td class="p-3">
+                <div class="font-semibold text-slate-800">{{ app.doctorName }}</div>
+                <div class="text-xs text-slate-400">{{ app.specialization }}</div>
+              </td>
+              <td class="p-3 text-slate-600 text-xs dir-ltr text-right">
+                <div>{{ app.date }}</div>
+                <div class="text-slate-400">{{ app.time }}</div>
+              </td>
+              <td class="p-3">
+                <span class="px-2.5 py-1 text-xs font-bold rounded-lg border {{ getStatusBadgeClass(app.status) }}">
+                  {{ getStatusArabic(app.status) }}
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="stats.recentAppointments.length === 0">
+              <td colspan="4" class="p-6 text-center text-slate-400">لا توجد حجوزات مسجلة مؤخراً</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Top Specializations (1 col) -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900">أعلى التخصصات طلباً</h2>
+          <p class="text-xs text-slate-500">التخصصات الأنشط من حيث الحجوزات</p>
+        </div>
+        <span class="w-8 h-8 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+          <span class="material-symbols-outlined text-lg">local_hospital</span>
+        </span>
+      </div>
+
+      <div class="space-y-4">
+        <div *ngFor="let spec of stats.topSpecializations" class="space-y-1.5">
+          <div class="flex items-center justify-between text-xs font-bold">
+            <span class="text-slate-800">{{ spec.name }}</span>
+            <span class="text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">{{ spec.count }} حجز</span>
+          </div>
+          <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full" [style.width.%]="(spec.count / (stats.totalAppointments || 1)) * 100"></div>
+          </div>
+        </div>
+
+        <div *ngIf="stats.topSpecializations.length === 0" class="text-center py-6 text-slate-400 text-xs">
+          لا توجد بيانات تخصصات كافية حالياً
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

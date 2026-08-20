@@ -51,11 +51,19 @@
           السجل الطبي
         </a>
 
-        <a *ngIf="currentUser" 
+        <a *ngIf="currentUser && !isAdmin" 
            routerLink="/dashboard" 
            routerLinkActive="bg-teal-50 text-teal-700 font-bold"
            class="px-3.5 py-2 rounded-xl hover:bg-slate-100 transition">
           لوحة التحكم
+        </a>
+
+        <a *ngIf="currentUser && isAdmin" 
+           routerLink="/admin/dashboard" 
+           routerLinkActive="bg-purple-50 text-purple-700 font-bold"
+           class="px-3.5 py-2 rounded-xl bg-purple-100 text-purple-800 font-bold hover:bg-purple-200 transition flex items-center gap-1">
+          <span class="material-symbols-outlined text-lg">admin_panel_settings</span>
+          لوحة الأدمن
         </a>
       </nav>
 
@@ -86,7 +94,7 @@
             </div>
             <div class="text-xs">
               <div class="font-bold text-slate-800">{{ currentUser.email }}</div>
-              <div class="text-slate-400 capitalize">{{ isDoctor ? 'طبيب' : 'مريض' }}</div>
+              <div class="text-slate-400 capitalize">{{ isAdmin ? 'مسؤول النظام' : (isDoctor ? 'طبيب' : 'مريض') }}</div>
             </div>
           </div>
 

@@ -1,337 +1,262 @@
-<div [dir]="isRtl ? 'rtl' : 'ltr'" class="auth-page-wrapper">
-<div class="auth-page-wrapper" dir="rtl" lang="ar">
-  <div class="bg-blur blur-top"></div>
-  <div class="bg-blur blur-bottom"></div>
+<div class="min-h-screen bg-gradient-to-br from-teal-50/50 via-slate-50 to-indigo-50/50 flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 dir-rtl text-right font-sans relative overflow-hidden">
+  
+  <!-- Ambient Glass Light Spheres -->
+  <div class="absolute -top-24 -right-24 w-96 h-96 bg-teal-400/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl pointer-events-none"></div>
 
-  <div class="auth-lang-switch">
-    <app-language-toggle></app-language-toggle>
-  </div>
-
-  <div class="auth-card-container">
-
-    <!-- Header Section -->
-    <div class="auth-header">
-      <div class="icon-badge">
-        <span class="material-symbols-outlined">
-          {{ step === 2 ? (registerForm.get('role')?.value === 'doctor' ? 'medical_services' : 'person') : 'health_and_safety' }}
-        </span>
+  <!-- Header Branding -->
+  <div class="sm:mx-auto sm:w-full sm:max-w-xl text-center space-y-3 z-10 mb-6">
+    <a routerLink="/" class="inline-flex items-center gap-2 group">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-600 to-emerald-500 text-white flex items-center justify-center font-black shadow-lg shadow-teal-600/30 group-hover:scale-105 transition">
+        <span class="material-symbols-outlined text-3xl">local_hospital</span>
       </div>
-      <ng-container *ngIf="step === 1">
-        <h2>إنشاء حساب جديد</h2>
-        <p>انضم إلى شبكة منصة طمني الطبية وابدأ الآن</p>
-      </ng-container>
-      <ng-container *ngIf="step === 2">
-        <h1 class="step-title">الخطوة 2 من 2</h1>
-        <p class="step-subtitle">
-          {{ registerForm.get('role')?.value === 'doctor' ? 'أكمل بيانات ملفك الطبي' : 'أكمل ملفك الشخصي' }}
-        </p>
-      </ng-container>
+      <span class="text-3xl font-black tracking-tight text-slate-900">
+        طمني <span class="text-teal-600 text-xl font-bold">| Tammeni</span>
+      </span>
+    </a>
+    
+    <div>
+      <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+        {{ step === 1 ? 'إنشاء حساب جديد' : (registerForm.get('role')?.value === 'doctor' ? 'استكمال ملف الطبيب' : 'استكمال ملف المريض') }}
+      </h2>
+      <p class="text-sm font-medium text-slate-500 mt-1">
+        {{ step === 1 ? 'انضم إلى المنظومة الطبية واحظى برعاية صحية متكاملة' : 'يرجى استكمال البيانات المطلوبة لإنهاء إنشاء الحساب' }}
+      </p>
     </div>
 
-    <!-- Auth Card -->
-    <div class="auth-card">
-      <div *ngIf="errorMessage" class="alert-error">
-        <span class="material-symbols-outlined">error</span>
+    <!-- Stepper Indicator -->
+    <div class="flex items-center justify-center gap-2 pt-2">
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition" [ngClass]="step >= 1 ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20' : 'bg-slate-200 text-slate-500'">1</span>
+        <span class="text-xs font-bold text-slate-700">بيانات الحساب</span>
+      </div>
+      <div class="w-12 h-0.5 rounded" [ngClass]="step === 2 ? 'bg-teal-600' : 'bg-slate-200'"></div>
+      <div class="flex items-center gap-2">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition" [ngClass]="step === 2 ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20' : 'bg-slate-200 text-slate-500'">2</span>
+        <span class="text-xs font-bold text-slate-700">الملف الشخصي</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="sm:mx-auto sm:w-full sm:max-w-xl z-10">
+    <div class="bg-white/90 backdrop-blur-xl py-8 px-6 sm:px-10 shadow-xl shadow-slate-200/50 rounded-3xl border border-slate-200/80 space-y-6">
+      
+      <!-- Error Alert -->
+      <div *ngIf="errorMessage" class="bg-rose-50 border border-rose-200 text-rose-700 p-4 rounded-2xl text-xs font-bold flex items-center gap-2">
+        <span class="material-symbols-outlined text-lg">error</span>
         <span>{{ errorMessage }}</span>
       </div>
 
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-5">
 
-        <!-- STEP 1: Account Info -->
-        <div *ngIf="step === 1" class="step-container">
-          <div class="role-segmented-control">
-            <button
-              type="button"
-              class="role-btn"
-              [class.active]="registerForm.get('role')?.value === 'patient'"
-              (click)="setRole('patient')">
-              مريض
-            </button>
-            <button
-              type="button"
-              class="role-btn"
-              [class.active]="registerForm.get('role')?.value === 'doctor'"
-              (click)="setRole('doctor')">
-              طبيب
-            </button>
+        <!-- STEP 1: Account Setup & Role Selection -->
+        <div *ngIf="step === 1" class="space-y-5">
+          
+          <!-- Role Toggle Cards -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-2">نوع الحساب *</label>
+            <div class="grid grid-cols-2 gap-3">
+              <!-- Patient Option -->
+              <button type="button" (click)="setRole('patient')" class="p-4 rounded-2xl border-2 transition flex items-center gap-3 text-right" [ngClass]="registerForm.get('role')?.value === 'patient' ? 'border-teal-600 bg-teal-50/60 text-teal-900 shadow-sm' : 'border-slate-200 hover:border-slate-300 text-slate-600 bg-slate-50/50'">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl transition" [ngClass]="registerForm.get('role')?.value === 'patient' ? 'bg-teal-600 text-white' : 'bg-slate-200 text-slate-600'">
+                  <span class="material-symbols-outlined">person</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-sm">حساب مريض</div>
+                  <div class="text-[11px] opacity-75">لحجز المواعيد والاستشارات</div>
+                </div>
+              </button>
+
+              <!-- Doctor Option -->
+              <button type="button" (click)="setRole('doctor')" class="p-4 rounded-2xl border-2 transition flex items-center gap-3 text-right" [ngClass]="registerForm.get('role')?.value === 'doctor' ? 'border-indigo-600 bg-indigo-50/60 text-indigo-900 shadow-sm' : 'border-slate-200 hover:border-slate-300 text-slate-600 bg-slate-50/50'">
+                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl transition" [ngClass]="registerForm.get('role')?.value === 'doctor' ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600'">
+                  <span class="material-symbols-outlined">stethoscope</span>
+                </div>
+                <div>
+                  <div class="font-extrabold text-sm">حساب طبيب</div>
+                  <div class="text-[11px] opacity-75">لتقديم الرعاية وإدارة العيادة</div>
+                </div>
+              </button>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="fullName">{{ registerForm.get('role')?.value === 'doctor' ? 'اسم الطبيب الكامل' : 'الاسم الكامل' }}</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon">person</span>
-              <input
-                id="fullName"
-                type="text"
-                formControlName="fullName"
-                [placeholder]="registerForm.get('role')?.value === 'doctor' ? 'د. محمد أحمد' : 'أحمد محمد'"
-              />
+          <!-- Full Name -->
+          <div>
+            <label for="fullName" class="block text-xs font-bold text-slate-700 mb-1.5">
+              {{ registerForm.get('role')?.value === 'doctor' ? 'اسم الطبيب الرباعي *' : 'الاسم الكامل *' }}
+            </label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute right-3.5 top-3 text-slate-400 text-xl">person</span>
+              <input id="fullName" type="text" formControlName="fullName" [placeholder]="registerForm.get('role')?.value === 'doctor' ? 'د. محمد أحمد علي' : 'أحمد محمد علي'" class="w-full pr-11 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 transition">
             </div>
-            <div *ngIf="submitted && f['fullName']?.errors" class="error-msg">
+            <div *ngIf="submitted && f['fullName']?.errors" class="text-rose-600 text-xs font-bold mt-1">
               <small>{{ getFullNameError() }}</small>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="register-email">البريد الإلكتروني</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon">mail</span>
-              <input
-                id="register-email"
-                type="email"
-                formControlName="email"
-                placeholder="name@example.com"
-              />
+          <!-- Email -->
+          <div>
+            <label for="register-email" class="block text-xs font-bold text-slate-700 mb-1.5">البريد الإلكتروني *</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute right-3.5 top-3 text-slate-400 text-xl">mail</span>
+              <input id="register-email" type="email" formControlName="email" placeholder="name@example.com" class="w-full pr-11 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 transition dir-ltr text-right">
             </div>
-            <div *ngIf="submitted && f['email'].errors" class="error-msg">
-              <small *ngIf="f['email'].errors['required']">البريد الإلكتروني مطلوب</small>
-              <small *ngIf="f['email'].errors['email']">يرجى إدخال صيغة بريد إلكتروني صحيحة</small>
+            <div *ngIf="submitted && f['email']?.errors" class="text-rose-600 text-xs font-bold mt-1">
+              <small *ngIf="f['email'].errors?.['required']">البريد الإلكتروني مطلوب</small>
+              <small *ngIf="f['email'].errors?.['email']">يرجى إدخال صيغة بريد إلكتروني صحيحة</small>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="register-password">كلمة المرور</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon">lock</span>
-              <input
-                id="register-password"
-                [type]="hidePassword ? 'password' : 'text'"
-                formControlName="password"
-                placeholder="••••••••"
-              />
-              <button type="button" class="password-toggle" (click)="hidePassword = !hidePassword">
-                <span class="material-symbols-outlined">
-                  {{ hidePassword ? 'visibility_off' : 'visibility' }}
-                </span>
+          <!-- Password -->
+          <div>
+            <label for="register-password" class="block text-xs font-bold text-slate-700 mb-1.5">كلمة المرور *</label>
+            <div class="relative">
+              <span class="material-symbols-outlined absolute right-3.5 top-3 text-slate-400 text-xl">lock</span>
+              <input id="register-password" [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="••••••••" class="w-full pr-11 pl-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 transition dir-ltr text-right">
+              <button type="button" (click)="hidePassword = !hidePassword" class="absolute left-3 top-2.5 text-slate-400 hover:text-slate-600 p-1">
+                <span class="material-symbols-outlined text-lg">{{ hidePassword ? 'visibility_off' : 'visibility' }}</span>
               </button>
             </div>
-            <div *ngIf="submitted && f['password'].errors" class="error-msg">
+            <div *ngIf="submitted && f['password']?.errors" class="text-rose-600 text-xs font-bold mt-1">
               <small>{{ getPasswordError() }}</small>
             </div>
           </div>
 
-          <button type="button" class="btn-primary" (click)="nextStep()">
-            <span>متابعة للخطوة التالية</span>
-            <span class="material-symbols-outlined btn-icon">arrow_forward</span>
+          <!-- Continue Button -->
+          <button type="button" (click)="nextStep()" class="w-full py-3 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white rounded-xl font-bold text-sm shadow-md shadow-teal-600/20 transition flex items-center justify-center gap-2 mt-4">
+            <span>متابعة لاستكمال التفاصيل</span>
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
           </button>
         </div>
 
         <!-- STEP 2: Patient Profile Details -->
-        <div *ngIf="step === 2 && registerForm.get('role')?.value === 'patient'" class="step-container">
-          <!-- Phone Number -->
-          <div class="form-group">
-            <label for="phone">رقم الهاتف (11 رقماً يبدأ بـ 010 / 011 / 012 / 015)</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">phone</span>
-              <input
-                id="phone"
-                type="tel"
-                formControlName="phoneNumber"
-                placeholder="01012345678"
-                class="rtl-input"
-              />
+        <div *ngIf="step === 2 && registerForm.get('role')?.value === 'patient'" class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <!-- Phone -->
+            <div>
+              <label for="phone" class="block text-xs font-bold text-slate-700 mb-1.5">رقم الهاتف *</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute right-3.5 top-3 text-slate-400 text-xl">phone</span>
+                <input id="phone" type="tel" formControlName="phoneNumber" placeholder="01012345678" class="w-full pr-11 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 dir-ltr text-right">
+              </div>
+              <div *ngIf="submitted && f['phoneNumber']?.errors" class="text-rose-600 text-xs font-bold mt-1">
+                <small>{{ getPhoneError() }}</small>
+              </div>
             </div>
-            <div *ngIf="submitted && f['phoneNumber']?.errors" class="error-msg">
-              <small>{{ getPhoneError() }}</small>
-            </div>
-          </div>
 
-          <!-- Age -->
-          <div class="form-group">
-            <label for="age">العمر</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">calendar_month</span>
-              <input
-                id="age"
-                type="number"
-                formControlName="age"
-                placeholder="أدخل العمر"
-                class="rtl-input"
-              />
+            <!-- Age -->
+            <div>
+              <label for="age" class="block text-xs font-bold text-slate-700 mb-1.5">العمر *</label>
+              <div class="relative">
+                <span class="material-symbols-outlined absolute right-3.5 top-3 text-slate-400 text-xl">calendar_month</span>
+                <input id="age" type="number" formControlName="age" placeholder="مثال: 25" class="w-full pr-11 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+              </div>
+              <div *ngIf="submitted && f['age']?.errors" class="text-rose-600 text-xs font-bold mt-1">
+                <small>{{ getAgeError() }}</small>
+              </div>
             </div>
-            <div *ngIf="submitted && f['age']?.errors" class="error-msg">
-              <small>{{ getAgeError() }}</small>
-            </div>
-          </div>
 
-          <!-- Gender -->
-          <div class="form-group">
-            <label for="gender">الجنس</label>
-            <div class="input-wrapper select-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">wc</span>
-              <select id="gender" formControlName="gender" class="rtl-input">
+            <!-- Gender -->
+            <div>
+              <label for="gender" class="block text-xs font-bold text-slate-700 mb-1.5">الجنس *</label>
+              <select id="gender" formControlName="gender" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
                 <option value="" disabled selected>اختر الجنس</option>
                 <option value="male">ذكر</option>
                 <option value="female">أنثى</option>
               </select>
-              <span class="material-symbols-outlined select-arrow">expand_more</span>
+              <div *ngIf="submitted && f['gender']?.errors" class="text-rose-600 text-xs font-bold mt-1">
+                <small *ngIf="f['gender'].errors?.['required']">الجنس مطلوب</small>
+              </div>
             </div>
-            <div *ngIf="submitted && f['gender']?.errors" class="error-msg">
-              <small *ngIf="f['gender'].errors?.['required']">الجنس مطلوب</small>
+
+            <!-- Address -->
+            <div>
+              <label for="address" class="block text-xs font-bold text-slate-700 mb-1.5">العنوان السكني</label>
+              <input id="address" type="text" formControlName="address" placeholder="المدينة، الحي..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+            </div>
+
+            <!-- Occupation -->
+            <div>
+              <label for="occupation" class="block text-xs font-bold text-slate-700 mb-1.5">الوظيفة (اختياري)</label>
+              <input id="occupation" type="text" formControlName="occupation" placeholder="مثال: مهندس" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+            </div>
+
+            <!-- Company -->
+            <div>
+              <label for="company" class="block text-xs font-bold text-slate-700 mb-1.5">جهة العمل (اختياري)</label>
+              <input id="company" type="text" formControlName="companyName" placeholder="اسم الشركة" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
             </div>
           </div>
 
-          <!-- Address -->
-          <div class="form-group">
-            <label for="address">العنوان</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">location_on</span>
-              <input
-                id="address"
-                type="text"
-                formControlName="address"
-                placeholder="المدينة، الحي..."
-                class="rtl-input"
-              />
-            </div>
-          </div>
-
-          <!-- Occupation -->
-          <div class="form-group">
-            <label for="occupation">الوظيفة (اختياري)</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">work</span>
-              <input
-                id="occupation"
-                type="text"
-                formControlName="occupation"
-                placeholder="أدخل المهنة"
-                class="rtl-input"
-              />
-            </div>
-          </div>
-
-          <!-- Company -->
-          <div class="form-group">
-            <label for="company">جهة العمل (اختياري)</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">business</span>
-              <input
-                id="company"
-                type="text"
-                formControlName="companyName"
-                placeholder="اسم الشركة أو المؤسسة"
-                class="rtl-input"
-              />
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="step-actions">
-            <button type="submit" class="btn-primary" [disabled]="loading">
-              <span *ngIf="!loading">إكمال التسجيل</span>
-              <span *ngIf="loading">جاري الحفظ...</span>
-              <span class="material-symbols-outlined btn-icon">how_to_reg</span>
+          <!-- Buttons -->
+          <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+            <button type="button" (click)="prevStep()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition">
+              رجوع
             </button>
-            <button type="button" class="btn-secondary" (click)="prevStep()" [disabled]="loading">
-              <span>رجوع</span>
+            <button type="submit" [disabled]="loading" class="flex-1 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white rounded-xl font-bold text-sm shadow-md shadow-teal-600/20 transition flex items-center justify-center gap-2">
+              <span>إكمال إنشاء الحساب</span>
+              <span class="material-symbols-outlined text-lg">how_to_reg</span>
             </button>
           </div>
         </div>
 
         <!-- STEP 2: Doctor Profile Details -->
-        <div *ngIf="step === 2 && registerForm.get('role')?.value === 'doctor'" class="step-container">
-          <!-- Specialization -->
-          <div class="form-group">
-            <label for="specialization">التخصص الطبي</label>
-            <div class="input-wrapper select-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">medical_information</span>
-              <select id="specialization" formControlName="specialization" class="rtl-input">
+        <div *ngIf="step === 2 && registerForm.get('role')?.value === 'doctor'" class="space-y-4">
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Specialization -->
+            <div class="sm:col-span-2">
+              <label for="specialization" class="block text-xs font-bold text-slate-700 mb-1.5">التخصص الطبي *</label>
+              <select id="specialization" formControlName="specialization" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
                 <option value="" disabled selected>اختر التخصص الطبي</option>
                 <option *ngFor="let spec of specializations" [value]="spec">{{ spec }}</option>
               </select>
-              <span class="material-symbols-outlined select-arrow">expand_more</span>
-            </div>
-            <div *ngIf="submitted && f['specialization']?.errors" class="error-msg">
-              <small *ngIf="f['specialization'].errors?.['required']">التخصص مطلوب من القائمة</small>
-            </div>
-          </div>
-
-          <!-- Years of Experience & Consultation Fee -->
-          <div class="form-row">
-            <div class="form-group flex-1">
-              <label for="yearsOfExperience">سنوات الخبرة</label>
-              <div class="input-wrapper">
-                <span class="material-symbols-outlined input-icon right-icon">history_edu</span>
-                <input
-                  id="yearsOfExperience"
-                  type="number"
-                  formControlName="yearsOfExperience"
-                  placeholder="0"
-                  min="0"
-                  class="rtl-input"
-                />
+              <div *ngIf="submitted && f['specialization']?.errors" class="text-rose-600 text-xs font-bold mt-1">
+                <small *ngIf="f['specialization'].errors?.['required']">التخصص مطلوب من القائمة</small>
               </div>
             </div>
-            <div class="form-group flex-1">
-              <label for="consultationFeeSnapshot">سعر الكشف ($)</label>
-              <div class="input-wrapper">
-                <span class="material-symbols-outlined input-icon right-icon">payments</span>
-                <input
-                  id="consultationFeeSnapshot"
-                  type="number"
-                  formControlName="consultationFeeSnapshot"
-                  placeholder="0"
-                  min="0"
-                  class="rtl-input"
-                />
-              </div>
+
+            <!-- Years of Exp -->
+            <div>
+              <label for="yearsOfExperience" class="block text-xs font-bold text-slate-700 mb-1.5">سنوات الخبرة</label>
+              <input id="yearsOfExperience" type="number" formControlName="yearsOfExperience" placeholder="0" min="0" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+            </div>
+
+            <!-- Consultation Fee -->
+            <div>
+              <label for="consultationFeeSnapshot" class="block text-xs font-bold text-slate-700 mb-1.5">سعر الكشف التقديري (ج.م)</label>
+              <input id="consultationFeeSnapshot" type="number" formControlName="consultationFeeSnapshot" placeholder="300" min="0" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+            </div>
+
+            <!-- Education -->
+            <div class="sm:col-span-2">
+              <label for="education" class="block text-xs font-bold text-slate-700 mb-1.5">المؤهل الدراسي والجامعة</label>
+              <input id="education" type="text" formControlName="education" placeholder="بكالوريوس طب وجراحة - جامعة القاهرة" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+            </div>
+
+            <!-- Qualifications -->
+            <div class="sm:col-span-2">
+              <label for="qualifications" class="block text-xs font-bold text-slate-700 mb-1.5">الشهادات والزمالة الإضافية</label>
+              <input id="qualifications" type="text" formControlName="qualifications" placeholder="استشاري مناظير ومفاصل" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+            </div>
+
+            <!-- Bio -->
+            <div class="sm:col-span-2">
+              <label for="bio" class="block text-xs font-bold text-slate-700 mb-1.5">نبذة تعريفية (Bio)</label>
+              <textarea id="bio" formControlName="bio" rows="3" placeholder="اكتب نبذة مختصرة عن خدماتك الطبية..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20"></textarea>
             </div>
           </div>
 
-          <!-- Education -->
-          <div class="form-group">
-            <label for="education">التعليم والجامعة</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">school</span>
-              <input
-                id="education"
-                type="text"
-                formControlName="education"
-                placeholder="مثال: بكالوريوس طب وجراحة - جامعة القاهرة"
-                class="rtl-input"
-              />
-            </div>
-          </div>
-
-          <!-- Qualifications -->
-          <div class="form-group">
-            <label for="qualifications">المؤهلات والشهادات الإضافية</label>
-            <div class="input-wrapper">
-              <span class="material-symbols-outlined input-icon right-icon">verified</span>
-              <input
-                id="qualifications"
-                type="text"
-                formControlName="qualifications"
-                placeholder="مثال: زمالة الكلية الملكية البريطانية"
-                class="rtl-input"
-              />
-            </div>
-          </div>
-
-          <!-- Bio -->
-          <div class="form-group">
-            <label for="bio">نبذة تعريفية (Bio)</label>
-            <div class="input-wrapper">
-              <textarea
-                id="bio"
-                formControlName="bio"
-                placeholder="اكتب نبذة مختصرة عن خبراتك وخدماتك العلاجية..."
-                class="rtl-input custom-textarea"
-                rows="3"
-              ></textarea>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="step-actions">
-            <button type="submit" class="btn-primary" [disabled]="loading">
-              <span *ngIf="!loading">إكمال تسجيل الطبيب</span>
-              <span *ngIf="loading">جاري إنشاء الحساب...</span>
-              <span class="material-symbols-outlined btn-icon">how_to_reg</span>
+          <!-- Buttons -->
+          <div class="flex items-center gap-3 pt-4 border-t border-slate-100">
+            <button type="button" (click)="prevStep()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold text-sm transition">
+              رجوع
             </button>
-            <button type="button" class="btn-secondary" (click)="prevStep()" [disabled]="loading">
-              <span>رجوع</span>
+            <button type="submit" [disabled]="loading" class="flex-1 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white rounded-xl font-bold text-sm shadow-md shadow-teal-600/20 transition flex items-center justify-center gap-2">
+              <span>إنشاء حساب الطبيب</span>
+              <span class="material-symbols-outlined text-lg">how_to_reg</span>
             </button>
           </div>
         </div>
@@ -339,9 +264,11 @@
       </form>
     </div>
 
-    <div class="auth-footer" *ngIf="step === 1">
-      لديك حساب بالفعل؟ <a routerLink="/auth/login">تسجيل الدخول</a>
+    <!-- Footer -->
+    <div class="text-center mt-6 text-sm text-slate-500">
+      لديك حساب بالفعل؟
+      <a routerLink="/auth/login" class="font-bold text-teal-600 hover:text-teal-700 hover:underline">تسجيل الدخول</a>
     </div>
   </div>
-</div>
 
+</div>
